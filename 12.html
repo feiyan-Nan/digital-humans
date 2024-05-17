@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    border: 0px;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+  }
+
+  #long_home {
+    width: 80vw;
+    height: 80vh;
+    background-color: black;
+    margin: auto;
+    position: relative;
+    overflow: hidden;
+  }
+
+  #home_body {
+    width: 10vw;
+    height: 10vw;
+    background-color: rgb(213, 30, 30);
+    position: absolute;
+    cursor: move;
+  }
+</style>
+
+
+<body>
+
+<div id="long_home">
+  <div id="home_body"></div>
+</div>
+
+<script>
+
+  // offsetLeft 距离父级元素左边的距离
+  var StartX
+  var StartY
+
+  var loginTag = document.getElementById('home_body') //要拖动的元素
+  var homeElement = document.getElementById('long_home') //父级元素
+
+
+  loginTag.addEventListener('mousedown', (event) => {
+    StartX = event.clientX - loginTag.offsetLeft
+    StartY = event.clientY - loginTag.offsetTop
+    console.log(StartX, StartY, loginTag.offsetLeft)
+    homeElement.addEventListener('mousemove', dropname)
+    homeElement.addEventListener('mouseup', stopDraging)
+
+  })
+
+  function dropname(events) {
+
+    let left = events.clientX - StartX
+    let top = events.clientY - StartY
+
+    // 用来控制div拖动的范围
+    let maxX = homeElement.offsetWidth - loginTag.offsetWidth
+    let maxY = homeElement.offsetHeight - loginTag.offsetHeight
+
+    // if (left > maxX + 150 || left < -120 || top > maxY + 150 || top < -120) {
+    //   stopDraging()
+    // }
+
+    left = Math.min(Math.max(0, left), 2000000)
+    top = Math.min(Math.max(0, top), 2000000)
+
+    loginTag.style.left = left + 'px'
+    loginTag.style.top = top + 'px'
+  }
+
+  function stopDraging() {
+    homeElement.removeEventListener('mousemove', dropname)
+    homeElement.removeEventListener('mouseup', stopDraging)
+  }
+
+
+</script>
+</body>
+
+</html>
