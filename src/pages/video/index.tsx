@@ -92,7 +92,7 @@ function Home() {
           const left = loginTag.style.left;
           console.log('result', '宽:', width, "高:", heiht, '顶部:', top, "左侧:", left);
           canvasctx.clearRect(0, 0, canvasctx.canvas.width, canvasctx.canvas.height);
-          canvasctx.drawImage(image, parseFloat(top), parseFloat(left), parseFloat(width), parseFloat(heiht));
+          canvasctx.drawImage(image, parseFloat(left), parseFloat(top), parseFloat(width), parseFloat(heiht));
         };
 
         document.onmouseup = function () {
@@ -114,11 +114,14 @@ function Home() {
 
     function dropname(events) {
       events.stopPropagation()
-      console.log('移动2')
+      // console.log('移动2', events.target.style.width, events.target.style.height);
       let left = events.clientX - StartX
       let top = events.clientY - StartY
       loginTag.style.left = left + 'px'
       loginTag.style.top = top + 'px'
+      console.log(left, top);
+      canvasctx.clearRect(0, 0, canvasctx.canvas.width, canvasctx.canvas.height);
+      canvasctx.drawImage(image, left, top, parseFloat(events.target.style.width), parseFloat(events.target.style.height));
     }
 
     function stopDraging() {
