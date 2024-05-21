@@ -5,6 +5,10 @@ https://szr.yunboai.com/#/video---功能上和这个网站对齐
 https://zenvideo.qq.com/ai/editor/mr9qiws7hgigt4c0befytg8?entry_from=digital_human_banner
 https://app.heygen.com/home   这个要翻墙
 
+
+
+https://szr.yunboai.com/#/video
+
 This is a boilerplate build with Vite, React 18, TypeScript, Vitest, Testing Library, Unocss, Eslint and Prettier.
 
 ## What is inside?
