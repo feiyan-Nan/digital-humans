@@ -17,9 +17,10 @@
   }
 
   #long_home {
-    width: 80vw;
-    height: 80vh;
-    background-color: black;
+    width: 942px;
+    height: 530px;
+    /*background-color: black;*/
+    background: url("https://digital-person.oss-cn-hangzhou.aliyuncs.com/FileUpload/1/UID_1/Image/Background/nafiniaputraKwdp0pokIunsplash_1678881317677.jpg") no-repeat;
     margin: auto;
     position: relative;
     user-select: none;
@@ -31,9 +32,10 @@
     height: 320px;
     top: 0px;
     left: 0px;
-    background-color: rgb(213, 30, 30);
+    /*background-color: rgb(213, 30, 30);*/
     position: absolute;
     cursor: move;
+    z-index: 10;
   }
 
   /*四边*/
@@ -113,6 +115,15 @@
   #home_body .bl {
     cursor: nesw-resize;
   }
+  #home_body img{
+    width: 100%;
+    height: 100%;
+  }
+  .videoView {
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
 </style>
 
 
@@ -128,8 +139,12 @@
     <span class="bl"></span>
     <span class="tr"></span>
     <span class="tl"></span>
+    <img draggable="false" src="https://digital-person.oss-cn-hangzhou.aliyuncs.com/alpha/51c8b926-62b5-4a2e-944e-ea54499eb5e6_avatar.png"
+         alt="">
   </div>
-  <div></div>
+  <div class="videoView">
+    <canvas id="digitalMan" width="942" height="530"></canvas>
+  </div>
 </div>
 
 <script>
