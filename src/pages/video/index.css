@@ -1,0 +1,110 @@
+#long_home {
+  width: 942px;
+  height: 530px;
+  /*background-color: black;*/
+  background: url("https://digital-person.oss-cn-hangzhou.aliyuncs.com/FileUpload/1/UID_1/Image/Background/nafiniaputraKwdp0pokIunsplash_1678881317677.jpg") no-repeat;
+  margin: auto;
+  position: relative;
+  user-select: none;
+  /*overflow: hidden;*/
+}
+
+#home_body {
+  width: 180px;
+  height: 320px;
+  top: 0px;
+  left: 0px;
+  /*background-color: rgb(213, 30, 30);*/
+  position: absolute;
+  cursor: move;
+  z-index: 10;
+}
+
+/*四边*/
+#home_body .t,
+#home_body .b,
+#home_body .l,
+#home_body .r {
+  position: absolute;
+  z-index: 1;
+  background: #666;
+}
+
+#home_body .l,
+#home_body .r {
+  width: 10px;
+  height: 100%;
+  cursor: col-resize;
+}
+
+#home_body .t,
+#home_body .b {
+  width: 100%;
+  height: 10px;
+  cursor: row-resize;
+}
+
+#home_body .t {
+  top: 0;
+  left: 0;
+}
+
+#home_body .b {
+  bottom: 0;
+  left: 0;
+}
+
+#home_body .l {
+  left: 0;
+}
+
+#home_body .r {
+  right: 0;
+}
+
+/*四角*/
+#home_body .tl,
+#home_body .bl,
+#home_body .br,
+#home_body .tr {
+  width: 20px;
+  height: 20px;
+  position: absolute;
+  background: #CCC;
+  z-index: 2;
+  cursor: nwse-resize
+}
+
+#home_body .tl,
+#home_body .bl {
+  left: -5px;
+}
+
+#home_body .tr,
+#home_body .br {
+  right: -5px;
+}
+
+#home_body .br,
+#home_body .bl {
+  bottom: -5px;
+}
+
+#home_body .tl,
+#home_body .tr {
+  top: -5px;
+}
+
+#home_body .tr,
+#home_body .bl {
+  cursor: nesw-resize;
+}
+#home_body img{
+  width: 100%;
+  height: 100%;
+}
+.videoView {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
