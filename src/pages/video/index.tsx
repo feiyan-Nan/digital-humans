@@ -37,13 +37,13 @@ function Video() {
       originImageWidth = image.width;
       originImageHeight = image.height;
       canvasctx.clearRect(0, 0, canvasctx.canvas.width, canvasctx.canvas.height);
-      canvasctx.drawImage(image, 0, 0, 180, 320);
+      canvasctx.drawImage(image, locations.left, locations.top, locations.width, locations.height);
     };
     // 给数字人一个初始位置
-    loginTag.style.top = `${0}px`;
-    loginTag.style.left = `${0}px`;
-    loginTag.style.width = `${180}px`;
-    loginTag.style.height = `${320}px`;
+    loginTag.style.top = `${locations.top}px`;
+    loginTag.style.left = `${locations.left}px`;
+    loginTag.style.width = `${locations.width}px`;
+    loginTag.style.height = `${locations.height}px`;
 
     console.log(canvasctx, canvasctx.canvas.width, canvasctx.canvas.height);
 

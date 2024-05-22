@@ -20,9 +20,9 @@ interface IStore {
 const useStore = create<IStore>()(
   immer(
     devtools((set, get) => ({
-      locations: { top: 0, left: 0, width: 180, height: 320 },
+      locations: { top: 50, left: 323, width: 324, height: 575 },
       updateLocations: (locations: any) => set((state) => ({ locations: { ...state.locations, ...locations } })),
-      selected: false,
+      selected: true,
       updateSelected: (selected: any) =>
         set({
           selected,
