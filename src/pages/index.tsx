@@ -27,49 +27,49 @@ function Index() {
 
   return (
     <>
-      <div border="4 solid blue" w-100 m="a t-10 b-20">
-        <p>Vite + React</p>
-        <Switch checked={state} onChange={toggle} m-b-4 />
-      </div>
+      {/*<div border="4 solid blue" w-100 m="a t-10 b-20">*/}
+      {/*  <p>Vite + React</p>*/}
+      {/*  <Switch checked={state} onChange={toggle} m-b-4 />*/}
+      {/*</div>*/}
 
-      <div m-b-20 className={cx('card', cardStyle)}>
-        <Button
-          value="increment count"
-          onClick={() => {
-            increment();
-          }}
-        />
+      {/*<div m-b-20 className={cx('card', cardStyle)}>*/}
+      {/*  <Button*/}
+      {/*    value="increment count"*/}
+      {/*    onClick={() => {*/}
+      {/*      increment();*/}
+      {/*    }}*/}
+      {/*  />*/}
 
-        <Button
-          value="decrement count"
-          onClick={() => {
-            decrement();
-          }}
-        />
-        <p>
-          <Input
-            onPressEnter={(event) => {
-              setInputValue((event.target as HTMLInputElement)?.value as string);
-            }}
-          />
-        </p>
-      </div>
+      {/*  <Button*/}
+      {/*    value="decrement count"*/}
+      {/*    onClick={() => {*/}
+      {/*      decrement();*/}
+      {/*    }}*/}
+      {/*  />*/}
+      {/*  <p>*/}
+      {/*    <Input*/}
+      {/*      onPressEnter={(event) => {*/}
+      {/*        setInputValue((event.target as HTMLInputElement)?.value as string);*/}
+      {/*      }}*/}
+      {/*    />*/}
+      {/*  </p>*/}
+      {/*</div>*/}
 
-      <div border="1 blue solid" p="4" flex="~ content-center justify-center" m="a">
-        <Button
-          value="Home"
-          onClick={() => {
-            navigate('/home');
-          }}
-        />
+      {/*<div border="1 blue solid" p="4" flex="~ content-center justify-center" m="a">*/}
+      {/*  <Button*/}
+      {/*    value="Home"*/}
+      {/*    onClick={() => {*/}
+      {/*      navigate('/home');*/}
+      {/*    }}*/}
+      {/*  />*/}
 
-        <Button
-          value="Card"
-          onClick={() => {
-            navigate('/card');
-          }}
-        />
-      </div>
+      {/*  <Button*/}
+      {/*    value="Card"*/}
+      {/*    onClick={() => {*/}
+      {/*      navigate('/card');*/}
+      {/*    }}*/}
+      {/*  />*/}
+      {/*</div>*/}
       <Outlet />
     </>
   );
