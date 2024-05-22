@@ -9,6 +9,7 @@ import img from '@/static/imgs/test.png';
 import logo from '@/static/imgs/logo.png';
 import uploadIcon from '@/static/icons/uploadIcon.png';
 import vector from '@/static/icons/vector.png';
+import Video from '@/pages/video';
 
 const { Sider, Content, Header, Footer } = Layout;
 
@@ -138,7 +139,9 @@ const ISlide: React.FC = () => (
           {/* <div className="right">右边的内容</div> */}
 
           <Layout style={{ height: 'calc(100% - 80px)' }}>
-            <Content>Content</Content>
+            <Content>
+              <Video />
+            </Content>
             <Sider className="right_sider">Sider</Sider>
           </Layout>
 
