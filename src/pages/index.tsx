@@ -3,7 +3,7 @@ import { Outlet, useNavigate } from 'react-router-dom';
 import { Input, Switch } from 'antd';
 import { useToggle } from 'ahooks';
 import { shallow } from 'zustand/shallow';
-import { useEffect } from 'react';
+// import { useEffect } from 'react';
 import Button from '@/components/button';
 import useStore from '@/store';
 

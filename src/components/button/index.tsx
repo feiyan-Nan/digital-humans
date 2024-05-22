@@ -7,7 +7,7 @@ interface IProps {
 }
 
 const ButtonCom: FC<IProps> = ({ value, onClick }) => (
-  <Button p-x-4px p-y-2px b-rounded-1 m-r-6px cursor-pointer hover:p-x-8px hover:p-y-4px onClick={onClick}>
+  <Button p-x-4px p-y-2px b-rounded-1 m-r-6px cursor-pointer hover:p-x-8px hover:p-y-4px onClick={onClick || null}>
     {value}
   </Button>
 );
