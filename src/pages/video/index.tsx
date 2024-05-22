@@ -4,11 +4,20 @@ import './index.css';
 import { useEffect } from 'react';
 
 function Video() {
-  const { locations, updateLocations } = useStore(
-    (state) => ({ locations: state.locations, updateLocations: state.updateLocations }),
+  const { locations, updateLocations, selected, updateSelected } = useStore(
+    (state) => ({
+      locations: state.locations,
+      updateLocations: state.updateLocations,
+      selected: state.selected,
+      updateSelected: state.updateSelected,
+    }),
     shallow,
   );
-  console.log(locations, 'locations');
+  console.log(locations, selected, 'locations');
+  const onClickDigitalMan = (e: any) => {
+    e.stopPropagation();
+    updateSelected(true);
+  };
   useEffect(() => {
     // offsetLeft 距离父级元素左边的距离
     let StartX;
@@ -100,7 +109,6 @@ function Video() {
             width: parseFloat(width),
             height: parseFloat(height),
           });
-          console.log(locations, 'locations122');
         };
 
         document.onmouseup = function () {
@@ -126,7 +134,6 @@ function Video() {
       const top = events.clientY - StartY;
       loginTag.style.left = `${left}px`;
       loginTag.style.top = `${top}px`;
-      console.log(left, top);
       canvasctx.clearRect(0, 0, canvasctx.canvas.width, canvasctx.canvas.height);
       canvasctx.drawImage(
         image,
@@ -135,6 +142,10 @@ function Video() {
         parseFloat(events.target.style.width),
         parseFloat(events.target.style.height),
       );
+      updateLocations({
+        left,
+        top,
+      });
     }
 
     function stopDraging() {
@@ -143,16 +154,16 @@ function Video() {
     }
   }, []);
   return (
-    <div id="long_home">
-      <div id="home_body">
-        <span className="r" />
-        <span className="l" />
-        <span className="t" />
-        <span className="b" />
-        <span className="br" />
-        <span className="bl" />
-        <span className="tr" />
-        <span className="tl" />
+    <div id="long_home" onClick={() => updateSelected(false)}>
+      <div id="home_body" onClick={onClickDigitalMan} style={{ cursor: selected ? 'move' : 'default' }}>
+        <span className="r" hidden={!selected} />
+        <span className="l" hidden={!selected} />
+        <span className="t" hidden={!selected} />
+        <span className="b" hidden={!selected} />
+        <span className="br" hidden={!selected} />
+        <span className="bl" hidden={!selected} />
+        <span className="tr" hidden={!selected} />
+        <span className="tl" hidden={!selected} />
         {/* <img draggable="false" */}
         {/*     src="https://digital-person.oss-cn-hangzhou.aliyuncs.com/alpha/51c8b926-62b5-4a2e-944e-ea54499eb5e6_avatar.png" */}
         {/*     alt=""/> */}
