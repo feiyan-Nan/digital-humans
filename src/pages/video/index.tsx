@@ -16,6 +16,7 @@ function Video() {
     }),
     shallow,
   );
+  console.log('执行', locations);
   const onClickDigitalMan = (e: any) => {
     e.stopPropagation();
     updateSelected(true);
@@ -186,9 +187,6 @@ function Video() {
           <span className="bl" hidden={!selected} />
           <span className="tr" hidden={!selected} />
           <span className="tl" hidden={!selected} />
-          {/* <img draggable="false" */}
-          {/*     src="https://digital-person.oss-cn-hangzhou.aliyuncs.com/alpha/51c8b926-62b5-4a2e-944e-ea54499eb5e6_avatar.png" */}
-          {/*     alt=""/> */}
         </div>
         <div className="videoView">
           <canvas id="digitalMan" width="942" height="530" />

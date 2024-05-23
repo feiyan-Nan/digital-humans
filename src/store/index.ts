@@ -37,6 +37,7 @@ const useStore = create<IStore>()(
         }),
       digitalManImage:
         'https://digital-person.oss-cn-hangzhou.aliyuncs.com/alpha/51c8b926-62b5-4a2e-944e-ea54499eb5e6_avatar.png',
+      updateDigitalImage: (image: string) => set(() => ({ digitalManImage: image })), // 计数器
       count: 0,
       increment: () => set((state) => ({ count: state.count + 1 })),
       decrement: () => set((state) => ({ count: state.count - 1 })),
