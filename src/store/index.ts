@@ -22,6 +22,7 @@ interface IStore {
    * 数字人的图片地址
    */
   digitalManImage: string;
+  updateDigitalImage: (image: string) => void;
 }
 
 const useStore = create<IStore>()(

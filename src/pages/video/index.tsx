@@ -4,6 +4,7 @@ import './index.css';
 import { useEffect } from 'react';
 
 let timer = 0;
+
 function Video() {
   const { locations, updateLocations, selected, updateSelected, digitalManImage } = useStore(
     (state) => ({
@@ -149,6 +150,16 @@ function Video() {
       document.removeEventListener('mousemove', dropname);
       document.removeEventListener('mouseup', stopDraging);
     }
+
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden) {
+        // 重新绘制canvas
+        console.log('重新绘制canvas');
+        const { left, top, width, height } = useStore.getState().locations;
+        canvasctx.clearRect(0, 0, canvasctx.canvas.width, canvasctx.canvas.height);
+        canvasctx.drawImage(image, left, top, width, height);
+      }
+    });
   }, [digitalManImage]);
   return (
     <div
