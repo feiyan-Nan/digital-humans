@@ -1,0 +1,36 @@
+.sub_nav_header {
+  display: flex;
+  height: 35px;
+  margin-top: 14px;
+
+  .sub_nav_header_item {
+    width: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    color: #909090;
+
+    cursor: pointer;
+    position: relative;
+
+    &.active {
+      color: #fff;
+    }
+  }
+}
+
+.sub_nav_line {
+  height: 2px;
+  background-color: #242F55;
+
+
+  .sub_nav_line_light {
+    width: 50%;
+    height: 100%;
+    background-color:  #7B68EE;
+
+    float: left;
+    // margin-left: 50%;
+  }
+}

@@ -3,13 +3,13 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Home from './pages/home';
 import Card from './pages/card';
 import Video from './pages/video';
-import Test from '@/components/test';
+import Index from './pages';
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Test />}>
+        <Route path="/" element={<Index />}>
           <Route path="/home" element={<Home />} />
           <Route path="/card" element={<Card />} />
           <Route path="/video" element={<Video />} />
