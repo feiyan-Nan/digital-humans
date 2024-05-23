@@ -1,7 +1,7 @@
-import useStore from '@/store';
-import { shallow } from 'zustand/shallow';
-import './index.css';
 import { useEffect } from 'react';
+import { shallow } from 'zustand/shallow';
+import useStore from '@/store';
+import './index.css';
 
 let timer = 0;
 
@@ -109,8 +109,10 @@ function Video() {
           });
         };
 
-        document.onmouseup = function () {
-          timer = performance.now() - startTime;
+        document.onmouseup = function (ev) {
+          if (!loginTag.contains(ev.target)) {
+            timer = performance.now() - startTime;
+          }
           document.onmousemove = null;
           document.onmouseup = null;
         };
@@ -119,7 +121,6 @@ function Video() {
     }
 
     loginTag.addEventListener('mousedown', (event) => {
-      updateSelected(true);
       StartX = event.clientX - loginTag.offsetLeft;
       StartY = event.clientY - loginTag.offsetTop;
       document.addEventListener('mousemove', dropname);
@@ -151,15 +152,18 @@ function Video() {
       document.removeEventListener('mouseup', stopDraging);
     }
 
-    document.addEventListener('visibilitychange', () => {
+    function drawCanvas() {
       if (!document.hidden) {
-        // 重新绘制canvas
-        console.log('重新绘制canvas');
         const { left, top, width, height } = useStore.getState().locations;
         canvasctx.clearRect(0, 0, canvasctx.canvas.width, canvasctx.canvas.height);
         canvasctx.drawImage(image, left, top, width, height);
       }
-    });
+    }
+
+    document.addEventListener('visibilitychange', drawCanvas);
+    return () => {
+      document.removeEventListener('visibilitychange', drawCanvas);
+    };
   }, [digitalManImage]);
   return (
     <div
