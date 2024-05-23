@@ -5,16 +5,16 @@ import { useEffect } from 'react';
 
 let timer = 0;
 function Video() {
-  const { locations, updateLocations, selected, updateSelected } = useStore(
+  const { locations, updateLocations, selected, updateSelected, digitalManImage } = useStore(
     (state) => ({
       locations: state.locations,
       updateLocations: state.updateLocations,
       selected: state.selected,
       updateSelected: state.updateSelected,
+      digitalManImage: state.digitalManImage,
     }),
     shallow,
   );
-  // console.log(locations, selected, 'locations');
   const onClickDigitalMan = (e: any) => {
     e.stopPropagation();
     updateSelected(true);
@@ -29,11 +29,10 @@ function Video() {
     const loginTag = document.getElementById('home_body'); // 要拖动的元素
     const canvasctx = document.getElementById('digitalMan')?.getContext('2d');
 
+    console.log('执行');
     const image = new Image();
-    image.src =
-      'https://digital-person.oss-cn-hangzhou.aliyuncs.com/alpha/51c8b926-62b5-4a2e-944e-ea54499eb5e6_avatar.png';
+    image.src = digitalManImage;
     image.onload = function () {
-      console.log(image.width, '1212');
       originImageWidth = image.width;
       originImageHeight = image.height;
       canvasctx.clearRect(0, 0, canvasctx.canvas.width, canvasctx.canvas.height);
@@ -45,8 +44,6 @@ function Video() {
     loginTag.style.width = `${locations.width}px`;
     loginTag.style.height = `${locations.height}px`;
 
-    console.log(canvasctx, canvasctx.canvas.width, canvasctx.canvas.height);
-
     const aSpan = loginTag.getElementsByTagName('span');
     for (let i = 0; i < aSpan.length; i++) {
       dragFn(aSpan[i]);
@@ -54,7 +51,6 @@ function Video() {
 
     function dragFn(obj) {
       obj.onmousedown = function (ev) {
-        console.log(obj, 'KKKKK');
         const oEv = ev || event;
         oEv.stopPropagation();
         const startTime = performance.now(); // 记录初始时间
@@ -65,7 +61,6 @@ function Video() {
         const oldY = oEv.clientY;
         const oldLeft = loginTag.offsetLeft;
         const oldTop = loginTag.offsetTop;
-        console.log(oldWidth, oldHeight, oldX, oldY, oldLeft, oldTop);
 
         document.onmousemove = function (ev) {
           const oEv = ev || event;
@@ -103,7 +98,6 @@ function Video() {
             loginTag.style.width = `${oldWidth + (oEv.clientX - oldX)}px`;
           }
           const { width, height, top, left } = loginTag.style;
-          // console.log('result', '宽:', width, '高:', height, '顶部:', top, '左侧:', left);
           canvasctx.clearRect(0, 0, canvasctx.canvas.width, canvasctx.canvas.height);
           canvasctx.drawImage(image, parseFloat(left), parseFloat(top), parseFloat(width), parseFloat(height));
           updateLocations({
@@ -124,18 +118,15 @@ function Video() {
     }
 
     loginTag.addEventListener('mousedown', (event) => {
-      console.log('移动1');
       updateSelected(true);
       StartX = event.clientX - loginTag.offsetLeft;
       StartY = event.clientY - loginTag.offsetTop;
-      console.log(StartX, StartY, loginTag.offsetLeft);
       document.addEventListener('mousemove', dropname);
       document.addEventListener('mouseup', stopDraging);
     });
 
     function dropname(events) {
       events.stopPropagation();
-      // console.log('移动2', events.target.style.width, events.target.style.height);
       const left = events.clientX - StartX;
       const top = events.clientY - StartY;
       loginTag.style.left = `${left}px`;
@@ -158,12 +149,11 @@ function Video() {
       document.removeEventListener('mousemove', dropname);
       document.removeEventListener('mouseup', stopDraging);
     }
-  }, []);
+  }, [digitalManImage]);
   return (
     <div
       id="videoWrap"
       onClick={() => {
-        console.log('执行了', timer);
         if (timer && timer > 150) {
           timer = 0;
           return;

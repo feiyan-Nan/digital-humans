@@ -13,8 +13,15 @@ interface IStore {
    */
   locations: any;
   updateLocations: (locations: any) => void;
-  selected: boolean;
+  /**
+   * 选中状态
+   */
+  selected: any;
   updateSelected: (selected: boolean) => void;
+  /**
+   * 数字人的图片地址
+   */
+  digitalManImage: string;
 }
 
 const useStore = create<IStore>()(
@@ -27,6 +34,8 @@ const useStore = create<IStore>()(
         set({
           selected,
         }),
+      digitalManImage:
+        'https://digital-person.oss-cn-hangzhou.aliyuncs.com/alpha/51c8b926-62b5-4a2e-944e-ea54499eb5e6_avatar.png',
       count: 0,
       increment: () => set((state) => ({ count: state.count + 1 })),
       decrement: () => set((state) => ({ count: state.count - 1 })),
