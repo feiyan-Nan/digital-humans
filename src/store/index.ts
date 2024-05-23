@@ -23,6 +23,11 @@ interface IStore {
    */
   digitalManImage: string;
   updateDigitalImage: (image: string) => void;
+  /**
+   * 横竖屏 VERTICAL：竖版 HORIZONTAL: 横版
+   */
+  align: string;
+  updateAlign: (align: string) => void;
 }
 
 const useStore = create<IStore>()(
@@ -37,7 +42,9 @@ const useStore = create<IStore>()(
         }),
       digitalManImage:
         'https://digital-person.oss-cn-hangzhou.aliyuncs.com/alpha/51c8b926-62b5-4a2e-944e-ea54499eb5e6_avatar.png',
-      updateDigitalImage: (image: string) => set(() => ({ digitalManImage: image })), // 计数器
+      updateDigitalImage: (image: string) => set(() => ({ digitalManImage: image })),
+      align: 'VERTICAL',
+      updateAlign: (align: string) => set(() => ({ align })),
       count: 0,
       increment: () => set((state) => ({ count: state.count + 1 })),
       decrement: () => set((state) => ({ count: state.count - 1 })),

@@ -13,6 +13,7 @@ import Video from '@/pages/video';
 
 // import AutoTabs from '@/components/auto-tabs';
 import Sb from '@/components/sb';
+import AspectRatio from '@/components/AspectRatio';
 
 const { Sider, Content, Header, Footer } = Layout;
 
@@ -153,17 +154,7 @@ const ISlide: React.FC = () => (
           </Layout>
 
           <Footer className="custom_footer">
-            <Space>
-              画面比例
-              <Select
-                defaultValue="jack"
-                style={{ width: 100 }}
-                options={[
-                  { value: 'jack', label: '9:16' },
-                  { value: 'lucy', label: '16:9' },
-                ]}
-              />
-            </Space>
+            <AspectRatio />
           </Footer>
         </Content>
       </Layout>

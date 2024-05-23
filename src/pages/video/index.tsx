@@ -1,7 +1,8 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { shallow } from 'zustand/shallow';
 import useStore from '@/store';
 import './index.css';
+import { useSize } from 'ahooks';
 
 let timer = 0;
 
@@ -16,7 +17,9 @@ function Video() {
     }),
     shallow,
   );
-  console.log('执行', locations);
+  const ref = useRef();
+  const size = useSize(ref);
+  console.log('执行', locations, size);
   const onClickDigitalMan = (e: any) => {
     e.stopPropagation();
     updateSelected(true);
@@ -169,6 +172,7 @@ function Video() {
   return (
     <div
       id="videoWrap"
+      ref={ref}
       onClick={() => {
         if (timer && timer > 150) {
           timer = 0;
