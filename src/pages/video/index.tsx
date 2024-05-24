@@ -79,7 +79,6 @@ function Video() {
     }
   }, [size, align]);
 
-  // console.log('执行', locations, size);
   const onClickDigitalMan = (e: any) => {
     e.stopPropagation();
     updateSelected(true);
