@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { shallow } from 'zustand/shallow';
+import { useSize } from 'ahooks';
 import useStore from '@/store';
 import './index.css';
-import { useSize } from 'ahooks';
 
 let timer = 0;
 
@@ -23,16 +23,16 @@ function Video() {
       shallow,
     );
   const [hasWH, setHasWH] = useState(false);
-  const ref = useRef();
+  const ref = useRef(null);
   const size = useSize(ref);
   console.log(scale, 'scale');
   // 设置背景图
   useEffect(() => {
-    const long_home = document.getElementById('long_home');
+    const backImgView = document.getElementById('backImgView') as HTMLElement;
     if (backGroundImage) {
-      long_home.style.backgroundImage = `url(${backGroundImage})`;
+      backImgView.style.backgroundImage = `url(${backGroundImage})`;
     } else {
-      long_home.style.backgroundImage = 'none';
+      backImgView.style.backgroundImage = 'none';
     }
   }, [backGroundImage]);
 
@@ -40,21 +40,21 @@ function Video() {
     if (!size || !size.height || !size.width) {
       return;
     }
-    const long_home = document.getElementById('long_home');
-    const canvasctx = document.getElementById('digitalMan');
+    const backImgView = document.getElementById('backImgView') as HTMLElement;
+    const canvasctx = document.getElementById('digitalMan') as HTMLCanvasElement;
     console.log('size', size);
     const { width, height } = size ?? {};
     if (align === 'VERTICAL') {
-      // 9:16 == 1080 * 1920
+      // 9:16 === 1080 * 1920
       if ((width * 16) / 9 > height) {
-        long_home.style.height = `${height}px`;
-        long_home.style.width = `${(height * 9) / 16}px`;
+        backImgView.style.height = `${height}px`;
+        backImgView.style.width = `${(height * 9) / 16}px`;
         canvasctx.width = (height * 9) / 16;
         canvasctx.height = height;
         updateScale(height / 1920);
       } else {
-        long_home.style.width = `${width}px`;
-        long_home.style.height = `${(width * 16) / 9}px`;
+        backImgView.style.width = `${width}px`;
+        backImgView.style.height = `${(width * 16) / 9}px`;
         canvasctx.width = width;
         canvasctx.height = (width * 16) / 9;
         updateScale(width / 1080);
@@ -62,16 +62,16 @@ function Video() {
     }
 
     if (align === 'HORIZONTAL') {
-      // 16:9 == 1920 * 1080
+      // 16:9 === 1920 * 1080
       if ((width * 9) / 16 > height) {
-        long_home.style.height = `${height}px`;
-        long_home.style.width = `${(height * 16) / 9}px`;
+        backImgView.style.height = `${height}px`;
+        backImgView.style.width = `${(height * 16) / 9}px`;
         canvasctx.width = (height * 16) / 9;
         canvasctx.height = height;
         updateScale(height / 1080);
       } else {
-        long_home.style.height = `${(width * 9) / 16}px`;
-        long_home.style.width = `${width}px`;
+        backImgView.style.height = `${(width * 9) / 16}px`;
+        backImgView.style.width = `${width}px`;
         canvasctx.width = width;
         canvasctx.height = (width * 9) / 16;
         updateScale(width / 1920);
@@ -93,8 +93,10 @@ function Video() {
     let originImageWidth: number;
     let originImageHeight: number;
 
-    const loginTag = document.getElementById('home_body'); // 要拖动的元素
-    const canvasctx = document.getElementById('digitalMan')?.getContext('2d');
+    const loginTag = document.getElementById('home_body') as HTMLElement; // 要拖动的元素
+    const canvasctx = (document.getElementById('digitalMan') as HTMLCanvasElement).getContext(
+      '2d',
+    ) as CanvasRenderingContext2D;
     setHasWH(false);
     console.log('执行');
     const image = new Image();
@@ -141,7 +143,7 @@ function Video() {
       dragFn(aSpan[i]);
     }
 
-    function dragFn(obj) {
+    function dragFn(obj: HTMLSpanElement) {
       obj.onmousedown = function (ev) {
         const oEv = ev || event;
         oEv.stopPropagation();
@@ -154,38 +156,38 @@ function Video() {
         const oldLeft = loginTag.offsetLeft;
         const oldTop = loginTag.offsetTop;
 
-        document.onmousemove = function (ev) {
-          const oEv = ev || event;
+        document.onmousemove = function (moveEv: any) {
+          const oEv = moveEv || event;
           oEv.stopPropagation();
 
-          if (obj.className == 'tl') {
+          if (obj.className === 'tl') {
             loginTag.style.width = `${oldWidth - (oEv.clientX - oldX)}px`;
             loginTag.style.height = `${oldHeight - ((oEv.clientX - oldX) / originImageWidth) * originImageHeight}px`;
             loginTag.style.left = `${oldLeft + (oEv.clientX - oldX)}px`;
             loginTag.style.top = `${oldTop + ((oEv.clientX - oldX) / originImageWidth) * originImageHeight}px`;
-          } else if (obj.className == 'bl') {
+          } else if (obj.className === 'bl') {
             loginTag.style.width = `${oldWidth - (oEv.clientX - oldX)}px`;
             loginTag.style.height = `${oldHeight - ((oEv.clientX - oldX) / originImageWidth) * originImageHeight}px`;
             loginTag.style.left = `${oldLeft + (oEv.clientX - oldX)}px`;
-          } else if (obj.className == 'tr') {
+          } else if (obj.className === 'tr') {
             loginTag.style.width = `${oldWidth + (oEv.clientX - oldX)}px`;
             loginTag.style.height = `${oldHeight + ((oEv.clientX - oldX) / originImageWidth) * originImageHeight}px`;
             loginTag.style.top = `${oldTop - ((oEv.clientX - oldX) / originImageWidth) * originImageHeight}px`;
-          } else if (obj.className == 'br') {
+          } else if (obj.className === 'br') {
             loginTag.style.width = `${oldWidth + (oEv.clientX - oldX)}px`;
             loginTag.style.height = `${oldHeight + ((oEv.clientX - oldX) / originImageWidth) * originImageHeight}px`;
-          } else if (obj.className == 't') {
+          } else if (obj.className === 't') {
             loginTag.style.height = `${oldHeight - (oEv.clientY - oldY)}px`;
             loginTag.style.width = `${oldWidth - ((oEv.clientY - oldY) / originImageHeight) * originImageWidth}px`;
             loginTag.style.top = `${oldTop + (oEv.clientY - oldY)}px`;
-          } else if (obj.className == 'b') {
+          } else if (obj.className === 'b') {
             loginTag.style.height = `${oldHeight + (oEv.clientY - oldY)}px`;
             loginTag.style.width = `${oldWidth + ((oEv.clientY - oldY) / originImageHeight) * originImageWidth}px`;
-          } else if (obj.className == 'l') {
+          } else if (obj.className === 'l') {
             loginTag.style.height = `${oldHeight - ((oEv.clientX - oldX) / originImageWidth) * originImageHeight}px`;
             loginTag.style.width = `${oldWidth - (oEv.clientX - oldX)}px`;
             loginTag.style.left = `${oldLeft + (oEv.clientX - oldX)}px`;
-          } else if (obj.className == 'r') {
+          } else if (obj.className === 'r') {
             loginTag.style.height = `${oldHeight + ((oEv.clientX - oldX) / originImageWidth) * originImageHeight}px`;
             loginTag.style.width = `${oldWidth + (oEv.clientX - oldX)}px`;
           }
@@ -200,8 +202,8 @@ function Video() {
           });
         };
 
-        document.onmouseup = function (ev) {
-          if (!loginTag.contains(ev.target)) {
+        document.onmouseup = function (e: any) {
+          if (!loginTag.contains(e.target)) {
             timer = performance.now() - startTime;
           }
           document.onmousemove = null;
@@ -219,7 +221,7 @@ function Video() {
       document.addEventListener('mouseup', stopDraging);
     });
 
-    function dropname(events) {
+    function dropname(events: any) {
       events.stopPropagation();
       const left = events.clientX - StartX;
       const top = events.clientY - StartY;
@@ -269,7 +271,7 @@ function Video() {
         updateSelected(false);
       }}
     >
-      <div id="long_home">
+      <div id="backImgView">
         <div id="home_body" onClick={onClickDigitalMan} style={{ cursor: selected ? 'move' : 'default' }}>
           <span className="r" style={{ display: selected && hasWH ? 'block' : 'none' }} />
           <span className="l" style={{ display: selected && hasWH ? 'block' : 'none' }} />
