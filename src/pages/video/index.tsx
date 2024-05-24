@@ -201,6 +201,7 @@ function Video() {
     }
 
     loginTag.addEventListener('mousedown', (event) => {
+      updateSelected(true);
       StartX = event.clientX - loginTag.offsetLeft;
       StartY = event.clientY - loginTag.offsetTop;
       document.addEventListener('mousemove', dropname);
