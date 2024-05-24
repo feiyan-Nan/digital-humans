@@ -11,12 +11,15 @@
 #long_home {
   /*width: 942px;*/
   /*height: 530px;*/
-  background: #232428 url("https://digital-person.oss-cn-hangzhou.aliyuncs.com/FileUpload/1/UID_1/Image/Background/nafiniaputraKwdp0pokIunsplash_1678881317677.jpg") no-repeat center center;
+  background-repeat: no-repeat;
+  background-position: center;
+  /*background-image: url("https://digital-person.oss-cn-hangzhou.aliyuncs.com/FileUpload/1/UID_1/Image/Background/nafiniaputraKwdp0pokIunsplash_1678881317677.jpg");*/
+  background-color: #232428;
   background-size: cover;
   margin: auto;
   position: relative;
   user-select: none;
-  /*overflow: hidden;*/
+  overflow: hidden;
 }
 
 #home_body {

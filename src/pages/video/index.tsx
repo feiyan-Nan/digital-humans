@@ -7,23 +7,35 @@ import { useSize } from 'ahooks';
 let timer = 0;
 
 function Video() {
-  const { updateLocations, selected, updateSelected, digitalManImage, align, updateScale, scale } = useStore(
-    (state) => ({
-      // locations: state.locations,
-      updateLocations: state.updateLocations,
-      selected: state.selected,
-      updateSelected: state.updateSelected,
-      digitalManImage: state.digitalManImage,
-      align: state.align,
-      updateScale: state.updateScale,
-      scale: state.scale,
-    }),
-    shallow,
-  );
+  const { updateLocations, selected, updateSelected, digitalManImage, align, updateScale, scale, backGroundImage } =
+    useStore(
+      (state) => ({
+        // locations: state.locations,
+        updateLocations: state.updateLocations,
+        selected: state.selected,
+        updateSelected: state.updateSelected,
+        digitalManImage: state.digitalManImage,
+        align: state.align,
+        updateScale: state.updateScale,
+        scale: state.scale,
+        backGroundImage: state.backGroundImage,
+      }),
+      shallow,
+    );
   const [hasWH, setHasWH] = useState(false);
   const ref = useRef();
   const size = useSize(ref);
   console.log(scale, 'scale');
+  // 设置背景图
+  useEffect(() => {
+    const long_home = document.getElementById('long_home');
+    if (backGroundImage) {
+      long_home.style.backgroundImage = `url(${backGroundImage})`;
+    } else {
+      long_home.style.backgroundImage = 'none';
+    }
+  }, [backGroundImage]);
+
   useEffect(() => {
     if (!size || !size.height || !size.width) {
       return;

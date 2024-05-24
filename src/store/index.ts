@@ -33,6 +33,11 @@ interface IStore {
    */
   scale: number;
   updateScale: (scale: number) => void;
+  /**
+   * 背景图片地址
+   */
+  backGroundImage: string;
+  updateBackGroundImage: (image: string) => void;
 }
 
 type CustomStoreType = StateCreator<IStore>;
@@ -45,6 +50,9 @@ const store: CustomStoreType = (set, get) => ({
     set({
       selected,
     }),
+  backGroundImage:
+    'https://digital-person.oss-cn-hangzhou.aliyuncs.com/FileUpload/1/UID_1/Image/Background/nafiniaputraKwdp0pokIunsplash_1678881317677.jpg',
+  updateBackGroundImage: (image: string) => set(() => ({ backGroundImage: image })),
   digitalManImage:
     'https://digital-person.oss-cn-hangzhou.aliyuncs.com/alpha/51c8b926-62b5-4a2e-944e-ea54499eb5e6_avatar.png',
   updateDigitalImage: (image: string) => set(() => ({ digitalManImage: image })),
