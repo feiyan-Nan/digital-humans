@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { shallow } from 'zustand/shallow';
 import useStore from '@/store';
 import './index.css';
@@ -7,24 +7,75 @@ import { useSize } from 'ahooks';
 let timer = 0;
 
 function Video() {
-  const { locations, updateLocations, selected, updateSelected, digitalManImage } = useStore(
+  const { updateLocations, selected, updateSelected, digitalManImage, align, updateScale, scale } = useStore(
     (state) => ({
-      locations: state.locations,
+      // locations: state.locations,
       updateLocations: state.updateLocations,
       selected: state.selected,
       updateSelected: state.updateSelected,
       digitalManImage: state.digitalManImage,
+      align: state.align,
+      updateScale: state.updateScale,
+      scale: state.scale,
     }),
     shallow,
   );
+  const [hasWH, setHasWH] = useState(false);
   const ref = useRef();
   const size = useSize(ref);
-  console.log('执行', locations, size);
+  console.log(scale, 'scale');
+  useEffect(() => {
+    if (!size || !size.height || !size.width) {
+      return;
+    }
+    const long_home = document.getElementById('long_home');
+    const canvasctx = document.getElementById('digitalMan');
+    console.log('size', size);
+    const { width, height } = size ?? {};
+    if (align === 'VERTICAL') {
+      // 9:16 == 1080 * 1920
+      if ((width * 16) / 9 > height) {
+        long_home.style.height = `${height}px`;
+        long_home.style.width = `${(height * 9) / 16}px`;
+        canvasctx.width = (height * 9) / 16;
+        canvasctx.height = height;
+        updateScale(height / 1920);
+      } else {
+        long_home.style.width = `${width}px`;
+        long_home.style.height = `${(width * 16) / 9}px`;
+        canvasctx.width = width;
+        canvasctx.height = (width * 16) / 9;
+        updateScale(width / 1080);
+      }
+    }
+
+    if (align === 'HORIZONTAL') {
+      // 16:9 == 1920 * 1080
+      if ((width * 9) / 16 > height) {
+        long_home.style.height = `${height}px`;
+        long_home.style.width = `${(height * 16) / 9}px`;
+        canvasctx.width = (height * 16) / 9;
+        canvasctx.height = height;
+        updateScale(height / 1080);
+      } else {
+        long_home.style.height = `${(width * 9) / 16}px`;
+        long_home.style.width = `${width}px`;
+        canvasctx.width = width;
+        canvasctx.height = (width * 9) / 16;
+        updateScale(width / 1920);
+      }
+    }
+  }, [size, align]);
+
+  // console.log('执行', locations, size);
   const onClickDigitalMan = (e: any) => {
     e.stopPropagation();
     updateSelected(true);
   };
   useEffect(() => {
+    if (scale === 1) {
+      return;
+    }
     // offsetLeft 距离父级元素左边的距离
     let StartX: number;
     let StartY: number;
@@ -33,7 +84,7 @@ function Video() {
 
     const loginTag = document.getElementById('home_body'); // 要拖动的元素
     const canvasctx = document.getElementById('digitalMan')?.getContext('2d');
-
+    setHasWH(false);
     console.log('执行');
     const image = new Image();
     image.src = digitalManImage;
@@ -41,13 +92,38 @@ function Video() {
       originImageWidth = image.width;
       originImageHeight = image.height;
       canvasctx.clearRect(0, 0, canvasctx.canvas.width, canvasctx.canvas.height);
-      canvasctx.drawImage(image, locations.left, locations.top, locations.width, locations.height);
+      const { scale, align } = useStore.getState();
+      let left;
+      let top;
+      let width;
+      let height;
+      if (align === 'VERTICAL') {
+        console.log('竖版,竖版竖版竖版竖版');
+        top = 192 * scale;
+        left = 52 * scale;
+        width = 973 * scale;
+        height = 1728 * scale;
+      } else {
+        console.log('横版, 横版横版横版横版横版');
+        top = 108 * scale;
+        left = 686 * scale;
+        width = 548 * scale;
+        height = 972 * scale;
+      }
+      canvasctx.drawImage(image, left, top, width, height);
+      // 给数字人一个初始位置
+      loginTag.style.top = `${top}px`;
+      loginTag.style.left = `${left}px`;
+      loginTag.style.width = `${width}px`;
+      loginTag.style.height = `${height}px`;
+      updateLocations({
+        left,
+        top,
+        width,
+        height,
+      });
+      setHasWH(true);
     };
-    // 给数字人一个初始位置
-    loginTag.style.top = `${locations.top}px`;
-    loginTag.style.left = `${locations.left}px`;
-    loginTag.style.width = `${locations.width}px`;
-    loginTag.style.height = `${locations.height}px`;
 
     const aSpan = loginTag.getElementsByTagName('span');
     for (let i = 0; i < aSpan.length; i++) {
@@ -168,7 +244,7 @@ function Video() {
     return () => {
       document.removeEventListener('visibilitychange', drawCanvas);
     };
-  }, [digitalManImage]);
+  }, [digitalManImage, size, scale]);
   return (
     <div
       id="videoWrap"
@@ -183,14 +259,14 @@ function Video() {
     >
       <div id="long_home">
         <div id="home_body" onClick={onClickDigitalMan} style={{ cursor: selected ? 'move' : 'default' }}>
-          <span className="r" hidden={!selected} />
-          <span className="l" hidden={!selected} />
-          <span className="t" hidden={!selected} />
-          <span className="b" hidden={!selected} />
-          <span className="br" hidden={!selected} />
-          <span className="bl" hidden={!selected} />
-          <span className="tr" hidden={!selected} />
-          <span className="tl" hidden={!selected} />
+          <span className="r" style={{ display: selected && hasWH ? 'block' : 'none' }} />
+          <span className="l" style={{ display: selected && hasWH ? 'block' : 'none' }} />
+          <span className="t" style={{ display: selected && hasWH ? 'block' : 'none' }} />
+          <span className="b" style={{ display: selected && hasWH ? 'block' : 'none' }} />
+          <span className="br" style={{ display: selected && hasWH ? 'block' : 'none' }} />
+          <span className="bl" style={{ display: selected && hasWH ? 'block' : 'none' }} />
+          <span className="tr" style={{ display: selected && hasWH ? 'block' : 'none' }} />
+          <span className="tl" style={{ display: selected && hasWH ? 'block' : 'none' }} />
         </div>
         <div className="videoView">
           <canvas id="digitalMan" width="942" height="530" />

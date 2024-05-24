@@ -1,4 +1,4 @@
-import { create } from 'zustand';
+import { create, StateCreator } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 import useInputStore from './input';
@@ -26,31 +26,37 @@ interface IStore {
   /**
    * 横竖屏 VERTICAL：竖版 HORIZONTAL: 横版
    */
-  align: string;
-  updateAlign: (align: string) => void;
+  align: VERTICAL | HORIZONTAL;
+  updateAlign: (align: VERTICAL | HORIZONTAL) => void;
+  /**
+   * 缩放比例
+   */
+  scale: number;
+  updateScale: (scale: number) => void;
 }
 
-const useStore = create<IStore>()(
-  immer(
-    devtools((set, get) => ({
-      locations: { top: 50, left: 323, width: 324, height: 575 },
-      updateLocations: (locations: any) => set((state) => ({ locations: { ...state.locations, ...locations } })),
-      selected: true,
-      updateSelected: (selected: any) =>
-        set({
-          selected,
-        }),
-      digitalManImage:
-        'https://digital-person.oss-cn-hangzhou.aliyuncs.com/alpha/51c8b926-62b5-4a2e-944e-ea54499eb5e6_avatar.png',
-      updateDigitalImage: (image: string) => set(() => ({ digitalManImage: image })),
-      align: 'VERTICAL',
-      updateAlign: (align: string) => set(() => ({ align })),
-      count: 0,
-      increment: () => set((state) => ({ count: state.count + 1 })),
-      decrement: () => set((state) => ({ count: state.count - 1 })),
-      setInputValue: useInputStore.getState().setInputValue,
-    })),
-  ),
-);
+type CustomStoreType = StateCreator<IStore>;
+
+const store: CustomStoreType = (set, get) => ({
+  locations: { top: 50, left: 323, width: 324, height: 575 },
+  updateLocations: (locations: any) => set((state) => ({ locations: { ...state.locations, ...locations } })),
+  selected: true,
+  updateSelected: (selected: any) =>
+    set({
+      selected,
+    }),
+  digitalManImage:
+    'https://digital-person.oss-cn-hangzhou.aliyuncs.com/alpha/51c8b926-62b5-4a2e-944e-ea54499eb5e6_avatar.png',
+  updateDigitalImage: (image: string) => set(() => ({ digitalManImage: image })),
+  align: 'VERTICAL',
+  updateAlign: (align: string) => set(() => ({ align })),
+  scale: 1,
+  updateScale: (scale: number) => set(() => ({ scale })),
+  count: 0,
+  increment: () => set((state) => ({ count: state.count + 1 })),
+  decrement: () => set((state) => ({ count: state.count - 1 })),
+  setInputValue: useInputStore.getState().setInputValue,
+});
+const useStore = create<IStore>()(immer(devtools(store)));
 
 export default useStore;
