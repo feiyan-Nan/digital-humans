@@ -2,17 +2,23 @@
   width: 100%;
   height: 100%;
   background: #5c5c5c;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /*margin: 20px;*/
 }
 
-#long_home {
-  width: 942px;
-  height: 530px;
-  /*background-color: black;*/
-  background: url("https://digital-person.oss-cn-hangzhou.aliyuncs.com/FileUpload/1/UID_1/Image/Background/nafiniaputraKwdp0pokIunsplash_1678881317677.jpg") no-repeat;
+#backImgView {
+  /*width: 942px;*/
+  /*height: 530px;*/
+  background-repeat: no-repeat;
+  background-position: center;
+  /*background-image: url("https://digital-person.oss-cn-hangzhou.aliyuncs.com/FileUpload/1/UID_1/Image/Background/nafiniaputraKwdp0pokIunsplash_1678881317677.jpg");*/
+  background-color: #232428;
+  background-size: cover;
   margin: auto;
   position: relative;
   user-select: none;
-  /*overflow: hidden;*/
 }
 
 #home_body {

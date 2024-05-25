@@ -15,6 +15,7 @@ import Video from '@/pages/video';
 
 import AutoTabs from '@/components/auto-tabs';
 import AspectRatio from '@/components/AspectRatio';
+import LocationInformation from '@/components/LocationInformation';
 
 // import IButton from '@/components/button';
 import Persons from '@/components/persons';
@@ -196,6 +197,7 @@ const ISlide: React.FC = () => {
 
           <Footer className="custom_footer">
             <AspectRatio />
+            <LocationInformation />
           </Footer>
         </Layout>
       </Layout>
