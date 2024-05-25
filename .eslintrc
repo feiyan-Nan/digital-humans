@@ -125,7 +125,9 @@
         "when": "never",
         "children": true
       }
-    ]
+    ],
+
+    "react/require-default-props": "off"
     //在JSX属性和表达式中加强或禁止大括号内的空格。
   }
 }
