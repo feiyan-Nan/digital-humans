@@ -1,21 +1,28 @@
 import React from 'react';
-import { Layout, Select, Space } from 'antd';
-// import { Routes, Route } from 'react-router-dom';
+import { Layout, Input } from 'antd';
+import { useSetState } from 'ahooks';
+import classNames from 'classnames';
 
 import './index.scss';
-import icon from '@/static/icons/icon.png';
+import voiceIcon from '@/static/icons/voice.png';
+import personsIcon from '@/static/icons/persons.png';
+import imagesIcon from '@/static/icons/images.png';
 import edit from '@/static/icons/edit.png';
 import img from '@/static/imgs/test.png';
 import logo from '@/static/imgs/logo.png';
-import uploadIcon from '@/static/icons/uploadIcon.png';
 import vector from '@/static/icons/vector.png';
 import Video from '@/pages/video';
 
-// import AutoTabs from '@/components/auto-tabs';
-import Sb from '@/components/sb';
+import AutoTabs from '@/components/auto-tabs';
 import AspectRatio from '@/components/AspectRatio';
 
+// import IButton from '@/components/button';
+import Persons from '@/components/persons';
+import Backgrounds from '@/components/backgrounds';
+import Voices from '@/components/voices';
+
 const { Sider, Content, Header, Footer } = Layout;
+const { TextArea } = Input;
 
 const sliderStyle: React.CSSProperties = {
   padding: 0,
@@ -25,7 +32,7 @@ const sliderStyle: React.CSSProperties = {
 };
 
 const contentStyle: React.CSSProperties = {
-  minHeight: 'calc(100vh - 54px)',
+  // minHeight: 'calc(100vh - 54px)',
   color: '#fff',
   background: '#0D1530',
   overflowY: 'scroll',
@@ -37,129 +44,162 @@ const headerStyle: React.CSSProperties = {
   color: '#fff',
   margin: 0,
   padding: 0,
+  height: '54px',
 };
 
-const ISlide: React.FC = () => (
-  <Layout>
-    <Header style={headerStyle}>
-      <div className="header">
-        <div className="logo_custom">
-          <img src={logo} alt="" />
-        </div>
+const ISlide: React.FC = () => {
+  type IStates = {
+    navs: { icon: string; text: string }[];
+    activeNum: number;
+  };
 
-        <div className="edit_name">
-          未命名草稿 <img src={edit} alt="" />
-        </div>
+  const [state, setState] = useSetState<IStates>({
+    navs: [
+      {
+        icon: personsIcon,
+        text: '数字人',
+      },
+      {
+        icon: imagesIcon,
+        text: '背景图',
+      },
+      {
+        icon: voiceIcon,
+        text: '声音',
+      },
+    ],
 
-        <div className="account">
-          <img src={vector} alt="" />
-        </div>
-      </div>
-    </Header>
+    activeNum: 0,
+  });
 
+  const changeNav = (activeNum: number) => {
+    setState({ activeNum });
+  };
+
+  return (
     <Layout>
-      <Sider width="278px">
-        <Layout>
-          <Sider style={sliderStyle} width="80px">
-            <ul className="nav">
-              <li className="nav-item">
-                <img src={icon} alt="" />
-                <span className="text">数字人</span>
-              </li>
+      <Header style={headerStyle}>
+        <div className="custom_header">
+          <div className="logo_custom">
+            <img src={logo} alt="" />
+          </div>
 
-              <li className="nav-item active">
-                <img src={icon} alt="" />
-                <span className="text">数字人</span>
-              </li>
-            </ul>
-          </Sider>
+          <div className="edit_name">
+            未命名草稿 <img src={edit} alt="" />
+          </div>
 
-          <Content style={contentStyle}>
-            <div className="sub_nav">
-              {/* <AutoTabs items={['aaa', 'bbb']} defaultNum={1} /> */}
-              {/* <div className="sub_nav_header">
-                <div className="sub_nav_header_item active">默认背景</div>
-                <div className="sub_nav_header_item">自定义</div>
-              </div>
-
-              <div className="sub_nav_line">
-                <div className="sub_nav_line_light" />
-              </div> */}
-
-              <Sb items={['默认背景', '自定义']} activeNum={0} />
-
-              <div className="sub_nav_main">
-                <div className="sub_nav_main_body">
-                  <div className="sub_nav_main_item">
-                    <img src={img} alt="" />
-                  </div>
-
-                  <div className="sub_nav_main_item active">
-                    <img src={img} alt="" />
-                  </div>
-
-                  <div className="sub_nav_main_item">
-                    <img src={img} alt="" />
-                  </div>
-
-                  <div className="sub_nav_main_item">
-                    <img src={img} alt="" />
-                  </div>
-
-                  <div className="sub_nav_main_item">
-                    <img src={img} alt="" />
-                  </div>
-
-                  <div className="sub_nav_main_item">
-                    <img src={img} alt="" />
-                  </div>
-
-                  <div className="sub_nav_main_item">
-                    <img src={img} alt="" />
-                  </div>
-                </div>
-              </div>
-
-              <div className="sub_nav_footer">
-                <div className="sub_nav_header">
-                  <div className="sub_nav_header_item active">默认背景</div>
-                  <div className="sub_nav_header_item">自定义</div>
-                </div>
-
-                <div className="sub_nav_line">
-                  <div className="sub_nav_line_light" />
-                </div>
-
-                <div className="sub_nav_tips">我们也支持上传上传音频驱动数字人，时长5分钟以内，格式支持MP3格式。</div>
-
-                <div className="sub_nav_btn">
-                  <img src={uploadIcon} alt="" />
-                  上传图片
-                </div>
-              </div>
-            </div>
-          </Content>
-        </Layout>
-      </Sider>
+          <div className="account">
+            <img src={vector} alt="" />
+          </div>
+        </div>
+      </Header>
 
       <Layout>
-        <Content>
-          {/* <div className="right">右边的内容</div> */}
+        <Sider width="278px">
+          <Layout>
+            <Sider style={sliderStyle} width="80px">
+              <div className="nav">
+                {state.navs.map((item, index) => (
+                  <div
+                    className={classNames('nav-item', index === state.activeNum ? 'active' : null)}
+                    key={item.text}
+                    onClick={() => changeNav(index)}
+                  >
+                    <img src={item.icon} alt="" />
+                    <span className="text">{item.text}</span>
+                  </div>
+                ))}
+              </div>
+            </Sider>
 
+            <Content style={contentStyle}>
+              {state.activeNum === 0 ? <Persons /> : state.activeNum === 1 ? <Backgrounds /> : <Voices />}
+            </Content>
+          </Layout>
+        </Sider>
+
+        <Layout>
           <Layout style={{ height: 'calc(100% - 80px)' }}>
             <Content>
               <Video />
             </Content>
-            <Sider className="right_sider">Sider</Sider>
+
+            <Sider className="right_sider" width="256px">
+              <div className="right_box">
+                <div className="right_box_header">
+                  <div className="block">
+                    <AutoTabs
+                      items={['文字播报', '音频播报']}
+                      onChange={(num) => {
+                        console.log('onChange', num);
+                      }}
+                      activeNum={0}
+                      mode="night"
+                    />
+
+                    <TextArea
+                      showCount
+                      maxLength={5000}
+                      placeholder="请输入文字"
+                      style={{ height: 200, resize: 'none', marginTop: '20px', padding: 0, border: 'none' }}
+                    />
+                  </div>
+
+                  <div className="save">保存并生成播报</div>
+
+                  <div className="block">
+                    <AutoTabs
+                      items={['视频列表', '']}
+                      onChange={(num) => {
+                        console.log('onChange', num);
+                      }}
+                      activeNum={0}
+                      mode="night"
+                    />
+                  </div>
+                </div>
+
+                <div className="right_box_footer">
+                  <div className="video_list">
+                    <div className="video_item">
+                      <img src={img} alt="" className="thumbnail" />
+                      <div className="video_info">
+                        <div className="video_name">未命名草稿</div>
+                        <div className="video_status">状态：制作中</div>
+                        <div className="video_time">2024-04-24 11:59:13</div>
+                        <div className="video_actions">
+                          <div className="video_btn">播放</div>
+                          <div className="video_btn">下载</div>
+                          <div className="video_btn">删除</div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="video_item">
+                      <img src={img} alt="" className="thumbnail" />
+                      <div className="video_info">
+                        <div className="video_name">未命名草稿</div>
+                        <div className="video_status">状态：制作中</div>
+                        <div className="video_time">2024-04-24 11:59:13</div>
+                        <div className="video_actions">
+                          <div className="video_btn">播放</div>
+                          <div className="video_btn">下载</div>
+                          <div className="video_btn">删除</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </Sider>
           </Layout>
 
           <Footer className="custom_footer">
             <AspectRatio />
           </Footer>
-        </Content>
+        </Layout>
       </Layout>
     </Layout>
-  </Layout>
-);
-
+  );
+};
 export default ISlide;

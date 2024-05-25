@@ -1,6 +1,8 @@
 .sub_nav_header {
   display: flex;
-  height: 35px;
+  // height: 35px;
+  height: 40px;
+  // background-color: red;
   margin-top: 14px;
 
   .sub_nav_header_item {
@@ -14,23 +16,31 @@
     cursor: pointer;
     position: relative;
 
-    &.active {
+    &.light_active {
       color: #fff;
+    }
+
+    &.night_active {
+      color: #000;
     }
   }
 }
 
+
+.light_sub_nav_line {
+  background-color: #242F55;
+}
+
+.night_sub_nav_line {
+  background-color: #E9EBF0;
+}
+
 .sub_nav_line {
   height: 2px;
-  background-color: #242F55;
 
 
   .sub_nav_line_light {
-    width: 50%;
     height: 100%;
     background-color:  #7B68EE;
-
-    float: left;
-    // margin-left: 50%;
   }
 }

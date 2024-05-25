@@ -1,15 +1,18 @@
-import { Button } from 'antd';
+// import { Button } from 'antd';
 import { FC } from 'react';
+import uploadIcon from '@/static/icons/uploadIcon.png';
+import './index.scss';
 
 interface IProps {
-  value: string;
-  onClick: () => void;
+  text: string;
+  onClick?: () => void;
 }
 
-const ButtonCom: FC<IProps> = ({ value, onClick }) => (
-  <Button p-x-4px p-y-2px b-rounded-1 m-r-6px cursor-pointer hover:p-x-8px hover:p-y-4px onClick={onClick || null}>
-    {value}
-  </Button>
+const ButtonCom: FC<IProps> = ({ text, onClick }) => (
+  <div className="sub_nav_btn" onClick={onClick}>
+    <img src={uploadIcon} alt="" />
+    {text}
+  </div>
 );
 
 export default ButtonCom;
