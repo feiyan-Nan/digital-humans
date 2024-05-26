@@ -1,23 +1,36 @@
 import React from 'react';
-import { useSetState } from 'ahooks';
+import { useSetState, useAsyncEffect } from 'ahooks';
 import AutoTabs from '@/components/auto-tabs';
 import IButton from '@/components/button';
 import CardList from '@/components/card-list';
 // import './index.scss';
 
-import img from '@/static/imgs/test.png';
+// import img from '@/static/imgs/test.png';
 
-type Options = {
+type IState = {
   items: string[];
   activeNum: number;
+  list: { url: string; id: number }[];
 };
 
-const Backgrounds: React.FC = () => {
-  const [state, setState] = useSetState<Options>({
+type IProps = {
+  list: { url: string; backgroundId: number }[];
+};
+
+const Backgrounds: React.FC<IProps> = ({ list }) => {
+  const [state, setState] = useSetState<IState>({
     items: ['默认背景', '自定义'],
 
     activeNum: 0,
+
+    list: [],
   });
+
+  useAsyncEffect(async () => {
+    setState({
+      list: list.map((i) => ({ ...i, id: i.backgroundId })),
+    });
+  }, [list]);
 
   const onTabChange = (num: number) => {
     if (num !== state.activeNum) {
@@ -30,13 +43,7 @@ const Backgrounds: React.FC = () => {
       <AutoTabs items={state.items} onChange={onTabChange} mode="light" />
 
       {state.activeNum === 0 ? (
-        <>
-          {/* <div className="persons_tip">
-            没有合适的数字人？<span className="persons_btn">去定制</span>
-          </div> */}
-
-          <CardList items={[{ img }, { img }, { img }]} activeNum={2} />
-        </>
+        <CardList items={state.list} activeNum={2} />
       ) : (
         <>
           <div className="sub_nav_footer">
@@ -47,7 +54,7 @@ const Backgrounds: React.FC = () => {
 
           <AutoTabs items={['我的背景图']} travel />
 
-          <CardList items={[{ img }, { img }, { img }]} activeNum={0} />
+          <CardList items={state.list} activeNum={0} />
         </>
       )}
     </div>

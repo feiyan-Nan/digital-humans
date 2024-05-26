@@ -21,4 +21,27 @@ export default defineConfig({
     UnoCSS(),
     tsconfigPaths(),
   ],
+
+  server: {
+    cors: true,
+    proxy: {
+      '/api': {
+        target: 'http://service.aicloud.fit:9528',
+        changeOrigin: true,
+
+        // rewrite: (path) => path.replace(/^\/api/, '/api/'),
+
+        configure: (proxy, options) => {
+          // console.log('AT-[ proxy &&&&&********** ]', proxy);
+
+          proxy.on('error', (error) => {
+            console.log('AT-[ error &&&&&********** ]', error);
+          });
+
+          console.log('AT-[ options &&&&&********** ]', options);
+          // proxy 是 'http-proxy' 的实例
+        },
+      },
+    },
+  },
 });

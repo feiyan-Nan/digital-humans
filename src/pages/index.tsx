@@ -1,9 +1,11 @@
-import React from 'react';
-import { Layout, Input } from 'antd';
-import { useSetState } from 'ahooks';
+import React, { useEffect } from 'react';
+import { Layout, Input, Spin } from 'antd';
+import { useSetState, useAsyncEffect, useRequest, useMount } from 'ahooks';
 import classNames from 'classnames';
 
 import './index.scss';
+// import axios from 'axios';
+
 import voiceIcon from '@/static/icons/voice.png';
 import personsIcon from '@/static/icons/persons.png';
 import imagesIcon from '@/static/icons/images.png';
@@ -17,10 +19,11 @@ import AutoTabs from '@/components/auto-tabs';
 import AspectRatio from '@/components/AspectRatio';
 import LocationInformation from '@/components/LocationInformation';
 
-// import IButton from '@/components/button';
 import Persons from '@/components/persons';
 import Backgrounds from '@/components/backgrounds';
 import Voices from '@/components/voices';
+
+import api from '@/api';
 
 const { Sider, Content, Header, Footer } = Layout;
 const { TextArea } = Input;
@@ -48,12 +51,18 @@ const headerStyle: React.CSSProperties = {
   height: '54px',
 };
 
-const ISlide: React.FC = () => {
-  type IStates = {
-    navs: { icon: string; text: string }[];
-    activeNum: number;
-  };
+type IStates = {
+  navs: { icon: string; text: string }[];
+  activeNum: number;
+  backgrounds: { url: string; backgroundId: number }[];
+  siderLoading: boolean;
+  loading: { backgrounds: boolean; digital: boolean; voice: boolean; sider: boolean };
+  persons: any[];
+  voices: any[];
+  videos: any[];
+};
 
+const ISlide: React.FC = () => {
   const [state, setState] = useSetState<IStates>({
     navs: [
       {
@@ -69,13 +78,69 @@ const ISlide: React.FC = () => {
         text: '声音',
       },
     ],
-
+    backgrounds: [],
     activeNum: 0,
+    siderLoading: false,
+    loading: { backgrounds: false, digital: false, voice: false, sider: false },
+    persons: [],
+    voices: [],
+    videos: [],
   });
 
-  const changeNav = (activeNum: number) => {
-    setState({ activeNum });
-  };
+  // 数字人列表
+  const { loading: personLoading, run: personRun } = useRequest(api.getPersonList, {
+    manual: true,
+
+    onSuccess(res) {
+      setState({ persons: res.result });
+    },
+  });
+
+  // 背景图列表
+  const { loading: bgLoading, run: bgRun } = useRequest(api.getBackgroundList, {
+    manual: true,
+
+    onSuccess(res) {
+      setState({ backgrounds: res.result });
+    },
+  });
+
+  // 音色列表
+  const { loading: voiceLoading, run: voiceRun } = useRequest(api.getAudioList, {
+    manual: true,
+
+    onSuccess(res) {
+      setState({ voices: res.result });
+    },
+  });
+
+  // 视频列表
+  const { loading: videoLoading, run: videoRun } = useRequest(api.getVideoList, {
+    manual: true,
+
+    onSuccess(res) {
+      setState({ videos: res.result });
+    },
+  });
+
+  useMount(() => {
+    videoRun();
+  });
+
+  useAsyncEffect(async () => {
+    if (state.activeNum === 0) personRun();
+    if (state.activeNum === 1) bgRun();
+    if (state.activeNum === 2) voiceRun();
+    setState({ siderLoading: bgLoading });
+  }, [state.activeNum]);
+
+  useAsyncEffect(async () => {
+    const siderLoading = personLoading && bgLoading && voiceLoading && videoLoading;
+
+    setState({ siderLoading });
+  }, [bgLoading, personLoading, voiceLoading, videoLoading]);
+
+  const changeNav = (activeNum: number) => setState({ activeNum });
 
   return (
     <Layout>
@@ -114,7 +179,13 @@ const ISlide: React.FC = () => {
             </Sider>
 
             <Content style={contentStyle}>
-              {state.activeNum === 0 ? <Persons /> : state.activeNum === 1 ? <Backgrounds /> : <Voices />}
+              <Spin spinning={state.siderLoading}>
+                {state.activeNum === 0 ? <Persons /> : null}
+
+                {state.activeNum === 1 ? <Backgrounds list={state.backgrounds} /> : null}
+
+                {state.activeNum === 2 ? <Voices /> : null}
+              </Spin>
             </Content>
           </Layout>
         </Sider>
@@ -148,47 +219,30 @@ const ISlide: React.FC = () => {
 
                   <div className="save">保存并生成播报</div>
 
-                  <div className="block">
-                    <AutoTabs
-                      items={['视频列表', '']}
-                      onChange={(num) => {
-                        console.log('onChange', num);
-                      }}
-                      activeNum={0}
-                      mode="night"
-                    />
-                  </div>
+                  {state.videos.length ? (
+                    <div className="block">
+                      <AutoTabs items={['视频列表', '']} mode="night" />
+                    </div>
+                  ) : null}
                 </div>
 
                 <div className="right_box_footer">
                   <div className="video_list">
-                    <div className="video_item">
-                      <img src={img} alt="" className="thumbnail" />
-                      <div className="video_info">
-                        <div className="video_name">未命名草稿</div>
-                        <div className="video_status">状态：制作中</div>
-                        <div className="video_time">2024-04-24 11:59:13</div>
-                        <div className="video_actions">
-                          <div className="video_btn">播放</div>
-                          <div className="video_btn">下载</div>
-                          <div className="video_btn">删除</div>
+                    {state.videos.map((item, index) => (
+                      <div className="video_item" key={item.id}>
+                        <img src={img} alt="" className="thumbnail" />
+                        <div className="video_info">
+                          <div className="video_name">未命名草稿</div>
+                          <div className="video_status">状态：制作中</div>
+                          <div className="video_time">2024-04-24 11:59:13</div>
+                          <div className="video_actions">
+                            <div className="video_btn">播放</div>
+                            <div className="video_btn">下载</div>
+                            <div className="video_btn">删除</div>
+                          </div>
                         </div>
                       </div>
-                    </div>
-
-                    <div className="video_item">
-                      <img src={img} alt="" className="thumbnail" />
-                      <div className="video_info">
-                        <div className="video_name">未命名草稿</div>
-                        <div className="video_status">状态：制作中</div>
-                        <div className="video_time">2024-04-24 11:59:13</div>
-                        <div className="video_actions">
-                          <div className="video_btn">播放</div>
-                          <div className="video_btn">下载</div>
-                          <div className="video_btn">删除</div>
-                        </div>
-                      </div>
-                    </div>
+                    ))}
                   </div>
                 </div>
               </div>

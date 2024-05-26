@@ -5,7 +5,7 @@ import classNames from 'classnames';
 import './index.scss';
 
 type IProps = {
-  items: { img: string; text?: string }[];
+  items: { url: string; text?: string; id: number }[];
   activeNum: number;
 };
 
@@ -15,9 +15,9 @@ const CardList: React.FC<IProps> = ({ items, activeNum = 0 }) => (
       {items.map((item, index) => (
         <div
           className={classNames('sub_nav_main_item', index === activeNum ? 'active' : null)}
-          key={item.img + Math.random()}
+          key={item.url + Math.random()}
         >
-          <img src={item.img} alt="" />
+          <img src={item.url} alt="" />
           {item.text && <div className="name">{item.text}</div>}
         </div>
       ))}

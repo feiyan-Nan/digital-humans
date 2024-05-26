@@ -1,7 +1,7 @@
 /** 如无特殊需求，此文件更改无需提交！！！！ * */
 
 // local
-const target = 'https://cxp-test.yili.com/cxp';
+const target = 'http://service.aicloud.fit:9528';
 const secure = false;
 
 // 测试服务器
@@ -53,4 +53,5 @@ module.exports = {
   '/consumer-voice/api/*': getServer(mockServer),
   '/crowd-busi/api/*': getServer(mockServer),
   '/crowd-task/api/*': getServer(mockServer),
+  '/api/material/get_upload_background_list': getServer(mockServer),
 };

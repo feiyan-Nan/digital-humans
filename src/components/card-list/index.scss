@@ -4,22 +4,24 @@
   flex-shrink: 0;
   // margin-top: 40px;
   margin-top: 10px;
-  overflow-y: scroll;
-  scrollbar-width: none;
+  // overflow-y: scroll;
+  // scrollbar-width: none;
+  // background-color: red;
+
+
 
   .sub_nav_main_body {
     display: inline-flex;
     flex-wrap: wrap;
     justify-content: space-between;
     overflow-y: scroll;
+    width: 100%;
+
 
     .sub_nav_main_item {
       width: 80px;
-      // height: 120px;
-      // height: 142px;
       margin-bottom: 12px;
       box-sizing: border-box;
-      // background-color: red;
       display: flex;
 
       align-items: center;

@@ -1,4 +1,4 @@
-import React, { FC, useEffect } from 'react';
+import React, { FC, useEffect, useCallback } from 'react';
 import classNames from 'classnames';
 import { useSetState } from 'ahooks';
 
@@ -27,31 +27,38 @@ const AutoTabs: FC<IProps> = ({ items, activeNum = 0, onChange, mode = 'light', 
     lineBackground: `${mode}_sub_nav_line`,
   });
 
-  useEffect(() => {
-    console.log('activeNum change', activeNum);
-  }, [activeNum]);
+  // useEffect(() => {
+  //   setTimeout(() => {
+  //     console.log('auto tabs activeNum change', activeNum);
+  //   });
+  // }, [activeNum]);
 
-  const handleClick = (num: number) => {
-    setState({ activeNum: num });
-  };
+  const handleClick = useCallback(
+    (num: number) => {
+      setState({ activeNum: num });
+    },
+    [setState],
+  );
 
   useEffect(() => {
     setState({ marginLeft: `${(1 / items.length) * 100 * state.activeNum}%` });
   }, [state.activeNum, setState, items]);
 
   useEffect(() => {
-    console.log('state.activeNum auto', state.activeNum);
+    console.log('state.activeNum auto-tabs组件', state.activeNum);
 
     if (onChange) {
       onChange(state.activeNum);
     }
   }, [state.activeNum, onChange]);
 
-  useEffect(() => {
-    if (onChange) {
-      onChange(activeNum);
-    }
-  }, [activeNum, onChange]);
+  // useEffect(() => {
+  //   // if (onChange) {
+  //   //   onChange(activeNum);
+  //   // }
+
+  //   handleClick(activeNum);
+  // }, [activeNum, handleClick]);
 
   const css: React.CSSProperties = {
     justifyContent: 'flex-start',

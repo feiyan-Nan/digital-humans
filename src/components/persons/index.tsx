@@ -26,18 +26,12 @@ const Persons: React.FC = () => {
   };
 
   const customization = () => {
-    setState({
-      activeNum: 1,
-    });
+    setState({ activeNum: 1 });
   };
-
-  useEffect(() => {
-    console.log('AT-[ state.activeNum &&&&&********** ]', state.activeNum);
-  }, [state.activeNum]);
 
   return (
     <div className="sub_nav">
-      <AutoTabs items={state.items} activeNum={state.activeNum} onChange={onTabChange} />
+      <AutoTabs items={state.items} activeNum={state.activeNum} key={state.activeNum} onChange={onTabChange} />
 
       {state.activeNum === 0 ? (
         <>
@@ -65,7 +59,7 @@ const Persons: React.FC = () => {
             <IButton text="上传视频" />
           </div>
 
-          <AutoTabs items={['我的数字人']} travel />
+          {/* <AutoTabs items={['我的数字人']} travel key="travel" /> */}
 
           <CardList
             items={[
