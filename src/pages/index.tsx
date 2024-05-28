@@ -24,6 +24,7 @@ import Backgrounds from '@/components/backgrounds';
 import Voices from '@/components/voices';
 
 import api from '@/api';
+import InlineEdit from '@/components/InlineEdit';
 
 const { Sider, Content, Header, Footer } = Layout;
 const { TextArea } = Input;
@@ -141,6 +142,9 @@ const ISlide: React.FC = () => {
   }, [bgLoading, personLoading, voiceLoading, videoLoading]);
 
   const changeNav = (activeNum: number) => setState({ activeNum });
+  const onNameChange = (name: string) => {
+    console.log(name);
+  };
 
   return (
     <Layout>
@@ -150,9 +154,7 @@ const ISlide: React.FC = () => {
             <img src={logo} alt="" />
           </div>
 
-          <div className="edit_name">
-            未命名草稿 <img src={edit} alt="" />
-          </div>
+          <InlineEdit name="未命名草稿" onChange={onNameChange} />
 
           <div className="account">
             <img src={vector} alt="" />
