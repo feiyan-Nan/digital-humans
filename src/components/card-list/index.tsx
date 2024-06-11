@@ -1,7 +1,8 @@
 import React from 'react';
 import classNames from 'classnames';
 import { useSetState, useAsyncEffect } from 'ahooks';
-
+import { LazyLoadImage } from 'react-lazy-load-image-component';
+import 'react-lazy-load-image-component/src/effects/blur.css';
 import './index.scss';
 
 type IProps = {
@@ -41,7 +42,14 @@ const CardList: React.FC<IProps> = ({ items, activeKey = 0, edit = false, onChan
             key={item.id}
             onClick={() => handleClick(index)}
           >
-            <img src={item.url} alt="" />
+            <LazyLoadImage
+              width="80px"
+              // placeholderSrc={}
+              height="142px"
+              effect="blur"
+              rootMargin="10px"
+              src={item.url}
+            />
             {item.text && <div className="name">{item.text}</div>}
           </div>
         ))}
