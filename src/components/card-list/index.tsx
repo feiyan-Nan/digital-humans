@@ -1,6 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
 import { useSetState, useAsyncEffect } from 'ahooks';
+import { Image } from 'antd';
 
 import './index.scss';
 
@@ -33,7 +34,7 @@ const CardList: React.FC<IProps> = ({ items, activeKey = 0, edit = false, onChan
   };
 
   return (
-    <div className="sub_nav_main">
+    <div className="card_list">
       <div className="sub_nav_main_body">
         {state.items.map((item, index) => (
           <div
@@ -41,7 +42,17 @@ const CardList: React.FC<IProps> = ({ items, activeKey = 0, edit = false, onChan
             key={item.id}
             onClick={() => handleClick(index)}
           >
-            <img src={item.url} alt="" />
+            <Image
+              src={item.url}
+              preview={false}
+              placeholder={
+                <Image
+                  preview={false}
+                  src="https://www.baidu.com/img/PCtm_d9c8750bed0b3c7d089fa7d55720d6cf.png"
+                  width={200}
+                />
+              }
+            />
             {item.text && <div className="name">{item.text}</div>}
           </div>
         ))}

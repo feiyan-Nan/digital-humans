@@ -1,0 +1,17 @@
+.backgrounds {
+  height: calc(100vh - 54px);
+  overflow: hidden;
+
+  display: flex;
+  flex-direction: column;
+
+
+  .backgrounds_header {
+    padding-bottom: 20px;
+  }
+
+  .backgrounds_main {
+    overflow-y: scroll;
+    flex: 1;
+  }
+}

@@ -69,7 +69,7 @@ export const getFreePersonList = (data = {}) =>
  * 获取最新定制成功的数字人
  */
 
-type IPersonRes = {
+export type IPersonRes = {
   code: number;
   data: {
     avatarUrl: string;
@@ -79,12 +79,12 @@ type IPersonRes = {
 
 export const getSuccessPersonList = (data = {}) =>
   instance<null, IPersonRes>({
-    url: '/api/digitalVhost/getSuccessPersonList',
-    method: 'get',
+    url: '/api/digitalVhost/getCustomPersonList',
+    method: 'post',
     data,
   });
 
-type IBackoundRes = {
+export type IBackoundRes = {
   code: number;
   data: {
     url: string;
@@ -108,10 +108,10 @@ export const getUploadBackgroundList = (data = {}) =>
     data,
   });
 
-type IAudioRes = {
+export type IAudioRes = {
   code: number;
   data: {
-    audioDisplayUrl: string;
+    previewPictureUrl: string;
     id: number;
   }[];
 };
@@ -156,6 +156,17 @@ export const uploadVideoFile = (formData: FormData) =>
     data: formData,
   });
 
+export const uploadBackgroundFile = (formData: FormData) =>
+  instance<null, IResponse>({
+    url: '/api/material/upload_background',
+    method: 'post',
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+
+    data: formData,
+  });
+
 export const makrPerson = (data: { description: string; name: string; trainVideo: string }) =>
   instance<null, IResponse>({
     url: 'api/digital/custom_person_asset',
@@ -186,4 +197,5 @@ export default {
   uploadVideoFile,
   makrPerson,
   createVideoByText,
+  uploadBackgroundFile,
 };

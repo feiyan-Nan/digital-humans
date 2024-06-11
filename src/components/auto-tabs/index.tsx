@@ -44,8 +44,6 @@ const AutoTabs: React.FC<IProps> = ({ items, activeKey = 0, textMode = 'white', 
     if (state.activeKey !== activeKey) {
       const marginLeft = isSingle ? '50%' : `${(1 / items.length) * 100 * activeKey}%`;
 
-      console.log('AT-[ marginLeft &&&&&********** =========------------]', marginLeft);
-
       setState({
         activeKey,
         activeLineStyle: { marginLeft },

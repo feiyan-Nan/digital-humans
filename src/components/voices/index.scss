@@ -1,0 +1,18 @@
+.voice {
+  height: calc(100vh - 54px);
+  overflow: hidden;
+
+  display: flex;
+  flex-direction: column;
+  // background-color: red;
+
+
+  .voice_header {
+    padding-bottom: 20px;
+  }
+
+  .voice_main {
+    overflow-y: scroll;
+    flex: 1;
+  }
+}

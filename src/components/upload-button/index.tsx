@@ -5,11 +5,12 @@ import './index.scss';
 
 interface IProps {
   text: string;
-  onChange?: (formData: FormData) => void;
+  onChange?: (formData: FormData, file: File) => void;
   accept: string;
 }
 
 const ButtonCom: FC<IProps> = ({ text, onChange, accept }) => {
+  console.log('AT-[ accept &&&&&********** ]', accept);
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const selectedFile = e.target.files[0];
@@ -18,12 +19,12 @@ const ButtonCom: FC<IProps> = ({ text, onChange, accept }) => {
 
       formData.append('file', selectedFile);
 
-      onChange && onChange(formData);
+      onChange && onChange(formData, selectedFile);
     }
   };
 
   return (
-    <div className="sub_nav_btn">
+    <div className="upload_button">
       <img src={uploadIcon} alt="" />
       {text}
       <input type="file" onChange={handleChange} accept={accept} />

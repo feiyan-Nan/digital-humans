@@ -4,15 +4,14 @@ import { useSetState, useAsyncEffect, useRequest } from 'ahooks';
 import classNames from 'classnames';
 
 import './index.scss';
-// import axios from 'axios';
 
 import voiceIcon from '@/static/icons/voice.png';
 import personsIcon from '@/static/icons/persons.png';
 import imagesIcon from '@/static/icons/images.png';
-import edit from '@/static/icons/edit.png';
 import img from '@/static/imgs/test.png';
 import logo from '@/static/imgs/logo.png';
 import vector from '@/static/icons/vector.png';
+import homeIcon from '@/static/icons/home_icon.png';
 import Video from '@/pages/video';
 
 import AutoTabs from '@/components/auto-tabs';
@@ -22,7 +21,6 @@ import LocationInformation from '@/components/LocationInformation';
 import Persons from '@/components/persons';
 import Backgrounds from '@/components/backgrounds';
 import Voices from '@/components/voices';
-import EditInput from '@/components/edit-input';
 
 import api from '@/api';
 import InlineEdit from '@/components/InlineEdit';
@@ -111,8 +109,6 @@ const IIndex: React.FC = () => {
     {
       manual: true,
 
-      loadingDelay: 1000,
-
       onSuccess(res) {
         console.log('AT-[ res &&&&&********** ]', res);
         const persons = res.data.map(({ avatarUrl: url, digitalId: id }) => ({ url, id }));
@@ -135,8 +131,6 @@ const IIndex: React.FC = () => {
     {
       manual: true,
 
-      loadingDelay: 1000,
-
       onSuccess(res) {
         setState({ backgrounds: res.data });
       },
@@ -157,10 +151,8 @@ const IIndex: React.FC = () => {
     {
       manual: true,
 
-      loadingDelay: 5000,
-
       onSuccess(res) {
-        const voices = res.data.map(({ audioDisplayUrl, ...rest }) => ({ ...rest, url: audioDisplayUrl }));
+        const voices = res.data.map(({ previewPictureUrl, ...rest }) => ({ ...rest, url: previewPictureUrl }));
 
         setState({ voices });
       },
@@ -179,36 +171,39 @@ const IIndex: React.FC = () => {
     if (state.activeNum === 0) getPersonList(state.personsActiveKey);
     if (state.activeNum === 1) getBgList(state.bgActiveKey);
     if (state.activeNum === 2) getAudioList(state.voiceActiveKey);
-
-    // setState({ siderLoading: bgLoading });
   }, [state.activeNum]);
 
   /** 切换loading状态 */
   useAsyncEffect(async () => {
-    const siderLoading = !!(personListLoading && voiceLoading && bgLoading);
+    // const siderLoading = !!(personListLoading && voiceLoading && bgLoading);
+    const siderLoading = personListLoading || voiceLoading || bgLoading;
 
     setState({ siderLoading });
   }, [personListLoading, voiceLoading, bgLoading]);
 
   const changeNav = (activeNum: number) => setState({ activeNum });
+
   const onNameChange = (name: string) => {
     console.log(name);
   };
 
-  const handleEdit = () => setState({ defaultEditStatus: true });
+  const toHomePage = () => {
+    window.location.href = 'https://www.baidu.com/';
+  };
+
+  const onUploadBgSuccess = () => {
+    getBgList(TabsEnum.private);
+  };
 
   return (
     <Layout>
       <Header style={headerStyle}>
         <div className="custom_header">
-          <div className="logo_custom">
-            <img src={logo} alt="" />
+          <div className="logo_custom" onClick={toHomePage}>
+            <img src={homeIcon} alt="" className="home_icon" />
+            <img src={logo} alt="" className="logo_icon" />
           </div>
 
-          <div className="edit_name">
-            <EditInput text="未命名草稿" defaultEditStatus={state.defaultEditStatus} />
-            <img src={edit} onClick={handleEdit} alt="" />
-          </div>
           <InlineEdit name="未命名草稿" onChange={onNameChange} />
 
           <div className="account">
@@ -247,7 +242,12 @@ const IIndex: React.FC = () => {
                 )}
 
                 {state.activeNum === 1 && (
-                  <Backgrounds list={state.backgrounds} onTabChange={onBgTabChange} tabActiveKey={state.bgActiveKey} />
+                  <Backgrounds
+                    list={state.backgrounds}
+                    onTabChange={onBgTabChange}
+                    tabActiveKey={state.bgActiveKey}
+                    whenUploadSuccess={onUploadBgSuccess}
+                  />
                 )}
 
                 {state.activeNum === 2 && (

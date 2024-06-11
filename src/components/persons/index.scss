@@ -1,15 +1,36 @@
-.persons_tip {
-  font-size: 12px;
-  color: #fff;
-  height: 35px;
-  line-height: 35px;
 
+
+
+.persons {
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  height: calc(100vh - 54px);
+  background-color: #0D1530;
 
-  .persons_btn {
-    color: #44E2DD;
-    margin-left: 10px;
-    cursor: pointer;
+
+  .persons_header {
+    padding-bottom: 20px;
+  }
+
+  .persons_main {
+    overflow-y: scroll;
+    flex: 1;
+  }
+
+
+  .persons_tip {
+    font-size: 12px;
+    color: #fff;
+    height: 35px;
+    line-height: 35px;
+
+    display: flex;
+    align-items: center;
+
+    .persons_btn {
+      color: #44E2DD;
+      margin-left: 10px;
+      cursor: pointer;
+    }
   }
 }

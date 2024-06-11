@@ -24,13 +24,19 @@ ol, ul {
   .logo_custom{
     width: 67px;
     display: inline-flex;
-    align-items: center;
     justify-content: center;
+    align-items: flex-end;
+    cursor: pointer;
+
+    .home_icon {
+      height: 18px;
+      margin-right: 10px;
+    }
 
 
-    img{
+    .logo_icon{
       width: 100%;
-      cursor: pointer;
+
     }
   }
 
@@ -112,7 +118,6 @@ ol, ul {
 
 
   .sub_nav_footer {
-    // margin-bottom: 50px;
 
     .sub_nav_tips {
       margin-top: 20px;

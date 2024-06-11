@@ -1,12 +1,13 @@
 import React from 'react';
 import { useAsyncEffect, useSetState } from 'ahooks';
 import AutoTabs from '@/components/auto-tabs';
-import UploadButton from '@/components/upload-button';
+// import UploadButton from '@/components/upload-button';
 import CardList from '@/components/card-list';
+import TipAndUpload from '@/components/tipAndUpload';
 import api from '@/api';
 
 import './index.scss';
-import img from '@/static/imgs/test.png';
+// import img from '@/static/imgs/test.png';
 
 type IProps = {
   tabActiveKey: number;
@@ -17,16 +18,16 @@ type IProps = {
 type IStates = {
   activeKey: number;
   personItems: { url: string; text?: string | undefined; id: number }[];
+  tabItems: string[];
 };
 
 const Persons: React.FC<IProps> = ({ list, tabActiveKey, onTabChange }) => {
-  useAsyncEffect(async () => {
-    console.log('打印一次zzzzzzzzzzzzzzzzz');
-  }, []);
   const [state, setState] = useSetState<IStates>({
     activeKey: tabActiveKey,
 
     personItems: list,
+
+    tabItems: ['公用数字人', '定制数字人'],
   });
 
   useAsyncEffect(async () => setState({ personItems: list }), [list]);
@@ -40,8 +41,10 @@ const Persons: React.FC<IProps> = ({ list, tabActiveKey, onTabChange }) => {
 
   const toCreateDigital = () => handleOnTabChange(1);
 
-  const uploadFileChange = async (formData: FormData) => {
+  const onFileChange = async (formData: FormData) => {
     const res = await api.uploadVideoFile(formData);
+
+    console.log('AT-[ res &&&&&********** ]', res);
 
     const r = await api.makrPerson({
       description: '测试数字人描述',
@@ -52,41 +55,39 @@ const Persons: React.FC<IProps> = ({ list, tabActiveKey, onTabChange }) => {
     console.log('AT-[ r &&&&&********** ]', r);
   };
 
+  // const onFileChange = (formData: FormData) => {
+
+  // }
+
   return (
-    <div className="sub_nav">
-      <AutoTabs items={['公用数字人', '定制数字人']} activeKey={state.activeKey} onTabChange={handleOnTabChange} />
+    <div className="persons">
+      <div className="persons_header">
+        <AutoTabs items={state.tabItems} onTabChange={handleOnTabChange} key="persons" />
 
-      {state.activeKey === 0 ? (
-        <>
-          <div className="persons_tip">
-            没有合适的数字人？
-            <span className="persons_btn" onClick={toCreateDigital}>
-              去定制
-            </span>
-          </div>
+        {state.activeKey === 1 && (
+          <>
+            <TipAndUpload
+              tip={
+                <div className="persons_tip">
+                  没有合适的数字人？
+                  <span className="persons_btn" onClick={toCreateDigital}>
+                    去定制
+                  </span>
+                </div>
+              }
+              btnText="上传视频"
+              accept="video/*"
+              onChange={onFileChange}
+            />
 
-          {state.personItems.length ? <CardList items={state.personItems} activeKey={0} /> : null}
-        </>
-      ) : (
-        <>
-          <div className="sub_nav_footer">
-            <div className="sub_nav_tips">我们也支持上传上传音频驱动数字人，时长5分钟以内，格式支持MP3格式。</div>
+            <AutoTabs items={['我的数字人']} key="travel" />
+          </>
+        )}
+      </div>
 
-            <UploadButton text="上传视频" accept="video/*" onChange={uploadFileChange} />
-          </div>
-
-          <AutoTabs items={['我的数字人']} key="travel" />
-
-          <CardList
-            items={[
-              { url: img, text: 'text1', id: 4 },
-              { url: img, text: 'text1', id: 5 },
-              { url: img, text: 'text1', id: 6 },
-            ]}
-            activeKey={0}
-          />
-        </>
-      )}
+      <div className="persons_main">
+        <CardList items={state.personItems} activeKey={0} />
+      </div>
     </div>
   );
 };
