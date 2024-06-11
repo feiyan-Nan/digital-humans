@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { useToggle } from 'ahooks';
 import { Input } from 'antd';
 import edit from '@/static/icons/edit.png';
@@ -12,7 +12,6 @@ function InlineEdit({ name: originName, onChange }: InlineEditProps) {
   const [name, setName] = useState(originName);
   const [state, { toggle }] = useToggle(false);
   const ref = useRef(null);
-  console.log(state, '5555');
   const onChangeInput = (e: any) => {
     setName(e.target.value);
   };
