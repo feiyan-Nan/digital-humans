@@ -25,6 +25,7 @@ import Voices from '@/components/voices';
 import EditInput from '@/components/edit-input';
 
 import api from '@/api';
+import InlineEdit from '@/components/InlineEdit';
 
 const { Sider, Content, Header, Footer } = Layout;
 const { TextArea } = Input;
@@ -190,6 +191,9 @@ const IIndex: React.FC = () => {
   }, [personListLoading, voiceLoading, bgLoading]);
 
   const changeNav = (activeNum: number) => setState({ activeNum });
+  const onNameChange = (name: string) => {
+    console.log(name);
+  };
 
   const handleEdit = () => setState({ defaultEditStatus: true });
 
@@ -205,6 +209,7 @@ const IIndex: React.FC = () => {
             <EditInput text="未命名草稿" defaultEditStatus={state.defaultEditStatus} />
             <img src={edit} onClick={handleEdit} alt="" />
           </div>
+          <InlineEdit name="未命名草稿" onChange={onNameChange} />
 
           <div className="account">
             <img src={vector} alt="" />
