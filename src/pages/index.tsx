@@ -24,6 +24,7 @@ import Voices from '@/components/voices';
 
 import api from '@/api';
 import InlineEdit from '@/components/InlineEdit';
+import WordsOrSounds from '@/components/wordsOrSounds';
 
 const { Sider, Content, Header, Footer } = Layout;
 const { TextArea } = Input;
@@ -63,6 +64,8 @@ type IStates = {
   personsActiveKey: TabsEnum;
   bgActiveKey: TabsEnum;
   voiceActiveKey: TabsEnum;
+  wordsOrSoundsActiveKey: TabsEnum;
+
   defaultEditStatus: boolean;
 
   // freePersonList: { url: string; text?: string | undefined; id: number }[];
@@ -99,6 +102,9 @@ const IIndex: React.FC = () => {
     personsActiveKey: TabsEnum.public,
     bgActiveKey: TabsEnum.public,
     voiceActiveKey: TabsEnum.public,
+
+    wordsOrSoundsActiveKey: TabsEnum.private,
+
     defaultEditStatus: false,
   });
 
@@ -166,6 +172,19 @@ const IIndex: React.FC = () => {
     }
   };
 
+  const { loading: videoLoading, run: getVideoList } = useRequest(api.getVideoList, {
+    manual: true,
+    onSuccess(res) {
+      console.log('AT-[ res &&&&&********** ]', res, videoLoading);
+
+      // setState({ videos: res });
+    },
+  });
+
+  useAsyncEffect(async () => {
+    getVideoList();
+  }, []);
+
   /** 触发接口请求 */
   useAsyncEffect(async () => {
     if (state.activeNum === 0) getPersonList(state.personsActiveKey);
@@ -193,6 +212,12 @@ const IIndex: React.FC = () => {
 
   const onUploadBgSuccess = () => {
     getBgList(TabsEnum.private);
+  };
+
+  const onWordsOrSoundsTabChange = (wordsOrSoundsActiveKey: number) => {
+    setState({
+      wordsOrSoundsActiveKey,
+    });
   };
 
   return (
@@ -237,7 +262,6 @@ const IIndex: React.FC = () => {
                     tabActiveKey={state.personsActiveKey}
                     list={state.persons}
                     onTabChange={onPersonsTabChange}
-                    key={Math.random()}
                   />
                 )}
 
@@ -268,14 +292,16 @@ const IIndex: React.FC = () => {
               <div className="right_box">
                 <div className="right_box_header">
                   <div className="block">
-                    <AutoTabs items={['文字播报', '音频播报']} activeKey={0} textMode="black" />
+                    {/* <AutoTabs items={['文字播报', '音频播报']} activeKey={0} textMode="black" />
 
                     <TextArea
                       showCount
                       maxLength={5000}
                       placeholder="请输入文字"
                       style={{ height: 200, resize: 'none', marginTop: '20px', padding: 0, border: 'none' }}
-                    />
+                    /> */}
+
+                    <WordsOrSounds tabActiveKey={state.wordsOrSoundsActiveKey} onTabChange={onWordsOrSoundsTabChange} />
                   </div>
 
                   <div className="save">保存并生成播报</div>

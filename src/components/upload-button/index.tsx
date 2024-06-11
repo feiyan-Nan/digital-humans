@@ -10,8 +10,8 @@ interface IProps {
 }
 
 const ButtonCom: FC<IProps> = ({ text, onChange, accept }) => {
-  console.log('AT-[ accept &&&&&********** ]', accept);
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log('AT-[ handleChange &&&&&********** 点击一次 ]');
     if (e.target.files) {
       const selectedFile = e.target.files[0];
 

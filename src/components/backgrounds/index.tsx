@@ -1,5 +1,6 @@
 import React from 'react';
 import { useSetState, useAsyncEffect } from 'ahooks';
+import { message } from 'antd';
 import AutoTabs from '@/components/auto-tabs';
 import CardList from '@/components/card-list';
 import TipAndUpload from '@/components/tipAndUpload';
@@ -16,17 +17,22 @@ type IProps = {
 
 type IState = {
   items: string[];
-  activeKey: number;
+  tabActiveKey: number;
   list: { url: string; id: number }[];
+  spinning: boolean;
 };
 
 const Backgrounds: React.FC<IProps> = ({ list, onTabChange, tabActiveKey = 0, whenUploadSuccess }) => {
+  // const [messageApi] = message.useMessage();
+
   const [state, setState] = useSetState<IState>({
     items: ['默认背景', '自定义'],
 
-    activeKey: tabActiveKey,
+    tabActiveKey,
 
     list: [],
+
+    spinning: false,
   });
 
   useAsyncEffect(async () => {
@@ -36,39 +42,62 @@ const Backgrounds: React.FC<IProps> = ({ list, onTabChange, tabActiveKey = 0, wh
   }, [list]);
 
   const handleTabChange = (activeKey: number) => {
-    if (activeKey !== state.activeKey) {
-      setState({ activeKey });
-      onTabChange && onTabChange(activeKey);
+    if (activeKey !== state.tabActiveKey) {
+      setState({ tabActiveKey: activeKey });
+      onTabChange && onTabChange(tabActiveKey);
     }
   };
 
-  const onFileChange = async (formData: FormData, file: File) => {
-    const reader = new FileReader();
+  const validateImage = async (file: File) =>
+    new Promise((resolve, reject) => {
+      const reader = new FileReader();
 
-    reader.onload = function (e) {
-      const img = new Image();
+      reader.onload = (e) => {
+        const img = new Image();
 
-      img.onload = function () {
-        const { width, height } = img;
+        img.onload = () => {
+          const { width, height } = img;
 
-        console.log('AT-[ width, height &&&&&********** ]', width, height);
+          width / height === 0.5625 ? resolve(null) : reject();
+        };
+
+        img.src = e.target?.result as string;
       };
 
-      img.src = e.target?.result as string;
-    };
+      reader.readAsDataURL(file);
+    });
 
-    reader.readAsDataURL(file);
+  const onFileChange = async (formData: FormData, file: File) => {
+    console.log('尽量一次');
+    validateImage(file)
+      .then(async () => {
+        const uploadingKey = 'uploadingKey';
 
-    await api.uploadBackgroundFile(formData);
-    whenUploadSuccess();
+        message.loading({
+          content: '上传中',
+          key: uploadingKey,
+        });
+
+        await api.uploadBackgroundFile(formData);
+
+        message.destroy(uploadingKey);
+
+        whenUploadSuccess();
+      })
+      .catch(() => {
+        message.error({
+          content: '必须要9:16的图片',
+          duration: 2,
+        });
+      });
   };
 
   return (
     <div className="backgrounds">
       <div className="backgrounds_header">
-        <AutoTabs items={state.items} onTabChange={handleTabChange} />
+        <AutoTabs items={state.items} onTabChange={handleTabChange} activeKey={state.tabActiveKey} />
 
-        {state.activeKey === 1 && (
+        {state.tabActiveKey === 1 && (
           <TipAndUpload tip="我们也支持上传自定义背景图" btnText="上传图片" accept="image/*" onChange={onFileChange} />
         )}
       </div>

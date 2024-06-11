@@ -127,7 +127,7 @@ export const getAudioFreeList = (data = {}) =>
 // 获取上传的录音列表
 export const getCustomAudioList = (data = {}) =>
   instance<null, IAudioRes>({
-    url: '/api/digitalVhost/audioCustomList',
+    url: '/api/digitalVhost/audioUploadList',
     method: 'get',
     data,
   });
@@ -135,7 +135,7 @@ export const getCustomAudioList = (data = {}) =>
 // 视频作品列表
 export const getVideoList = (data = {}) =>
   instance<null, IResponse>({
-    url: 'api/video/get_video_list',
+    url: '/api/digitalVhost/getVideoList',
     method: 'post',
     data,
   });
