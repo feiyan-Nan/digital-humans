@@ -1,97 +1,78 @@
-import React, { FC, useEffect, useCallback } from 'react';
+import React from 'react';
 import classNames from 'classnames';
 import { useSetState } from 'ahooks';
 
 import './index.scss';
 
-interface IProps {
+type IProps = {
   items: string[];
-  activeNum?: number;
-  onChange?: (num: number) => void;
-  mode?: 'light' | 'night';
-  travel?: boolean;
-}
+  textMode?: 'white' | 'black';
+  activeKey?: number;
+  onTabChange?: (activeKey: number) => void;
+};
 
-const AutoTabs: FC<IProps> = ({ items, activeNum = 0, onChange, mode = 'light', travel = false }) => {
-  const [state, setState] = useSetState<{
-    activeNum: number;
-    width: string;
-    marginLeft: string;
-    modeActiveName: string;
-    lineBackground: string;
-  }>({
-    activeNum,
-    width: `${(1 / items.length) * 100}%`,
-    marginLeft: '0',
-    modeActiveName: `${mode}_active`,
-    lineBackground: `${mode}_sub_nav_line`,
+type IState = {
+  activeKey: number;
+  activeLineStyle: React.CSSProperties;
+};
+
+/**
+ * @param   type
+ * default  默认模式
+ * line     单个模式
+ *
+ * @param   textMode
+ * white  白字模式
+ * black  黑子模式
+ *
+ *@param  activeKey
+ 默认激活的key
+
+ * @returns
+ */
+const AutoTabs: React.FC<IProps> = ({ items, activeKey = 0, textMode = 'white', onTabChange }) => {
+  const isSingle = items.length === 1;
+
+  const [state, setState] = useSetState<IState>({
+    activeKey,
+    activeLineStyle: { width: isSingle ? '50%' : `${(1 / items.length) * 100}%` },
   });
 
-  // useEffect(() => {
-  //   setTimeout(() => {
-  //     console.log('auto tabs activeNum change', activeNum);
-  //   });
-  // }, [activeNum]);
+  const activeClassName = `${textMode}_active`;
 
-  const handleClick = useCallback(
-    (num: number) => {
-      setState({ activeNum: num });
-    },
-    [setState],
-  );
+  const handleClick = (activeKey: number) => {
+    if (state.activeKey !== activeKey) {
+      const marginLeft = isSingle ? '50%' : `${(1 / items.length) * 100 * activeKey}%`;
 
-  useEffect(() => {
-    setState({ marginLeft: `${(1 / items.length) * 100 * state.activeNum}%` });
-  }, [state.activeNum, setState, items]);
+      console.log('AT-[ marginLeft &&&&&********** =========------------]', marginLeft);
 
-  useEffect(() => {
-    console.log('state.activeNum auto-tabs组件', state.activeNum);
+      setState({
+        activeKey,
+        activeLineStyle: { marginLeft },
+      });
 
-    if (onChange) {
-      onChange(state.activeNum);
+      onTabChange && onTabChange(activeKey);
     }
-  }, [state.activeNum, onChange]);
-
-  // useEffect(() => {
-  //   // if (onChange) {
-  //   //   onChange(activeNum);
-  //   // }
-
-  //   handleClick(activeNum);
-  // }, [activeNum, handleClick]);
-
-  const css: React.CSSProperties = {
-    justifyContent: 'flex-start',
-    color: '#fff',
-    cursor: 'default',
   };
 
   return (
-    <>
-      <div className="sub_nav_header">
+    <div className="auto_tabs">
+      <div className="auto_tabs_items">
         {items.map((item, index) => (
           <div
-            className={classNames(
-              'sub_nav_header_item',
-              state.activeNum === index && !travel ? state.modeActiveName : null,
-            )}
-            style={{ width: state.width, cursor: item === '' ? 'default' : 'pointer', ...(travel ? css : null) }}
+            className={classNames('auto_tabs_item', state.activeKey === index && activeClassName)}
             key={item}
-            onClick={() => item !== '' && handleClick(index)}
+            onClick={() => handleClick(index)}
           >
             {item}
           </div>
         ))}
       </div>
 
-      <div className={classNames('sub_nav_line', state.lineBackground)}>
-        <div
-          className="sub_nav_line_light"
-          style={{ marginLeft: state.marginLeft, width: !travel ? state.width : 0 }}
-        />
+      <div className={classNames('auto_tabs_line', activeClassName)}>
+        <div className="auto_tabs_active_line" style={state.activeLineStyle} />
       </div>
-    </>
+    </div>
   );
 };
-
 export default AutoTabs;

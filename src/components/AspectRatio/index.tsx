@@ -23,7 +23,7 @@ function AspectRatio() {
         style={{ width: 100 }}
         options={[
           { value: 'VERTICAL', label: '9:16' },
-          { value: 'HORIZONTAL', label: '16:9' },
+          // { value: 'HORIZONTAL', label: '16:9' },
         ]}
       />
     </Space>

@@ -1,27 +1,26 @@
 import React from 'react';
 import { useSetState, useAsyncEffect } from 'ahooks';
 import AutoTabs from '@/components/auto-tabs';
-import IButton from '@/components/button';
+import UploadButton from '@/components/upload-button';
 import CardList from '@/components/card-list';
-// import './index.scss';
-
-// import img from '@/static/imgs/test.png';
-
-type IState = {
-  items: string[];
-  activeNum: number;
-  list: { url: string; id: number }[];
-};
 
 type IProps = {
   list: { url: string; backgroundId: number }[];
+  onTabChange?: (activeKey: number) => void;
+  tabActiveKey?: number;
 };
 
-const Backgrounds: React.FC<IProps> = ({ list }) => {
+type IState = {
+  items: string[];
+  activeKey: number;
+  list: { url: string; id: number }[];
+};
+
+const Backgrounds: React.FC<IProps> = ({ list, onTabChange, tabActiveKey = 0 }) => {
   const [state, setState] = useSetState<IState>({
     items: ['默认背景', '自定义'],
 
-    activeNum: 0,
+    activeKey: tabActiveKey,
 
     list: [],
   });
@@ -32,29 +31,29 @@ const Backgrounds: React.FC<IProps> = ({ list }) => {
     });
   }, [list]);
 
-  const onTabChange = (num: number) => {
-    if (num !== state.activeNum) {
-      setState({ activeNum: num });
+  const handleTabChange = (activeKey: number) => {
+    if (activeKey !== state.activeKey) {
+      setState({ activeKey });
+      onTabChange && onTabChange(activeKey);
     }
   };
 
   return (
     <div className="sub_nav">
-      <AutoTabs items={state.items} onChange={onTabChange} mode="light" />
+      <AutoTabs items={state.items} onTabChange={handleTabChange} />
 
-      {state.activeNum === 0 ? (
-        <CardList items={state.list} activeNum={2} />
+      {state.activeKey === 0 ? (
+        <CardList items={state.list} activeKey={2} />
       ) : (
         <>
           <div className="sub_nav_footer">
             <div className="sub_nav_tips">我们也支持上传自定义背景图</div>
-
-            <IButton text="上传图片" />
+            <UploadButton text="上传图片" accept="image/*" />
           </div>
 
-          <AutoTabs items={['我的背景图']} travel />
+          <AutoTabs items={['我的背景图']} />
 
-          <CardList items={state.list} activeNum={0} />
+          <CardList items={state.list} activeKey={0} />
         </>
       )}
     </div>

@@ -26,7 +26,8 @@ export default defineConfig({
     cors: true,
     proxy: {
       '/api': {
-        target: 'http://service.aicloud.fit:9528',
+        // target: 'http://service.aicloud.fit:9528',
+        target: 'http://service.aicloud.fit:9535',
         changeOrigin: true,
 
         // rewrite: (path) => path.replace(/^\/api/, '/api/'),

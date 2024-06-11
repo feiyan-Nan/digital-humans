@@ -1,73 +1,89 @@
-import React, { useEffect } from 'react';
-import { useSetState } from 'ahooks';
+import React from 'react';
+import { useAsyncEffect, useSetState } from 'ahooks';
 import AutoTabs from '@/components/auto-tabs';
-import IButton from '@/components/button';
+import UploadButton from '@/components/upload-button';
 import CardList from '@/components/card-list';
-import './index.scss';
+import api from '@/api';
 
+import './index.scss';
 import img from '@/static/imgs/test.png';
 
-type Options = {
-  items: string[];
-  activeNum: number;
+type IProps = {
+  tabActiveKey: number;
+  list: { url: string; text?: string | undefined; id: number }[];
+  onTabChange?: (activeKey: number) => void;
 };
 
-const Persons: React.FC = () => {
-  const [state, setState] = useSetState<Options>({
-    items: ['公用数字人', '定制数字人'],
+type IStates = {
+  activeKey: number;
+  personItems: { url: string; text?: string | undefined; id: number }[];
+};
 
-    activeNum: 0,
+const Persons: React.FC<IProps> = ({ list, tabActiveKey, onTabChange }) => {
+  useAsyncEffect(async () => {
+    console.log('打印一次zzzzzzzzzzzzzzzzz');
+  }, []);
+  const [state, setState] = useSetState<IStates>({
+    activeKey: tabActiveKey,
+
+    personItems: list,
   });
 
-  const onTabChange = (num: number) => {
-    if (num !== state.activeNum) {
-      setState({ activeNum: num });
+  useAsyncEffect(async () => setState({ personItems: list }), [list]);
+
+  const handleOnTabChange = (activeKey: number) => {
+    if (activeKey !== state.activeKey) {
+      setState({ activeKey });
+      onTabChange && onTabChange(activeKey);
     }
   };
 
-  const customization = () => {
-    setState({ activeNum: 1 });
+  const toCreateDigital = () => handleOnTabChange(1);
+
+  const uploadFileChange = async (formData: FormData) => {
+    const res = await api.uploadVideoFile(formData);
+
+    const r = await api.makrPerson({
+      description: '测试数字人描述',
+      name: '测试数字人名称',
+      trainVideo: res.result,
+    });
+
+    console.log('AT-[ r &&&&&********** ]', r);
   };
 
   return (
     <div className="sub_nav">
-      <AutoTabs items={state.items} activeNum={state.activeNum} key={state.activeNum} onChange={onTabChange} />
+      <AutoTabs items={['公用数字人', '定制数字人']} activeKey={state.activeKey} onTabChange={handleOnTabChange} />
 
-      {state.activeNum === 0 ? (
+      {state.activeKey === 0 ? (
         <>
           <div className="persons_tip">
             没有合适的数字人？
-            <span className="persons_btn" onClick={customization}>
+            <span className="persons_btn" onClick={toCreateDigital}>
               去定制
             </span>
           </div>
 
-          <CardList
-            items={[
-              { img, text: 'text1' },
-              { img, text: 'text1' },
-              { img, text: 'text1' },
-            ]}
-            activeNum={2}
-          />
+          {state.personItems.length ? <CardList items={state.personItems} activeKey={0} /> : null}
         </>
       ) : (
         <>
           <div className="sub_nav_footer">
             <div className="sub_nav_tips">我们也支持上传上传音频驱动数字人，时长5分钟以内，格式支持MP3格式。</div>
 
-            <IButton text="上传视频" />
+            <UploadButton text="上传视频" accept="video/*" onChange={uploadFileChange} />
           </div>
 
-          {/* <AutoTabs items={['我的数字人']} travel key="travel" /> */}
+          <AutoTabs items={['我的数字人']} key="travel" />
 
           <CardList
             items={[
-              { img, text: 'text1' },
-              { img, text: 'text1' },
-              { img, text: 'text1' },
+              { url: img, text: 'text1', id: 4 },
+              { url: img, text: 'text1', id: 5 },
+              { url: img, text: 'text1', id: 6 },
             ]}
-            activeNum={2}
+            activeKey={0}
           />
         </>
       )}

@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Layout, Input, Spin } from 'antd';
-import { useSetState, useAsyncEffect, useRequest, useMount } from 'ahooks';
+import { useSetState, useAsyncEffect, useRequest } from 'ahooks';
 import classNames from 'classnames';
 
 import './index.scss';
@@ -22,6 +22,7 @@ import LocationInformation from '@/components/LocationInformation';
 import Persons from '@/components/persons';
 import Backgrounds from '@/components/backgrounds';
 import Voices from '@/components/voices';
+import EditInput from '@/components/edit-input';
 
 import api from '@/api';
 
@@ -32,7 +33,6 @@ const sliderStyle: React.CSSProperties = {
   padding: 0,
   margin: 0,
   background: '#0D1530',
-  // paddingRight: '7px',
 };
 
 const contentStyle: React.CSSProperties = {
@@ -57,12 +57,24 @@ type IStates = {
   backgrounds: { url: string; backgroundId: number }[];
   siderLoading: boolean;
   loading: { backgrounds: boolean; digital: boolean; voice: boolean; sider: boolean };
-  persons: any[];
+  persons: { url: string; text?: string | undefined; id: number }[];
   voices: any[];
   videos: any[];
+
+  personsActiveKey: TabsEnum;
+  bgActiveKey: TabsEnum;
+  voiceActiveKey: TabsEnum;
+  defaultEditStatus: boolean;
+
+  // freePersonList: { url: string; text?: string | undefined; id: number }[];
 };
 
-const ISlide: React.FC = () => {
+enum TabsEnum {
+  public = 0,
+  private = 1,
+}
+
+const IIndex: React.FC = () => {
   const [state, setState] = useSetState<IStates>({
     navs: [
       {
@@ -85,62 +97,101 @@ const ISlide: React.FC = () => {
     persons: [],
     voices: [],
     videos: [],
+    personsActiveKey: TabsEnum.public,
+    bgActiveKey: TabsEnum.public,
+    voiceActiveKey: TabsEnum.public,
+    defaultEditStatus: false,
   });
 
-  // 数字人列表
-  const { loading: personLoading, run: personRun } = useRequest(api.getPersonList, {
-    manual: true,
+  // 数字人接口请求
+  const { loading: personListLoading, run: getPersonList } = useRequest(
+    (personsActiveKey: TabsEnum) =>
+      personsActiveKey === TabsEnum.public ? api.getFreePersonList() : api.getSuccessPersonList(),
+    {
+      manual: true,
 
-    onSuccess(res) {
-      setState({ persons: res.result });
+      loadingDelay: 1000,
+
+      onSuccess(res) {
+        console.log('AT-[ res &&&&&********** ]', res);
+        const persons = res.data.map(({ avatarUrl: url, digitalId: id }) => ({ url, id }));
+        setState({ persons });
+      },
     },
-  });
+  );
 
-  // 背景图列表
-  const { loading: bgLoading, run: bgRun } = useRequest(api.getBackgroundList, {
-    manual: true,
+  // 数字人内部tab切换
+  const onPersonsTabChange = (personsActiveKey: TabsEnum) => {
+    if (state.personsActiveKey !== personsActiveKey) {
+      getPersonList(personsActiveKey);
+      setState({ personsActiveKey });
+    }
+  };
 
-    onSuccess(res) {
-      setState({ backgrounds: res.result });
+  // 背景列表
+  const { loading: bgLoading, run: getBgList } = useRequest(
+    (bgActiveKey) => (bgActiveKey === TabsEnum.public ? api.getFreeBackgroundList() : api.getUploadBackgroundList()),
+    {
+      manual: true,
+
+      loadingDelay: 1000,
+
+      onSuccess(res) {
+        setState({ backgrounds: res.data });
+      },
     },
-  });
+  );
+
+  const onBgTabChange = (bgActiveKey: TabsEnum) => {
+    if (bgActiveKey !== state.bgActiveKey) {
+      getBgList(bgActiveKey);
+      setState({ bgActiveKey });
+    }
+  };
 
   // 音色列表
-  const { loading: voiceLoading, run: voiceRun } = useRequest(api.getAudioList, {
-    manual: true,
+  const { loading: voiceLoading, run: getAudioList } = useRequest(
+    (voiceActiveKey: TabsEnum) =>
+      voiceActiveKey === TabsEnum.public ? api.getAudioFreeList() : api.getCustomAudioList(),
+    {
+      manual: true,
 
-    onSuccess(res) {
-      setState({ voices: res.result });
+      loadingDelay: 5000,
+
+      onSuccess(res) {
+        const voices = res.data.map(({ audioDisplayUrl, ...rest }) => ({ ...rest, url: audioDisplayUrl }));
+
+        setState({ voices });
+      },
     },
-  });
+  );
 
-  // 视频列表
-  const { loading: videoLoading, run: videoRun } = useRequest(api.getVideoList, {
-    manual: true,
+  const onAudioTabChange = (voiceActiveKey: TabsEnum) => {
+    if (voiceActiveKey !== state.voiceActiveKey) {
+      getAudioList(voiceActiveKey);
+      setState({ voiceActiveKey });
+    }
+  };
 
-    onSuccess(res) {
-      setState({ videos: res.result });
-    },
-  });
-
-  useMount(() => {
-    videoRun();
-  });
-
+  /** 触发接口请求 */
   useAsyncEffect(async () => {
-    if (state.activeNum === 0) personRun();
-    if (state.activeNum === 1) bgRun();
-    if (state.activeNum === 2) voiceRun();
-    setState({ siderLoading: bgLoading });
+    if (state.activeNum === 0) getPersonList(state.personsActiveKey);
+    if (state.activeNum === 1) getBgList(state.bgActiveKey);
+    if (state.activeNum === 2) getAudioList(state.voiceActiveKey);
+
+    // setState({ siderLoading: bgLoading });
   }, [state.activeNum]);
 
+  /** 切换loading状态 */
   useAsyncEffect(async () => {
-    const siderLoading = personLoading && bgLoading && voiceLoading && videoLoading;
+    const siderLoading = !!(personListLoading && voiceLoading && bgLoading);
 
     setState({ siderLoading });
-  }, [bgLoading, personLoading, voiceLoading, videoLoading]);
+  }, [personListLoading, voiceLoading, bgLoading]);
 
   const changeNav = (activeNum: number) => setState({ activeNum });
+
+  const handleEdit = () => setState({ defaultEditStatus: true });
 
   return (
     <Layout>
@@ -151,7 +202,8 @@ const ISlide: React.FC = () => {
           </div>
 
           <div className="edit_name">
-            未命名草稿 <img src={edit} alt="" />
+            <EditInput text="未命名草稿" defaultEditStatus={state.defaultEditStatus} />
+            <img src={edit} onClick={handleEdit} alt="" />
           </div>
 
           <div className="account">
@@ -180,11 +232,22 @@ const ISlide: React.FC = () => {
 
             <Content style={contentStyle}>
               <Spin spinning={state.siderLoading}>
-                {state.activeNum === 0 ? <Persons /> : null}
+                {state.activeNum === 0 && (
+                  <Persons
+                    tabActiveKey={state.personsActiveKey}
+                    list={state.persons}
+                    onTabChange={onPersonsTabChange}
+                    key={Math.random()}
+                  />
+                )}
 
-                {state.activeNum === 1 ? <Backgrounds list={state.backgrounds} /> : null}
+                {state.activeNum === 1 && (
+                  <Backgrounds list={state.backgrounds} onTabChange={onBgTabChange} tabActiveKey={state.bgActiveKey} />
+                )}
 
-                {state.activeNum === 2 ? <Voices /> : null}
+                {state.activeNum === 2 && (
+                  <Voices list={state.voices} onTabChange={onAudioTabChange} tabActiveKey={state.voiceActiveKey} />
+                )}
               </Spin>
             </Content>
           </Layout>
@@ -200,14 +263,7 @@ const ISlide: React.FC = () => {
               <div className="right_box">
                 <div className="right_box_header">
                   <div className="block">
-                    <AutoTabs
-                      items={['文字播报', '音频播报']}
-                      onChange={(num) => {
-                        console.log('onChange', num);
-                      }}
-                      activeNum={0}
-                      mode="night"
-                    />
+                    <AutoTabs items={['文字播报', '音频播报']} activeKey={0} textMode="black" />
 
                     <TextArea
                       showCount
@@ -219,16 +275,16 @@ const ISlide: React.FC = () => {
 
                   <div className="save">保存并生成播报</div>
 
-                  {state.videos.length ? (
+                  {!state.videos.length ? (
                     <div className="block">
-                      <AutoTabs items={['视频列表', '']} mode="night" />
+                      <AutoTabs items={['视频列表', '']} textMode="black" />
                     </div>
                   ) : null}
                 </div>
 
                 <div className="right_box_footer">
                   <div className="video_list">
-                    {state.videos.map((item, index) => (
+                    {state.videos.map((item) => (
                       <div className="video_item" key={item.id}>
                         <img src={img} alt="" className="thumbnail" />
                         <div className="video_info">
@@ -258,4 +314,5 @@ const ISlide: React.FC = () => {
     </Layout>
   );
 };
-export default ISlide;
+
+export default IIndex;

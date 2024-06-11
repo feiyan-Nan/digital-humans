@@ -38,12 +38,16 @@ ol, ul {
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    // background-color: red;
+    // flex: 1;
 
-    img {
+
+    > img {
       cursor: pointer;
       width: 20px;
       margin-left: 10px;
     }
+
   }
 
   .account {

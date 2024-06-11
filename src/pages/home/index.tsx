@@ -1,6 +1,6 @@
 import useStore from '@/store';
 
-import Button from '@/components/button';
+import Button from '@/components/upload-button';
 
 function Home() {
   const count = useStore((state) => state.count);
