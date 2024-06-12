@@ -117,7 +117,7 @@ const IIndex: React.FC = () => {
 
       onSuccess(res) {
         console.log('AT-[ res &&&&&********** ]', res);
-        const persons = res.data.map(({ avatarUrl: url, digitalId: id }) => ({ url, id }));
+        const persons = res.data.map(({ avatarUrl: url, digitalId: id, name }) => ({ url, id, name }));
         setState({ persons });
       },
     },

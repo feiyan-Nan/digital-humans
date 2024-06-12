@@ -15,8 +15,9 @@
 
     .sub_nav_main_item {
       width: 80px;
-      margin-bottom: 12px;
-      background: gray;
+      margin-bottom: 6px;
+      margin-top: 6px;
+      //background: gray;
       box-sizing: border-box;
       display: flex;
       align-items: center;
@@ -35,7 +36,7 @@
       }
 
       img {
-        width: 100%;
+        //width: 100%;
         border-radius: 4px;
         cursor: pointer;
       }

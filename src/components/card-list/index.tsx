@@ -4,6 +4,7 @@ import { useSetState, useAsyncEffect } from 'ahooks';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import 'react-lazy-load-image-component/src/effects/blur.css';
 import './index.scss';
+import InlineEdit from '@/components/InlineEdit';
 
 type IProps = {
   items: IItem[];
@@ -12,7 +13,7 @@ type IProps = {
   onChange?: (checkedValue: IItem) => void;
 };
 
-type IItem = { url: string; text?: string; id: number };
+type IItem = { url: string; name?: string; id: number };
 
 type IState = {
   items: IItem[];
@@ -33,18 +34,23 @@ const CardList: React.FC<IProps> = ({ items, activeKey = 0, edit = false, onChan
       onChange && onChange(items[activeKey]);
     }
   };
+  const onNameChange = (name: string) => {
+    console.log(name);
+  };
 
   return (
     <div className="card_list">
       <div className="sub_nav_main_body">
         {state.items.map((item, index) => (
-          <div
-            className={classNames('sub_nav_main_item', index === state.activeKey ? 'active' : null)}
-            key={item.id}
-            onClick={() => handleClick(index)}
-          >
-            <LazyLoadImage width="80px" effect="blur" src={item.url} />
-            {item.text && <div className="name">{item.text}</div>}
+          <div style={{ width: '80px' }}>
+            <div
+              className={classNames('sub_nav_main_item', index === state.activeKey ? 'active' : null)}
+              key={item.id}
+              onClick={() => handleClick(index)}
+            >
+              <LazyLoadImage width="80px" effect="blur" src={item.url} />
+            </div>
+            {item.name && <InlineEdit hideEdit name={item.name} onChange={onNameChange} />}
           </div>
         ))}
       </div>
