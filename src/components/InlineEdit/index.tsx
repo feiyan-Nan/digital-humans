@@ -6,9 +6,10 @@ import edit from '@/static/icons/edit.png';
 interface InlineEditProps {
   name: string;
   onChange?: (value: string) => void;
+  hideEdit?: boolean;
 }
 
-function InlineEdit({ name: originName, onChange }: InlineEditProps) {
+function InlineEdit({ name: originName, onChange, hideEdit = false }: InlineEditProps) {
   const [name, setName] = useState(originName);
   const [state, { toggle }] = useToggle(false);
   const ref = useRef(null);
@@ -22,7 +23,7 @@ function InlineEdit({ name: originName, onChange }: InlineEditProps) {
     }
   };
   return (
-    <div>
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       {!state && (
         <div
           className="edit_name"
@@ -34,7 +35,7 @@ function InlineEdit({ name: originName, onChange }: InlineEditProps) {
             }, 10);
           }}
         >
-          {name} <img src={edit} alt="" />
+          {name} {!hideEdit && <img src={edit} alt="" />}
         </div>
       )}
       <Input

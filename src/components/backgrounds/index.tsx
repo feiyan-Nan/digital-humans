@@ -7,6 +7,8 @@ import TipAndUpload from '@/components/tipAndUpload';
 import './index.scss';
 
 import api from '@/api';
+import useStore from '@/store';
+import { shallow } from 'zustand/shallow';
 
 type IProps = {
   list: { url: string; backgroundId: number }[];
@@ -23,6 +25,15 @@ type IState = {
 };
 
 const Backgrounds: React.FC<IProps> = ({ list, onTabChange, tabActiveKey = 0, whenUploadSuccess }) => {
+  const { scale, locations, updateDigitalImage, updateBackGroundImage } = useStore(
+    (state) => ({
+      scale: state.scale,
+      locations: state.locations,
+      updateDigitalImage: state.updateDigitalImage,
+      updateBackGroundImage: state.updateBackGroundImage,
+    }),
+    shallow,
+  );
   // const [messageApi] = message.useMessage();
 
   const [state, setState] = useSetState<IState>({
@@ -95,6 +106,11 @@ const Backgrounds: React.FC<IProps> = ({ list, onTabChange, tabActiveKey = 0, wh
       });
   };
 
+  const onChange = (data: any) => {
+    console.log(data, 'id');
+    updateBackGroundImage(data?.url);
+  };
+
   return (
     <div className="backgrounds">
       <div className="backgrounds_header">
@@ -106,7 +122,7 @@ const Backgrounds: React.FC<IProps> = ({ list, onTabChange, tabActiveKey = 0, wh
       </div>
 
       <div className="backgrounds_main">
-        <CardList items={state.list} activeKey={0} />
+        <CardList items={state.list} activeKey={0} onChange={onChange} />
       </div>
     </div>
   );
