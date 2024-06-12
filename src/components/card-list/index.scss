@@ -60,11 +60,8 @@
         .cardlist_name_text {
           overflow: hidden;
           text-overflow: ellipsis;
-          // white-space: nowrap;
           flex: 1;
           line-height: 1;
-          // max-width: calc(100% - 45px);
-          // width: 20px;
         }
       }
     }

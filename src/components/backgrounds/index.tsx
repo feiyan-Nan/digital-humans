@@ -1,5 +1,6 @@
 import React from 'react';
 import { useSetState, useAsyncEffect } from 'ahooks';
+import { shallow } from 'zustand/shallow';
 import { message } from 'antd';
 import AutoTabs from '@/components/auto-tabs';
 import CardList from '@/components/card-list';
@@ -8,7 +9,6 @@ import './index.scss';
 
 import api from '@/api';
 import useStore from '@/store';
-import { shallow } from 'zustand/shallow';
 
 type IProps = {
   list: { url: string; backgroundId: number }[];

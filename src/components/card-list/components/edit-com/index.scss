@@ -1,0 +1,27 @@
+.edit_input {
+
+  display: flex;
+
+  align-items: center;
+
+  height: 38px;
+
+  .edit_input_text {
+    color: #fff;
+    font-size: 12px;
+    height: 38px;
+    line-height: 38px;
+    overflow: hidden;
+
+  }
+
+  > img {
+    width: 10px;
+    height: 10px;
+    cursor: pointer;
+  }
+
+  .edit_input_edit_icon {
+    margin: 0 5px 0 5px;
+  }
+}

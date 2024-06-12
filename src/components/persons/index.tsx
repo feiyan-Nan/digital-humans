@@ -32,6 +32,7 @@ const Persons: React.FC<IProps> = ({ list, tabActiveKey, onTabChange }) => {
   useAsyncEffect(async () => setState({ personItems: list }), [list]);
 
   useAsyncEffect(async () => {
+    console.log('AT-[ tabActiveKey &&&&&********** ]', tabActiveKey);
     setState({ activeKey: tabActiveKey });
   }, [tabActiveKey]);
 
@@ -84,7 +85,7 @@ const Persons: React.FC<IProps> = ({ list, tabActiveKey, onTabChange }) => {
       </div>
 
       <div className="persons_main">
-        <CardList items={state.personItems} activeKey={2} edit />
+        <CardList items={state.personItems} activeKey={2} editable={state.activeKey === 1} />
       </div>
     </div>
   );
