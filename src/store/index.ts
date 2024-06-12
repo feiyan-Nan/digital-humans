@@ -39,6 +39,9 @@ interface IStore {
   backGroundImage: string;
   updateBackGroundImage: (image: string) => void;
 
+  textContent: string;
+  updateTextContent: (image: string) => void;
+
   selectedPerson: any;
   updatePerson: (value: any) => void;
 
@@ -59,6 +62,8 @@ const store: CustomStoreType = (set, get) => ({
     set({
       selected,
     }),
+  textContent: '',
+  updateTextContent: (val: string) => set(() => ({ textContent: val })),
   backGroundImage:
     'https://digital-person.oss-cn-hangzhou.aliyuncs.com/FileUpload/1/UID_1/Image/Background/nafiniaputraKwdp0pokIunsplash_1678881317677.jpg',
   updateBackGroundImage: (image: string) => set(() => ({ backGroundImage: image })),

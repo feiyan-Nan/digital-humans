@@ -79,6 +79,13 @@ export const getSuccessPersonList = (data = {}) =>
     data,
   });
 
+export const createWithTTS = (data = {}) =>
+  instance<null, IPersonRes>({
+    url: '/api/digitalVhost/createWithTTS',
+    method: 'post',
+    data,
+  });
+
 export type IBackoundRes = {
   code: number;
   data: {

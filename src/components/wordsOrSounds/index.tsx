@@ -3,6 +3,8 @@ import { useAsyncEffect, useSetState } from 'ahooks';
 import { Input } from 'antd';
 import AutoTabs from '@/components/auto-tabs';
 import TipAndUpload from '@/components/tipAndUpload';
+import useStore from "@/store";
+import {shallow} from "zustand/shallow";
 
 const { TextArea } = Input;
 
@@ -19,6 +21,20 @@ const WordsOrSounds: React.FC<IProps> = ({ tabActiveKey = 0, onTabChange }) => {
   const [state, setState] = useSetState<IState>({
     tabActiveKey,
   });
+  const {updateTextContent, textContent, updatePerson, selectedBackground, updateBackground, selectedVoice, updateVoice} = useStore(
+    ({updateTextContent,textContent, updatePerson, selectedBackground, updateBackground, selectedVoice, updateVoice}) => ({
+      updateTextContent,
+      textContent,
+      updatePerson,
+
+      selectedBackground,
+      updateBackground,
+
+      selectedVoice,
+      updateVoice,
+    }),
+    shallow,
+  );
 
   useAsyncEffect(async () => {
     setState({ tabActiveKey });
@@ -27,6 +43,9 @@ const WordsOrSounds: React.FC<IProps> = ({ tabActiveKey = 0, onTabChange }) => {
   // const handleOnTabChange = (tabActiveKey: number) => {
   //   setState({ tabActiveKey });
   // };
+  const onChange = (value) => {
+    updateTextContent(value.target.value)
+  }
 
   return (
     <div className="wordsorsounds">
@@ -43,6 +62,8 @@ const WordsOrSounds: React.FC<IProps> = ({ tabActiveKey = 0, onTabChange }) => {
           maxLength={5000}
           placeholder="请输入文字"
           style={{ height: 200, resize: 'none', marginTop: '20px', padding: 0, border: 'none' }}
+          value={textContent}
+          onChange={onChange}
         />
       ) : (
         <TipAndUpload
