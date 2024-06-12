@@ -9,13 +9,15 @@ const instance = axios.create({
   // 还可以进行一些其他的配置
 });
 
+const token =
+  'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE3MTgyMDYwMzcsInVzZXJuYW1lIjoiMTg2MTAwMTU1MzgifQ._tsDvCKwl6X5fZ2wjy6esvX0_wEYBCEq-eEAxx5KJ5I';
+
 instance.interceptors.request.use((config) => {
   Object.assign(config.headers, {
     appKey: '1550708352504bb1972e8afecdd807c1',
-    appSecret:
-      'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE3MTgyMDYwMzcsInVzZXJuYW1lIjoiMTg2MTAwMTU1MzgifQ._tsDvCKwl6X5fZ2wjy6esvX0_wEYBCEq-eEAxx5KJ5I',
-    'X-Access-Token':
-      'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE3MTgyMDYwMzcsInVzZXJuYW1lIjoiMTg2MTAwMTU1MzgifQ._tsDvCKwl6X5fZ2wjy6esvX0_wEYBCEq-eEAxx5KJ5I',
+    appSecret: token,
+    'X-Access-Token': token,
+    'Project-Source': 'digital-vhost',
   });
 
   return config;
@@ -45,16 +47,7 @@ type IResponse = { code: number; result: any };
  * 获取免费数字人列表
  */
 export const getFreePersonList = (data = {}) =>
-  instance<
-    null,
-    {
-      code: number;
-      data: {
-        avatarUrl: string;
-        digitalId: number;
-      }[];
-    }
-  >({
+  instance<null, IPersonRes>({
     url: '/api/digitalVhost/getFreePersonList',
     method: 'get',
     data,
@@ -73,6 +66,7 @@ export type IPersonRes = {
   code: number;
   data: {
     avatarUrl: string;
+    name: string;
     digitalId: number;
   }[];
 };
@@ -132,9 +126,14 @@ export const getCustomAudioList = (data = {}) =>
     data,
   });
 
+export type IVideoRes = {
+  code: number;
+  data: any[];
+};
+
 // 视频作品列表
 export const getVideoList = (data = {}) =>
-  instance<null, IResponse>({
+  instance<null, IVideoRes>({
     url: '/api/digitalVhost/getVideoList',
     method: 'post',
     data,
@@ -143,10 +142,9 @@ export const getVideoList = (data = {}) =>
 /**
  * 上传视频接口
  * @param formData
- * @returns {IResponse}
  */
 export const uploadVideoFile = (formData: FormData) =>
-  instance<null, IResponse>({
+  instance<null, any>({
     url: '/api/digitalVhost/fileUpload',
     method: 'post',
     headers: {
@@ -170,6 +168,13 @@ export const uploadBackgroundFile = (formData: FormData) =>
 export const makrPerson = (data: { description: string; name: string; trainVideo: string }) =>
   instance<null, IResponse>({
     url: 'api/digital/custom_person_asset',
+    method: 'post',
+    data,
+  });
+
+export const deletePerson = (data: { assetId: number }) =>
+  instance<null, any>({
+    url: '/openApiDigitalPerson/customer/deleteDigitalPersonAsset',
     method: 'post',
     data,
   });
@@ -198,4 +203,5 @@ export default {
   makrPerson,
   createVideoByText,
   uploadBackgroundFile,
+  deletePerson,
 };

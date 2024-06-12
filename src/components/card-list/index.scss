@@ -16,35 +16,56 @@
     .sub_nav_main_item {
       width: 80px;
       margin-bottom: 12px;
-      background: gray;
       box-sizing: border-box;
       display: flex;
       align-items: center;
       flex-direction: column;
       overflow: hidden;
 
-      img {
-        border: 2px solid rgba(0,0,0,0);
-      }
 
       &.active {
-        img {
+        >.lazy-load-image-background >img {
           border: 2px solid #7B68EE;
           border-radius: 4px;
         }
       }
 
-      img {
+      >.lazy-load-image-background >img{
         width: 100%;
         border-radius: 4px;
         cursor: pointer;
+        border: 2px solid rgba(0,0,0,0);
       }
 
-      .name {
+      .cardlist_name {
         color: #fff;
         font-size: 12px;
         height: 38px;
         line-height: 38px;
+
+        display: inline-flex;
+        align-items: center;
+
+        > img {
+          width: 10px;
+          height: 10px;
+          cursor: pointer;
+        }
+
+        .cardlist_edit_icon {
+          // margin: 0 10px 0 5px;
+          margin: 0 5px 0 5px;
+        }
+
+        .cardlist_name_text {
+          overflow: hidden;
+          text-overflow: ellipsis;
+          // white-space: nowrap;
+          flex: 1;
+          line-height: 1;
+          // max-width: calc(100% - 45px);
+          // width: 20px;
+        }
       }
     }
   }

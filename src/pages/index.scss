@@ -168,6 +168,8 @@ ol, ul {
         justify-content: center;
         font-weight: 600;
         cursor: pointer;
+
+        user-select: none;
       }
 
       .block {

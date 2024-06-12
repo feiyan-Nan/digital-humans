@@ -1,13 +1,12 @@
 import React from 'react';
 import { useAsyncEffect, useSetState } from 'ahooks';
+import { message } from 'antd';
 import AutoTabs from '@/components/auto-tabs';
-// import UploadButton from '@/components/upload-button';
 import CardList from '@/components/card-list';
 import TipAndUpload from '@/components/tipAndUpload';
 import api from '@/api';
 
 import './index.scss';
-// import img from '@/static/imgs/test.png';
 
 type IProps = {
   tabActiveKey: number;
@@ -32,37 +31,36 @@ const Persons: React.FC<IProps> = ({ list, tabActiveKey, onTabChange }) => {
 
   useAsyncEffect(async () => setState({ personItems: list }), [list]);
 
-  const handleOnTabChange = (activeKey: number) => {
-    if (activeKey !== state.activeKey) {
-      setState({ activeKey });
-      onTabChange && onTabChange(activeKey);
-    }
-  };
+  useAsyncEffect(async () => {
+    setState({ activeKey: tabActiveKey });
+  }, [tabActiveKey]);
 
-  const toCreateDigital = () => handleOnTabChange(1);
+  const toCreateDigital = () => onTabChange && onTabChange(1);
 
   const onFileChange = async (formData: FormData) => {
-    const res = await api.uploadVideoFile(formData);
+    const key = 'loading';
 
-    console.log('AT-[ res &&&&&********** ]', res);
-
-    const r = await api.makrPerson({
-      description: '测试数字人描述',
-      name: '测试数字人名称',
-      trainVideo: res.result,
+    message.loading({
+      content: '上传中',
+      key,
+      duration: 0,
     });
 
-    console.log('AT-[ r &&&&&********** ]', r);
+    const res = await api.uploadVideoFile(formData);
+
+    message.destroy(key);
+
+    if (res.code !== 200) {
+      message.error(res.data.message);
+    } else {
+      message.success(res.data.message);
+    }
   };
-
-  // const onFileChange = (formData: FormData) => {
-
-  // }
 
   return (
     <div className="persons">
       <div className="persons_header">
-        <AutoTabs items={state.tabItems} onTabChange={handleOnTabChange} key="persons" />
+        <AutoTabs items={state.tabItems} onTabChange={onTabChange} activeKey={state.activeKey} />
 
         {state.activeKey === 1 && (
           <>
@@ -86,7 +84,7 @@ const Persons: React.FC<IProps> = ({ list, tabActiveKey, onTabChange }) => {
       </div>
 
       <div className="persons_main">
-        <CardList items={state.personItems} activeKey={0} />
+        <CardList items={state.personItems} activeKey={2} edit />
       </div>
     </div>
   );

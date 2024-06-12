@@ -27,7 +27,7 @@ export default defineConfig({
     proxy: {
       '/api': {
         // target: 'http://service.aicloud.fit:9528',
-        target: 'http://service.aicloud.fit:9535',
+        target: 'https://vhost.aidigitalfield.com',
         changeOrigin: true,
 
         // rewrite: (path) => path.replace(/^\/api/, '/api/'),

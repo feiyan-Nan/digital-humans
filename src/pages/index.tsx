@@ -1,5 +1,5 @@
 import React from 'react';
-import { Layout, Input, Spin } from 'antd';
+import { Layout, Spin, message } from 'antd';
 import { useSetState, useAsyncEffect, useRequest } from 'ahooks';
 import classNames from 'classnames';
 
@@ -8,7 +8,7 @@ import './index.scss';
 import voiceIcon from '@/static/icons/voice.png';
 import personsIcon from '@/static/icons/persons.png';
 import imagesIcon from '@/static/icons/images.png';
-import img from '@/static/imgs/test.png';
+// import img from '@/static/imgs/test.png';
 import logo from '@/static/imgs/logo.png';
 import vector from '@/static/icons/vector.png';
 import homeIcon from '@/static/icons/home_icon.png';
@@ -27,7 +27,7 @@ import InlineEdit from '@/components/InlineEdit';
 import WordsOrSounds from '@/components/wordsOrSounds';
 
 const { Sider, Content, Header, Footer } = Layout;
-const { TextArea } = Input;
+// const { TextArea } = Input;
 
 const sliderStyle: React.CSSProperties = {
   padding: 0,
@@ -116,8 +116,12 @@ const IIndex: React.FC = () => {
       manual: true,
 
       onSuccess(res) {
-        console.log('AT-[ res &&&&&********** ]', res);
-        const persons = res.data.map(({ avatarUrl: url, digitalId: id }) => ({ url, id }));
+        const persons = res.data.map(({ avatarUrl: url, digitalId: id, name: text, ...rest }) => ({
+          url,
+          id,
+          text,
+          ...rest,
+        }));
         setState({ persons });
       },
     },
@@ -174,10 +178,9 @@ const IIndex: React.FC = () => {
 
   const { loading: videoLoading, run: getVideoList } = useRequest(api.getVideoList, {
     manual: true,
-    onSuccess(res) {
-      console.log('AT-[ res &&&&&********** ]', res, videoLoading);
 
-      // setState({ videos: res });
+    onSuccess(res) {
+      setState({ videos: res.data });
     },
   });
 
@@ -187,14 +190,23 @@ const IIndex: React.FC = () => {
 
   /** 触发接口请求 */
   useAsyncEffect(async () => {
-    if (state.activeNum === 0) getPersonList(state.personsActiveKey);
-    if (state.activeNum === 1) getBgList(state.bgActiveKey);
-    if (state.activeNum === 2) getAudioList(state.voiceActiveKey);
+    if (state.activeNum === 0) {
+      if (state.personsActiveKey === 1) {
+        getPersonList(state.personsActiveKey);
+      } else if (!state.persons.length) {
+        getPersonList(state.personsActiveKey);
+      }
+    }
+    if (state.activeNum === 1) {
+      !state.backgrounds.length && getBgList(state.bgActiveKey);
+    }
+    if (state.activeNum === 2) {
+      !state.voices.length && getAudioList(state.voiceActiveKey);
+    }
   }, [state.activeNum]);
 
   /** 切换loading状态 */
   useAsyncEffect(async () => {
-    // const siderLoading = !!(personListLoading && voiceLoading && bgLoading);
     const siderLoading = personListLoading || voiceLoading || bgLoading;
 
     setState({ siderLoading });
@@ -218,6 +230,11 @@ const IIndex: React.FC = () => {
     setState({
       wordsOrSoundsActiveKey,
     });
+  };
+
+  const handleOnSave = () => {
+    console.log('AT-[ handleOnSave &&&&&********** ]');
+    message.success('handleOnSave');
   };
 
   return (
@@ -292,36 +309,29 @@ const IIndex: React.FC = () => {
               <div className="right_box">
                 <div className="right_box_header">
                   <div className="block">
-                    {/* <AutoTabs items={['文字播报', '音频播报']} activeKey={0} textMode="black" />
-
-                    <TextArea
-                      showCount
-                      maxLength={5000}
-                      placeholder="请输入文字"
-                      style={{ height: 200, resize: 'none', marginTop: '20px', padding: 0, border: 'none' }}
-                    /> */}
-
                     <WordsOrSounds tabActiveKey={state.wordsOrSoundsActiveKey} onTabChange={onWordsOrSoundsTabChange} />
                   </div>
 
-                  <div className="save">保存并生成播报</div>
+                  <div className="save" onClick={handleOnSave}>
+                    保存并生成播报
+                  </div>
 
-                  {!state.videos.length ? (
+                  {!state.videos.length && (
                     <div className="block">
-                      <AutoTabs items={['视频列表', '']} textMode="black" />
+                      <AutoTabs items={['视频列表']} textMode="black" />
                     </div>
-                  ) : null}
+                  )}
                 </div>
 
                 <div className="right_box_footer">
                   <div className="video_list">
                     {state.videos.map((item) => (
-                      <div className="video_item" key={item.id}>
-                        <img src={img} alt="" className="thumbnail" />
+                      <div className="video_item" key={item.digitalPersonWorksId}>
+                        <img src={item.previewPictureUrl} alt="" className="thumbnail" />
                         <div className="video_info">
-                          <div className="video_name">未命名草稿</div>
-                          <div className="video_status">状态：制作中</div>
-                          <div className="video_time">2024-04-24 11:59:13</div>
+                          <div className="video_name">{item.videoName}</div>
+                          <div className="video_status">状态：{item.status}</div>
+                          <div className="video_time">{item.createTime}</div>
                           <div className="video_actions">
                             <div className="video_btn">播放</div>
                             <div className="video_btn">下载</div>

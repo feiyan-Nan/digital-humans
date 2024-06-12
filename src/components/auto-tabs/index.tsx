@@ -35,14 +35,17 @@ const AutoTabs: React.FC<IProps> = ({ items, activeKey = 0, textMode = 'white', 
 
   const [state, setState] = useSetState<IState>({
     activeKey,
-    activeLineStyle: { width: isSingle ? '50%' : `${(1 / items.length) * 100}%` },
+    activeLineStyle: {
+      width: isSingle ? '50%' : `${(1 / items.length) * 100}%`,
+      marginLeft: isSingle ? 0 : `${(1 / items.length) * 100 * activeKey}%`,
+    },
   });
 
   const activeClassName = `${textMode}_active`;
 
   const handleClick = (activeKey: number) => {
     if (state.activeKey !== activeKey) {
-      const marginLeft = isSingle ? '50%' : `${(1 / items.length) * 100 * activeKey}%`;
+      const marginLeft = isSingle ? 0 : `${(1 / items.length) * 100 * activeKey}%`;
 
       setState({
         activeKey,

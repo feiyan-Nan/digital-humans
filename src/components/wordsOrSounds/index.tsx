@@ -52,7 +52,7 @@ const WordsOrSounds: React.FC<IProps> = ({ tabActiveKey = 0, onTabChange }) => {
           black
           style={{
             marginTop: '20px',
-            marginBottom: '20px',
+            marginBottom: '80px',
             fontSize: '12px',
             lineHeight: '20px',
           }}

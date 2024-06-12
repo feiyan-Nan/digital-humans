@@ -41,12 +41,16 @@ const Backgrounds: React.FC<IProps> = ({ list, onTabChange, tabActiveKey = 0, wh
     });
   }, [list]);
 
-  const handleTabChange = (activeKey: number) => {
-    if (activeKey !== state.tabActiveKey) {
-      setState({ tabActiveKey: activeKey });
-      onTabChange && onTabChange(tabActiveKey);
-    }
-  };
+  useAsyncEffect(async () => {
+    setState({ tabActiveKey });
+  }, [tabActiveKey]);
+
+  // const handleTabChange = (activeKey: number) => {
+  //   if (activeKey !== state.tabActiveKey) {
+  //     setState({ tabActiveKey: activeKey });
+  //     onTabChange && onTabChange(tabActiveKey);
+  //   }
+  // };
 
   const validateImage = async (file: File) =>
     new Promise((resolve, reject) => {
@@ -68,7 +72,6 @@ const Backgrounds: React.FC<IProps> = ({ list, onTabChange, tabActiveKey = 0, wh
     });
 
   const onFileChange = async (formData: FormData, file: File) => {
-    console.log('尽量一次');
     validateImage(file)
       .then(async () => {
         const uploadingKey = 'uploadingKey';
@@ -95,7 +98,7 @@ const Backgrounds: React.FC<IProps> = ({ list, onTabChange, tabActiveKey = 0, wh
   return (
     <div className="backgrounds">
       <div className="backgrounds_header">
-        <AutoTabs items={state.items} onTabChange={handleTabChange} activeKey={state.tabActiveKey} />
+        <AutoTabs items={state.items} onTabChange={onTabChange} activeKey={state.tabActiveKey} />
 
         {state.tabActiveKey === 1 && (
           <TipAndUpload tip="我们也支持上传自定义背景图" btnText="上传图片" accept="image/*" onChange={onFileChange} />

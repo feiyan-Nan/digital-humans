@@ -63,7 +63,7 @@ const Voices: React.FC<IProps> = ({ onTabChange, list, tabActiveKey = 0 }) => {
       </div>
 
       <div className="voice_main">
-        <CardList items={state.list} activeKey={0} key={Math.random()} />
+        <CardList items={state.list} activeKey={0} />
       </div>
     </div>
   );
