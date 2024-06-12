@@ -151,8 +151,6 @@ const IIndex: React.FC = () => {
           ...rest,
         }));
 
-        console.log('AT-[ persons &&&&&********** ]', persons);
-
         setState({ persons });
       },
     },
@@ -231,6 +229,14 @@ const IIndex: React.FC = () => {
 
   useAsyncEffect(async () => {
     getVideoList();
+  }, []);
+
+  useAsyncEffect(async () => {
+    getPersonList(0);
+
+    getBgList(0);
+
+    getAudioList(0);
   }, []);
 
   /** 触发接口请求 */
@@ -413,8 +419,8 @@ const IIndex: React.FC = () => {
                             <div className="video_btn" onClick={() => previewVideo(item.url)}>
                               播放
                             </div>
-                            <div className="video_btn">下载</div>
-                            <div className="video_btn">删除</div>
+                            {/* <div className="video_btn">下载</div>
+                            <div className="video_btn">删除</div> */}
                           </div>
                         </div>
                       </div>
