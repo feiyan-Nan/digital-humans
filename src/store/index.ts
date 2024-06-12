@@ -38,6 +38,15 @@ interface IStore {
    */
   backGroundImage: string;
   updateBackGroundImage: (image: string) => void;
+
+  selectedPerson: any;
+  updatePerson: (value: any) => void;
+
+  selectedBackground: any;
+  updateBackground: (value: any) => void;
+
+  selectedVoice: any;
+  updateVoice: (value: any) => void;
 }
 
 type CustomStoreType = StateCreator<IStore>;
@@ -64,6 +73,13 @@ const store: CustomStoreType = (set, get) => ({
   increment: () => set((state) => ({ count: state.count + 1 })),
   decrement: () => set((state) => ({ count: state.count - 1 })),
   setInputValue: useInputStore.getState().setInputValue,
+
+  selectedPerson: null,
+  updatePerson: (selectedPerson: any) => set(() => ({ selectedPerson })),
+  selectedBackground: null,
+  updateBackground: (selectedBackground: any) => set(() => ({ selectedBackground })),
+  selectedVoice: null,
+  updateVoice: (selectedVoice: any) => set(() => ({ selectedVoice })),
 });
 const useStore = create<IStore>()(immer(devtools(store)));
 

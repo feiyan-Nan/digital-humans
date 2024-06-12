@@ -68,6 +68,7 @@ export type IPersonRes = {
     avatarUrl: string;
     name: string;
     digitalId: number;
+    status?: 'FAIL' | 'IN_PROGRESS' | 'SUCCESS';
   }[];
 };
 
@@ -107,6 +108,7 @@ export type IAudioRes = {
   data: {
     previewPictureUrl: string;
     id: number;
+    status: 'SUCCESS' | 'DRAFT' | 'FAIL' | 'IN_PROGRESS';
   }[];
 };
 

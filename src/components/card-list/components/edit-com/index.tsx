@@ -1,5 +1,5 @@
 import React from 'react';
-import { useAsyncEffect, useBoolean } from 'ahooks';
+import { useBoolean } from 'ahooks';
 import { Input } from 'antd';
 
 import whiteEditIcon from '@/static/icons/white_edit.png';
@@ -10,10 +10,11 @@ import './index.scss';
 type IProps = {
   defaultValue: string | undefined;
   editable: boolean;
+  deleteAble: boolean;
   onDelete?: () => void;
 };
 
-const EditInput: React.FC<IProps> = ({ defaultValue, editable, onDelete }) => {
+const EditInput: React.FC<IProps> = ({ defaultValue, editable, deleteAble, onDelete }) => {
   const [editStatus, { setTrue, setFalse }] = useBoolean(false);
 
   // useAsyncEffect(async () => {
@@ -35,12 +36,9 @@ const EditInput: React.FC<IProps> = ({ defaultValue, editable, onDelete }) => {
           <>
             <span className="edit_input_text">{defaultValue}</span>
 
-            {editable && (
-              <>
-                <img src={whiteEditIcon} className="edit_input_edit_icon" alt="" onClick={handleEdit} />
-                <img src={deleteIcon} className="edit_input_delete_icon" alt="" onClick={onDelete} />
-              </>
-            )}
+            {editable && <img src={whiteEditIcon} className="edit_input_edit_icon" alt="" onClick={handleEdit} />}
+
+            {deleteAble && <img src={deleteIcon} className="edit_input_delete_icon" alt="" onClick={onDelete} />}
           </>
         )}
       </div>

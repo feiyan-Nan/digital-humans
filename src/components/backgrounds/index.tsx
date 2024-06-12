@@ -20,22 +20,12 @@ type IProps = {
 type IState = {
   items: string[];
   tabActiveKey: number;
-  list: { url: string; id: number }[];
+  list: { url: string; id: number; backgroundId: number }[];
   spinning: boolean;
+  cardListActiveKey: number;
 };
 
 const Backgrounds: React.FC<IProps> = ({ list, onTabChange, tabActiveKey = 0, whenUploadSuccess }) => {
-  const { scale, locations, updateDigitalImage, updateBackGroundImage } = useStore(
-    (state) => ({
-      scale: state.scale,
-      locations: state.locations,
-      updateDigitalImage: state.updateDigitalImage,
-      updateBackGroundImage: state.updateBackGroundImage,
-    }),
-    shallow,
-  );
-  // const [messageApi] = message.useMessage();
-
   const [state, setState] = useSetState<IState>({
     items: ['默认背景', '自定义'],
 
@@ -44,7 +34,14 @@ const Backgrounds: React.FC<IProps> = ({ list, onTabChange, tabActiveKey = 0, wh
     list: [],
 
     spinning: false,
+
+    cardListActiveKey: -1,
   });
+
+  const { selectedBackground, updateBackground } = useStore(
+    ({ updateBackground, selectedBackground }) => ({ updateBackground, selectedBackground }),
+    shallow,
+  );
 
   useAsyncEffect(async () => {
     setState({
@@ -53,15 +50,14 @@ const Backgrounds: React.FC<IProps> = ({ list, onTabChange, tabActiveKey = 0, wh
   }, [list]);
 
   useAsyncEffect(async () => {
+    const cardListActiveKey = state.list.findIndex((i) => i.backgroundId === selectedBackground.backgroundId);
+
+    setState({ cardListActiveKey });
+  }, [state.list, selectedBackground]);
+
+  useAsyncEffect(async () => {
     setState({ tabActiveKey });
   }, [tabActiveKey]);
-
-  // const handleTabChange = (activeKey: number) => {
-  //   if (activeKey !== state.tabActiveKey) {
-  //     setState({ tabActiveKey: activeKey });
-  //     onTabChange && onTabChange(tabActiveKey);
-  //   }
-  // };
 
   const validateImage = async (file: File) =>
     new Promise((resolve, reject) => {
@@ -106,10 +102,7 @@ const Backgrounds: React.FC<IProps> = ({ list, onTabChange, tabActiveKey = 0, wh
       });
   };
 
-  const onChange = (data: any) => {
-    console.log(data, 'id');
-    updateBackGroundImage(data?.url);
-  };
+  const onChange = (data: any) => updateBackground(data);
 
   return (
     <div className="backgrounds">
@@ -122,7 +115,7 @@ const Backgrounds: React.FC<IProps> = ({ list, onTabChange, tabActiveKey = 0, wh
       </div>
 
       <div className="backgrounds_main">
-        <CardList items={state.list} activeKey={0} onChange={onChange} />
+        <CardList items={state.list} onChange={onChange} activeKey={state.cardListActiveKey} />
       </div>
     </div>
   );

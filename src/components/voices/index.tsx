@@ -1,32 +1,46 @@
 import React from 'react';
+import { shallow } from 'zustand/shallow';
 import { useSetState, useAsyncEffect } from 'ahooks';
 import { Button, InputNumber, Space } from 'antd';
 import AutoTabs from '@/components/auto-tabs';
-// import UploadButton from '@/components/upload-button';
 import CardList from '@/components/card-list';
 import TipAndUpload from '@/components/tipAndUpload';
 import './index.scss';
 
+import useStore from '@/store';
+
 type IProps = {
-  list: { url: string; id: number }[];
+  list: { url: string; id: number; templateId: number }[];
   onTabChange?: (activeKey: number) => void;
   tabActiveKey?: number;
 };
 
 type IState = {
   activeKey: number;
-  list: { url: string; id: number }[];
+  list: { url: string; id: number; templateId: number }[];
+  cardListActiveKey: number;
 };
 
 const Voices: React.FC<IProps> = ({ onTabChange, list, tabActiveKey = 0 }) => {
+  const { updateVoice, selectedVoice } = useStore(
+    ({ updateVoice, selectedVoice }) => ({ updateVoice, selectedVoice }),
+    shallow,
+  );
+
   const [state, setState] = useSetState<IState>({
     activeKey: tabActiveKey,
     list,
+    cardListActiveKey: -1,
   });
 
   useAsyncEffect(async () => {
     setState({ list });
   }, [list]);
+
+  useAsyncEffect(async () => {
+    const cardListActiveKey = state.list.findIndex((i) => i.templateId === selectedVoice.templateId);
+    setState({ cardListActiveKey });
+  }, [state.list, selectedVoice]);
 
   const handleTabChange = (activeKey: number) => {
     if (activeKey !== state.activeKey) {
@@ -35,6 +49,8 @@ const Voices: React.FC<IProps> = ({ onTabChange, list, tabActiveKey = 0 }) => {
       onTabChange && onTabChange(activeKey);
     }
   };
+
+  const onChange = (data: any) => updateVoice(data);
 
   return (
     <div className="voice">
@@ -63,7 +79,7 @@ const Voices: React.FC<IProps> = ({ onTabChange, list, tabActiveKey = 0 }) => {
       </div>
 
       <div className="voice_main">
-        <CardList items={state.list} activeKey={0} />
+        <CardList items={state.list} onChange={onChange} activeKey={state.cardListActiveKey} />
       </div>
     </div>
   );

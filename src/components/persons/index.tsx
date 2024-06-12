@@ -1,38 +1,54 @@
 import React from 'react';
-import { useAsyncEffect, useSetState } from 'ahooks';
+import { useAsyncEffect, useRequest, useSetState } from 'ahooks';
 import { message } from 'antd';
+import { shallow } from 'zustand/shallow';
 import AutoTabs from '@/components/auto-tabs';
 import CardList from '@/components/card-list';
 import TipAndUpload from '@/components/tipAndUpload';
 import api from '@/api';
-
+import useStore from '@/store';
 import './index.scss';
+
+type Item = { url: string; text?: string | undefined; id: number; digitalId: number; enable: boolean };
 
 type IProps = {
   tabActiveKey: number;
-  list: { url: string; text?: string | undefined; id: number }[];
+  list: Item[];
   onTabChange?: (activeKey: number) => void;
+  refreshPerson?: () => void;
 };
 
 type IStates = {
   activeKey: number;
-  personItems: { url: string; text?: string | undefined; id: number }[];
+  personItems: Item[];
   tabItems: string[];
+  cardListActiveKey: number;
 };
 
-const Persons: React.FC<IProps> = ({ list, tabActiveKey, onTabChange }) => {
+const Persons: React.FC<IProps> = ({ list, tabActiveKey, onTabChange, refreshPerson }) => {
   const [state, setState] = useSetState<IStates>({
     activeKey: tabActiveKey,
 
     personItems: list,
 
     tabItems: ['公用数字人', '定制数字人'],
+
+    cardListActiveKey: -1,
   });
+
+  const { updatePerson, selectedPerson } = useStore(
+    ({ updatePerson, selectedPerson }) => ({ updatePerson, selectedPerson }),
+    shallow,
+  );
 
   useAsyncEffect(async () => setState({ personItems: list }), [list]);
 
   useAsyncEffect(async () => {
-    console.log('AT-[ tabActiveKey &&&&&********** ]', tabActiveKey);
+    const cardListActiveKey = state.personItems.findIndex((i) => i.digitalId === selectedPerson.digitalId);
+    setState({ cardListActiveKey });
+  }, [state.personItems, selectedPerson]);
+
+  useAsyncEffect(async () => {
     setState({ activeKey: tabActiveKey });
   }, [tabActiveKey]);
 
@@ -55,7 +71,28 @@ const Persons: React.FC<IProps> = ({ list, tabActiveKey, onTabChange }) => {
       message.error(res.data.message);
     } else {
       message.success(res.data.message);
+      refreshPerson && refreshPerson();
     }
+  };
+
+  const onChange = (data: any) => updatePerson(data);
+
+  const onDelete = async (item: { id: number }) => {
+    const key = 'deleteing';
+
+    message.loading({ content: '删除中', duration: 0, key });
+    api
+      .deletePerson({ assetId: item.id })
+      .then((r) => {
+        r.code === 200 && message.success('删除成功');
+        refreshPerson && refreshPerson();
+      })
+      .catch((err) => {
+        message.error('删除失败');
+      })
+      .finally(() => {
+        message.destroy(key);
+      });
   };
 
   return (
@@ -85,7 +122,13 @@ const Persons: React.FC<IProps> = ({ list, tabActiveKey, onTabChange }) => {
       </div>
 
       <div className="persons_main">
-        <CardList items={state.personItems} activeKey={2} editable={state.activeKey === 1} />
+        <CardList
+          items={state.personItems}
+          activeKey={state.cardListActiveKey}
+          editable={state.activeKey === 1}
+          onChange={onChange}
+          onDelete={onDelete}
+        />
       </div>
     </div>
   );

@@ -1,10 +1,11 @@
 import React from 'react';
-import { Layout, Spin, message } from 'antd';
-import { useSetState, useAsyncEffect, useRequest } from 'ahooks';
+import { Layout, Spin, message, Modal } from 'antd';
+import { useSetState, useAsyncEffect, useRequest, useBoolean } from 'ahooks';
 import classNames from 'classnames';
 
 import './index.scss';
 
+import { shallow } from 'zustand/shallow';
 import voiceIcon from '@/static/icons/voice.png';
 import personsIcon from '@/static/icons/persons.png';
 import imagesIcon from '@/static/icons/images.png';
@@ -25,6 +26,8 @@ import Voices from '@/components/voices';
 import api from '@/api';
 import InlineEdit from '@/components/InlineEdit';
 import WordsOrSounds from '@/components/wordsOrSounds';
+
+import useStore from '@/store';
 
 const { Sider, Content, Header, Footer } = Layout;
 // const { TextArea } = Input;
@@ -57,7 +60,7 @@ type IStates = {
   backgrounds: { url: string; backgroundId: number }[];
   siderLoading: boolean;
   loading: { backgrounds: boolean; digital: boolean; voice: boolean; sider: boolean };
-  persons: { url: string; text?: string | undefined; id: number }[];
+  persons: { url: string; text?: string | undefined; id: number; digitalId: number; enable: boolean }[];
   voices: any[];
   videos: any[];
 
@@ -108,6 +111,22 @@ const IIndex: React.FC = () => {
     defaultEditStatus: false,
   });
 
+  const [createVideoIng, { setTrue, setFalse }] = useBoolean(false);
+
+  const { selectedPerson, updatePerson, selectedBackground, updateBackground, selectedVoice, updateVoice } = useStore(
+    ({ selectedPerson, updatePerson, selectedBackground, updateBackground, selectedVoice, updateVoice }) => ({
+      selectedPerson,
+      updatePerson,
+
+      selectedBackground,
+      updateBackground,
+
+      selectedVoice,
+      updateVoice,
+    }),
+    shallow,
+  );
+
   // 数字人接口请求
   const { loading: personListLoading, run: getPersonList } = useRequest(
     (personsActiveKey: TabsEnum) =>
@@ -116,12 +135,24 @@ const IIndex: React.FC = () => {
       manual: true,
 
       onSuccess(res) {
-        const persons = res.data.map(({ avatarUrl: url, digitalId: id, name: text, ...rest }) => ({
+        const maskMap = new Map([
+          ['FAIL', '定制失败'],
+          ['IN_PROGRESS', '定制中'],
+          ['SUCCESS', undefined],
+        ]);
+
+        const persons = res.data.map(({ avatarUrl: url, digitalId, name: text, status, ...rest }) => ({
           url,
-          id,
+          id: digitalId,
           text,
+          digitalId,
+          mask: status ? maskMap.get(status) : undefined,
+          enable: status === undefined || status === 'SUCCESS',
           ...rest,
         }));
+
+        console.log('AT-[ persons &&&&&********** ]', persons);
+
         setState({ persons });
       },
     },
@@ -133,6 +164,10 @@ const IIndex: React.FC = () => {
       getPersonList(personsActiveKey);
       setState({ personsActiveKey });
     }
+  };
+
+  const refreshPerson = () => {
+    getPersonList(state.personsActiveKey);
   };
 
   // 背景列表
@@ -176,11 +211,21 @@ const IIndex: React.FC = () => {
     }
   };
 
+  // 获取已生成的视频
   const { loading: videoLoading, run: getVideoList } = useRequest(api.getVideoList, {
     manual: true,
 
     onSuccess(res) {
-      setState({ videos: res.data });
+      const statusMap = new Map([
+        ['SUCCESS', '已完成'],
+        ['DRAFT', '草稿'],
+        ['FAIL', '失败'],
+        ['IN_PROGRESS', '制作中'],
+      ]);
+
+      setState({
+        videos: res.data.map((i) => ({ ...i, statusText: statusMap.get(i.status) })),
+      });
     },
   });
 
@@ -191,12 +236,9 @@ const IIndex: React.FC = () => {
   /** 触发接口请求 */
   useAsyncEffect(async () => {
     if (state.activeNum === 0) {
-      if (state.personsActiveKey === 1) {
-        getPersonList(state.personsActiveKey);
-      } else if (!state.persons.length) {
-        getPersonList(state.personsActiveKey);
-      }
+      !state.persons.length && getPersonList(state.personsActiveKey);
     }
+
     if (state.activeNum === 1) {
       !state.backgrounds.length && getBgList(state.bgActiveKey);
     }
@@ -211,6 +253,19 @@ const IIndex: React.FC = () => {
 
     setState({ siderLoading });
   }, [personListLoading, voiceLoading, bgLoading]);
+
+  // 监测数据获取状态，赋全局默认值
+  useAsyncEffect(async () => {
+    !selectedPerson && state.persons.length && updatePerson(state.persons[0]);
+  }, [state.persons]);
+
+  useAsyncEffect(async () => {
+    !selectedBackground && state.backgrounds.length && updateBackground(state.backgrounds[0]);
+  }, [state.backgrounds]);
+
+  useAsyncEffect(async () => {
+    !selectedVoice && state.voices.length && updateVoice(state.voices[0]);
+  }, [state.voices]);
 
   const changeNav = (activeNum: number) => setState({ activeNum });
 
@@ -235,6 +290,23 @@ const IIndex: React.FC = () => {
   const handleOnSave = () => {
     console.log('AT-[ handleOnSave &&&&&********** ]');
     message.success('handleOnSave');
+
+    setTrue();
+
+    setTimeout(setFalse, 3000);
+  };
+
+  const previewVideo = (mp4Path: string) => {
+    Modal.success({
+      title: '视频预览',
+      content: (
+        <div>
+          <video src={mp4Path} width="300px" autoPlay />
+        </div>
+      ),
+
+      okText: '确定',
+    });
   };
 
   return (
@@ -279,6 +351,7 @@ const IIndex: React.FC = () => {
                     tabActiveKey={state.personsActiveKey}
                     list={state.persons}
                     onTabChange={onPersonsTabChange}
+                    refreshPerson={refreshPerson}
                   />
                 )}
 
@@ -307,21 +380,25 @@ const IIndex: React.FC = () => {
 
             <Sider className="right_sider" width="256px">
               <div className="right_box">
-                <div className="right_box_header">
-                  <div className="block">
-                    <WordsOrSounds tabActiveKey={state.wordsOrSoundsActiveKey} onTabChange={onWordsOrSoundsTabChange} />
-                  </div>
-
-                  <div className="save" onClick={handleOnSave}>
-                    保存并生成播报
-                  </div>
-
-                  {!state.videos.length && (
+                <Spin spinning={createVideoIng}>
+                  <div className="right_box_header">
                     <div className="block">
-                      <AutoTabs items={['视频列表']} textMode="black" />
+                      <WordsOrSounds
+                        tabActiveKey={state.wordsOrSoundsActiveKey}
+                        onTabChange={onWordsOrSoundsTabChange}
+                      />
                     </div>
-                  )}
-                </div>
+
+                    <div className="save" onClick={handleOnSave}>
+                      保存并生成播报
+                    </div>
+                    {!state.videos.length && (
+                      <div className="block">
+                        <AutoTabs items={['视频列表']} textMode="black" />
+                      </div>
+                    )}
+                  </div>
+                </Spin>
 
                 <div className="right_box_footer">
                   <div className="video_list">
@@ -330,10 +407,12 @@ const IIndex: React.FC = () => {
                         <img src={item.previewPictureUrl} alt="" className="thumbnail" />
                         <div className="video_info">
                           <div className="video_name">{item.videoName}</div>
-                          <div className="video_status">状态：{item.status}</div>
+                          <div className="video_status">状态：{item.statusText}</div>
                           <div className="video_time">{item.createTime}</div>
                           <div className="video_actions">
-                            <div className="video_btn">播放</div>
+                            <div className="video_btn" onClick={() => previewVideo(item.url)}>
+                              播放
+                            </div>
                             <div className="video_btn">下载</div>
                             <div className="video_btn">删除</div>
                           </div>
