@@ -1,7 +1,6 @@
 import { create, StateCreator } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
-import { useEffect } from 'react';
 import useInputStore from './input';
 
 interface IStore {
@@ -72,6 +71,8 @@ const store: CustomStoreType = (set, get) => ({
     set({
       selected,
     }),
+  speechStr: 1.2,
+  updateSpeechStr: (value: number) => set(() => ({ speechStr: value })),
   textContent: '',
   updateTextContent: (val: string) => set(() => ({ textContent: val })),
   backGroundImage:
@@ -99,7 +100,6 @@ const store: CustomStoreType = (set, get) => ({
   currentName: '',
   updateCurrentName: (currentName: string) => set(() => ({ currentName })),
 
-  speechStr: 1,
   updateSpeedStr: (speechStr: number) => set(() => ({ speechStr })),
 
   draftData: null,
