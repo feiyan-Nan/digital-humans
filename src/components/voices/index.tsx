@@ -22,8 +22,13 @@ type IState = {
 };
 
 const Voices: React.FC<IProps> = ({ onTabChange, list, tabActiveKey = 0 }) => {
-  const { updateVoice, selectedVoice } = useStore(
-    ({ updateVoice, selectedVoice }) => ({ updateVoice, selectedVoice }),
+  const { updateVoice, selectedVoice, speechStr, updateSpeechStr } = useStore(
+    ({ updateVoice, selectedVoice, speechStr, updateSpeechStr }) => ({
+      updateVoice,
+      selectedVoice,
+      speechStr,
+      updateSpeechStr,
+    }),
     shallow,
   );
 
@@ -60,7 +65,14 @@ const Voices: React.FC<IProps> = ({ onTabChange, list, tabActiveKey = 0 }) => {
         <div className="persons_tip" style={{ paddingTop: '10px' }}>
           语速
           <Space.Compact style={{ width: '60%', marginLeft: '10px' }} size="small">
-            <InputNumber defaultValue={1.2} type="number" style={{ textAlign: 'center' }} />
+            <InputNumber
+              value={speechStr}
+              min={0}
+              onChange={updateSpeechStr}
+              step="0.1"
+              type="number"
+              style={{ textAlign: 'center' }}
+            />
             <Button type="primary">确认</Button>
           </Space.Compact>
         </div>

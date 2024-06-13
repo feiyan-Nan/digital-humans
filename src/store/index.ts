@@ -53,6 +53,9 @@ interface IStore {
 
   currentName: string;
   updateCurrentName: (value: string) => void;
+
+  speechStr: number;
+  updateSpeechStr: (value: number) => void;
 }
 
 type CustomStoreType = StateCreator<IStore>;
@@ -65,6 +68,8 @@ const store: CustomStoreType = (set, get) => ({
     set({
       selected,
     }),
+  speechStr: 1.2,
+  updateSpeechStr: (value: number) => set(() => ({ speechStr: value })),
   textContent: '',
   updateTextContent: (val: string) => set(() => ({ textContent: val })),
   backGroundImage:

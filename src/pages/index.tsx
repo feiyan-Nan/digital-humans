@@ -128,6 +128,7 @@ const IIndex: React.FC = () => {
     updateDigitalImage,
     currentName,
     updateCurrentName,
+    speechStr,
   } = useStore(
     ({
       textContent,
@@ -140,6 +141,7 @@ const IIndex: React.FC = () => {
       updateDigitalImage,
       currentName,
       updateCurrentName,
+      speechStr,
     }) => ({
       selectedPerson,
       textContent,
@@ -154,6 +156,7 @@ const IIndex: React.FC = () => {
       updateDigitalImage,
       currentName,
       updateCurrentName,
+      speechStr,
     }),
     shallow,
   );
@@ -338,43 +341,50 @@ const IIndex: React.FC = () => {
     const { digitalId } = selectedPerson;
     const { templateId: voice } = selectedVoice;
     const { url } = selectedBackground;
-
-    const body = {
-      name: currentName,
-      textContent,
-      voice,
-      digitalId,
-      speechStr: 1, // 语速
-      width: 1080,
-      height: 1920,
-      layers: [
-        {
-          repeat: 0, // 0 表示一直存在，1 表示短暂出现，出现的时长为 duration 定义；默认为0
-          data: [
-            {
-              type: 'image',
-              url,
-              duration: 1000,
-              rect: [
-                0, // 左上 x
-                0, // 左上 x
-                1080, // 宽
-                1920, // 高
-              ],
-            },
-          ],
-        },
-        {
-          repeat: 0,
-          data: [
-            {
-              type: 'human',
-              rect: [270, 500, 810, 1440],
-            },
-          ],
-        },
-      ],
-    };
+    console.log(speechStr, '语速');
+    let body: any = {};
+    if (state.wordsOrSoundsActiveKey === 0) {
+      if (textContent.length === 0) {
+        message.error('请输入文字播报内容');
+        return;
+      }
+      body = {
+        name: currentName,
+        textContent,
+        voice,
+        digitalId,
+        speechStr: 1, // 语速
+        width: 1080,
+        height: 1920,
+        layers: [
+          {
+            repeat: 0, // 0 表示一直存在，1 表示短暂出现，出现的时长为 duration 定义；默认为0
+            data: [
+              {
+                type: 'image',
+                url,
+                duration: 1000,
+                rect: [
+                  0, // 左上 x
+                  0, // 左上 x
+                  1080, // 宽
+                  1920, // 高
+                ],
+              },
+            ],
+          },
+          {
+            repeat: 0,
+            data: [
+              {
+                type: 'human',
+                rect: [270, 500, 810, 1440],
+              },
+            ],
+          },
+        ],
+      };
+    }
 
     showCreateVideoLoading();
 
