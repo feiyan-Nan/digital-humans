@@ -1,11 +1,11 @@
 import React from 'react';
-import {Layout, message, Modal, Spin} from 'antd';
-import {useAsyncEffect, useBoolean, useRequest, useSetState} from 'ahooks';
+import { Layout, message, Modal, Spin } from 'antd';
+import { useAsyncEffect, useBoolean, useRequest, useSetState } from 'ahooks';
 import classNames from 'classnames';
 
 import './index.scss';
 
-import {shallow} from 'zustand/shallow';
+import { shallow } from 'zustand/shallow';
 import voiceIcon from '@/static/icons/voice.png';
 import personsIcon from '@/static/icons/persons.png';
 import imagesIcon from '@/static/icons/images.png';
@@ -23,13 +23,13 @@ import Persons from '@/components/persons';
 import Backgrounds from '@/components/backgrounds';
 import Voices from '@/components/voices';
 
-import api, {createWithTTS} from '@/api';
+import api, { createWithTTS } from '@/api';
 import InlineEdit from '@/components/InlineEdit';
 import WordsOrSounds from '@/components/wordsOrSounds';
 
 import useStore from '@/store';
 
-const {Sider, Content, Header, Footer} = Layout;
+const { Sider, Content, Header, Footer } = Layout;
 // const { TextArea } = Input;
 
 const sliderStyle: React.CSSProperties = {
@@ -71,7 +71,8 @@ type IStates = {
 
   defaultEditStatus: boolean;
 
-  // freePersonList: { url: string; text?: string | undefined; id: number }[];
+  initialName: string;
+  currentName: string;
 };
 
 enum TabsEnum {
@@ -98,7 +99,7 @@ const IIndex: React.FC = () => {
     backgrounds: [],
     activeNum: 0,
     siderLoading: false,
-    loading: {backgrounds: false, digital: false, voice: false, sider: false},
+    loading: { backgrounds: false, digital: false, voice: false, sider: false },
     persons: [],
     voices: [],
     videos: [],
@@ -106,12 +107,15 @@ const IIndex: React.FC = () => {
     bgActiveKey: TabsEnum.public,
     voiceActiveKey: TabsEnum.public,
 
-    wordsOrSoundsActiveKey: TabsEnum.private,
+    wordsOrSoundsActiveKey: TabsEnum.public,
 
     defaultEditStatus: false,
+
+    initialName: '未命名草稿',
+    currentName: '未命名草稿',
   });
 
-  const [createVideoIng, {setTrue, setFalse}] = useBoolean(false);
+  const [createVideoIng, { setTrue: showCreateVideoLoading, setFalse: hideCreateVideoLoading }] = useBoolean(false);
 
   const {
     textContent,
@@ -120,17 +124,23 @@ const IIndex: React.FC = () => {
     selectedBackground,
     updateBackground,
     selectedVoice,
-    updateVoice
+    updateVoice,
+    updateDigitalImage,
+    currentName,
+    updateCurrentName,
   } = useStore(
     ({
-       textContent,
-       selectedPerson,
-       updatePerson,
-       selectedBackground,
-       updateBackground,
-       selectedVoice,
-       updateVoice
-     }) => ({
+      textContent,
+      selectedPerson,
+      updatePerson,
+      selectedBackground,
+      updateBackground,
+      selectedVoice,
+      updateVoice,
+      updateDigitalImage,
+      currentName,
+      updateCurrentName,
+    }) => ({
       selectedPerson,
       textContent,
       updatePerson,
@@ -140,12 +150,16 @@ const IIndex: React.FC = () => {
 
       selectedVoice,
       updateVoice,
+
+      updateDigitalImage,
+      currentName,
+      updateCurrentName,
     }),
     shallow,
   );
 
   // 数字人接口请求
-  const {loading: personListLoading, run: getPersonList} = useRequest(
+  const { loading: personListLoading, run: getPersonList } = useRequest(
     (personsActiveKey: TabsEnum) =>
       personsActiveKey === TabsEnum.public ? api.getFreePersonList() : api.getSuccessPersonList(),
     {
@@ -158,7 +172,7 @@ const IIndex: React.FC = () => {
           ['SUCCESS', undefined],
         ]);
 
-        const persons = res.data.map(({avatarUrl: url, digitalId, name: text, status, ...rest}) => ({
+        const persons = res.data.map(({ avatarUrl: url, digitalId, name: text, status, ...rest }) => ({
           url,
           id: digitalId,
           text,
@@ -168,7 +182,7 @@ const IIndex: React.FC = () => {
           ...rest,
         }));
 
-        setState({persons});
+        setState({ persons });
       },
     },
   );
@@ -177,7 +191,7 @@ const IIndex: React.FC = () => {
   const onPersonsTabChange = (personsActiveKey: TabsEnum) => {
     if (state.personsActiveKey !== personsActiveKey) {
       getPersonList(personsActiveKey);
-      setState({personsActiveKey});
+      setState({ personsActiveKey });
     }
   };
 
@@ -186,13 +200,13 @@ const IIndex: React.FC = () => {
   };
 
   // 背景列表
-  const {loading: bgLoading, run: getBgList} = useRequest(
+  const { loading: bgLoading, run: getBgList } = useRequest(
     (bgActiveKey) => (bgActiveKey === TabsEnum.public ? api.getFreeBackgroundList() : api.getUploadBackgroundList()),
     {
       manual: true,
 
       onSuccess(res) {
-        setState({backgrounds: res.data});
+        setState({ backgrounds: res.data });
       },
     },
   );
@@ -200,21 +214,21 @@ const IIndex: React.FC = () => {
   const onBgTabChange = (bgActiveKey: TabsEnum) => {
     if (bgActiveKey !== state.bgActiveKey) {
       getBgList(bgActiveKey);
-      setState({bgActiveKey});
+      setState({ bgActiveKey });
     }
   };
 
   // 音色列表
-  const {loading: voiceLoading, run: getAudioList} = useRequest(
+  const { loading: voiceLoading, run: getAudioList } = useRequest(
     (voiceActiveKey: TabsEnum) =>
       voiceActiveKey === TabsEnum.public ? api.getAudioFreeList() : api.getCustomAudioList(),
     {
       manual: true,
 
       onSuccess(res) {
-        const voices = res.data.map(({previewPictureUrl, ...rest}) => ({...rest, url: previewPictureUrl}));
+        const voices = res.data.map(({ previewPictureUrl, ...rest }) => ({ ...rest, url: previewPictureUrl }));
 
-        setState({voices});
+        setState({ voices });
       },
     },
   );
@@ -222,12 +236,12 @@ const IIndex: React.FC = () => {
   const onAudioTabChange = (voiceActiveKey: TabsEnum) => {
     if (voiceActiveKey !== state.voiceActiveKey) {
       getAudioList(voiceActiveKey);
-      setState({voiceActiveKey});
+      setState({ voiceActiveKey });
     }
   };
 
   // 获取已生成的视频
-  const {loading: videoLoading, run: getVideoList} = useRequest(api.getVideoList, {
+  const { loading: videoLoading, run: getVideoList } = useRequest(api.getVideoList, {
     manual: true,
 
     onSuccess(res) {
@@ -239,7 +253,7 @@ const IIndex: React.FC = () => {
       ]);
 
       setState({
-        videos: res.data.map((i) => ({...i, statusText: statusMap.get(i.status)})),
+        videos: res.data.map((i) => ({ ...i, statusText: statusMap.get(i.status) })),
       });
     },
   });
@@ -274,13 +288,17 @@ const IIndex: React.FC = () => {
   useAsyncEffect(async () => {
     const siderLoading = personListLoading || voiceLoading || bgLoading;
 
-    setState({siderLoading});
+    setState({ siderLoading });
   }, [personListLoading, voiceLoading, bgLoading]);
 
   // 监测数据获取状态，赋全局默认值
   useAsyncEffect(async () => {
     !selectedPerson && state.persons.length && updatePerson(state.persons[0]);
   }, [state.persons]);
+
+  useAsyncEffect(async () => {
+    updateDigitalImage(selectedPerson?.url);
+  }, [selectedPerson]);
 
   useAsyncEffect(async () => {
     !selectedBackground && state.backgrounds.length && updateBackground(state.backgrounds[0]);
@@ -290,10 +308,12 @@ const IIndex: React.FC = () => {
     !selectedVoice && state.voices.length && updateVoice(state.voices[0]);
   }, [state.voices]);
 
-  const changeNav = (activeNum: number) => setState({activeNum});
+  const changeNav = (activeNum: number) => setState({ activeNum });
 
   const onNameChange = (name: string) => {
-    console.log(name);
+    if (currentName !== name) {
+      updateCurrentName(name);
+    }
   };
 
   const toHomePage = () => {
@@ -305,63 +325,65 @@ const IIndex: React.FC = () => {
   };
 
   const onWordsOrSoundsTabChange = (wordsOrSoundsActiveKey: number) => {
+    console.log('AT-[ wordsOrSoundsActiveKey &&&&&********** ]', wordsOrSoundsActiveKey);
     setState({
       wordsOrSoundsActiveKey,
     });
   };
 
   const handleOnSave = () => {
-    console.log('AT-[ handleOnSave &&&&&********** ]');
-    message.success('handleOnSave');
-    console.log(selectedPerson, selectedVoice, selectedBackground, textContent)
-    const {digitalId} = selectedPerson
-    const {templateId: voice} = selectedVoice
-    const {url} = selectedBackground
+    // console.log('AT-[ handleOnSave &&&&&********** ]');
+    // message.success('handleOnSave');
+    // console.log(selectedPerson, selectedVoice, selectedBackground, textContent);
+    const { digitalId } = selectedPerson;
+    const { templateId: voice } = selectedVoice;
+    const { url } = selectedBackground;
+
     const body = {
-      "name": "测试视频0606_1",
-      "textContent": textContent,
-      "voice": voice,
-      "digitalId": digitalId,
-      "speechStr": 1, //语速
-      "width": 1080,
-      "height": 1920,
-      "layers": [
+      name: currentName,
+      textContent,
+      voice,
+      digitalId,
+      speechStr: 1, // 语速
+      width: 1080,
+      height: 1920,
+      layers: [
         {
-          "repeat": 0, // 0 表示一直存在，1 表示短暂出现，出现的时长为 duration 定义；默认为0
-          "data": [
+          repeat: 0, // 0 表示一直存在，1 表示短暂出现，出现的时长为 duration 定义；默认为0
+          data: [
             {
-              "type": "image",
-              "url": url,
-              "duration": 1000,
-              "rect": [
+              type: 'image',
+              url,
+              duration: 1000,
+              rect: [
                 0, // 左上 x
                 0, // 左上 x
                 1080, // 宽
-                1920 // 高
-              ]
-            }
-          ]
+                1920, // 高
+              ],
+            },
+          ],
         },
         {
-          "repeat": 0,
-          "data": [
+          repeat: 0,
+          data: [
             {
-              "type": "human",
-              "rect": [
-                270,
-                500,
-                810,
-                1440
-              ]
-            }
-          ]
-        }
-      ]
-    }
-    createWithTTS(body).then(res => console.log(res))
-    setTrue();
+              type: 'human',
+              rect: [270, 500, 810, 1440],
+            },
+          ],
+        },
+      ],
+    };
 
-    setTimeout(setFalse, 3000);
+    showCreateVideoLoading();
+
+    createWithTTS(body)
+      .then((res) => {
+        console.log('AT-[ res &&&&&********** ]', res);
+        getVideoList();
+      })
+      .finally(hideCreateVideoLoading);
   };
 
   const previewVideo = (mp4Path: string) => {
@@ -369,7 +391,7 @@ const IIndex: React.FC = () => {
       title: '视频预览',
       content: (
         <div>
-          <video src={mp4Path} width="300px" autoPlay/>
+          <video src={mp4Path} width="300px" autoPlay />
         </div>
       ),
 
@@ -382,14 +404,14 @@ const IIndex: React.FC = () => {
       <Header style={headerStyle}>
         <div className="custom_header">
           <div className="logo_custom" onClick={toHomePage}>
-            <img src={homeIcon} alt="" className="home_icon"/>
-            <img src={logo} alt="" className="logo_icon"/>
+            <img src={homeIcon} alt="" className="home_icon" />
+            <img src={logo} alt="" className="logo_icon" />
           </div>
 
-          <InlineEdit name="未命名草稿" onChange={onNameChange}/>
+          <InlineEdit name={state.currentName} onChange={onNameChange} />
 
           <div className="account">
-            <img src={vector} alt=""/>
+            <img src={vector} alt="" />
           </div>
         </div>
       </Header>
@@ -405,7 +427,7 @@ const IIndex: React.FC = () => {
                     key={item.text}
                     onClick={() => changeNav(index)}
                   >
-                    <img src={item.icon} alt=""/>
+                    <img src={item.icon} alt="" />
                     <span className="text">{item.text}</span>
                   </div>
                 ))}
@@ -433,7 +455,7 @@ const IIndex: React.FC = () => {
                 )}
 
                 {state.activeNum === 2 && (
-                  <Voices list={state.voices} onTabChange={onAudioTabChange} tabActiveKey={state.voiceActiveKey}/>
+                  <Voices list={state.voices} onTabChange={onAudioTabChange} tabActiveKey={state.voiceActiveKey} />
                 )}
               </Spin>
             </Content>
@@ -441,9 +463,9 @@ const IIndex: React.FC = () => {
         </Sider>
 
         <Layout>
-          <Layout style={{height: 'calc(100% - 80px)'}}>
+          <Layout style={{ height: 'calc(100% - 80px)' }}>
             <Content>
-              <Video/>
+              <Video />
             </Content>
 
             <Sider className="right_sider" width="256px">
@@ -457,12 +479,14 @@ const IIndex: React.FC = () => {
                       />
                     </div>
 
-                    {true && (<div className="save" onClick={handleOnSave}>
-                      保存并生成播报
-                    </div>)}
+                    {true && (
+                      <div className="save" onClick={handleOnSave}>
+                        保存并生成播报
+                      </div>
+                    )}
                     {!state.videos.length && (
                       <div className="block">
-                        <AutoTabs items={['视频列表']} textMode="black"/>
+                        <AutoTabs items={['视频列表']} textMode="black" />
                       </div>
                     )}
                   </div>
@@ -472,7 +496,7 @@ const IIndex: React.FC = () => {
                   <div className="video_list">
                     {state.videos.map((item) => (
                       <div className="video_item" key={item.digitalPersonWorksId}>
-                        <img src={item.previewPictureUrl} alt="" className="thumbnail"/>
+                        <img src={item.previewPictureUrl} alt="" className="thumbnail" />
                         <div className="video_info">
                           <div className="video_name">{item.videoName}</div>
                           <div className="video_status">状态：{item.statusText}</div>
@@ -494,8 +518,8 @@ const IIndex: React.FC = () => {
           </Layout>
 
           <Footer className="custom_footer">
-            <AspectRatio/>
-            <LocationInformation/>
+            <AspectRatio />
+            <LocationInformation />
           </Footer>
         </Layout>
       </Layout>

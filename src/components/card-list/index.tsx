@@ -17,6 +17,7 @@ type IProps = {
   onChange?: (checkedValue: IItem) => void;
   type?: 'avatar' | 'default';
   onDelete?: (item: any) => void;
+  onEdit?: (item: any) => void;
 };
 
 type IState = {
@@ -34,6 +35,7 @@ const CardList: React.FC<IProps> = ({
   onChange,
   type = 'default',
   onDelete,
+  onEdit,
 }) => {
   const [state, setState] = useSetState<IState>({ activeKey, items, type, editKey: undefined, editable });
 
@@ -77,6 +79,7 @@ const CardList: React.FC<IProps> = ({
               editable={state.editable && item.enable}
               deleteAble={state.editable}
               onDelete={() => onDelete && onDelete(item)}
+              onEdit={(newValue: string) => onEdit?.({ ...item, newValue })}
             />
           </div>
         ))}

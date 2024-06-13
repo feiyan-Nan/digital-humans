@@ -1,7 +1,7 @@
 import React from 'react';
-import {useAsyncEffect, useSetState} from 'ahooks';
-import {message} from 'antd';
-import {shallow} from 'zustand/shallow';
+import { useAsyncEffect, useSetState } from 'ahooks';
+import { message } from 'antd';
+import { shallow } from 'zustand/shallow';
 import AutoTabs from '@/components/auto-tabs';
 import CardList from '@/components/card-list';
 import TipAndUpload from '@/components/tipAndUpload';
@@ -25,7 +25,7 @@ type IStates = {
   cardListActiveKey: number;
 };
 
-const Persons: React.FC<IProps> = ({list, tabActiveKey, onTabChange, refreshPerson}) => {
+const Persons: React.FC<IProps> = ({ list, tabActiveKey, onTabChange, refreshPerson }) => {
   const [state, setState] = useSetState<IStates>({
     activeKey: tabActiveKey,
 
@@ -36,20 +36,20 @@ const Persons: React.FC<IProps> = ({list, tabActiveKey, onTabChange, refreshPers
     cardListActiveKey: -1,
   });
 
-  const {updatePerson, selectedPerson, updateDigitalImage} = useStore(
-    ({updatePerson, selectedPerson, updateDigitalImage}) => ({updatePerson, selectedPerson, updateDigitalImage}),
+  const { updatePerson, selectedPerson, updateDigitalImage } = useStore(
+    ({ updatePerson, selectedPerson, updateDigitalImage }) => ({ updatePerson, selectedPerson, updateDigitalImage }),
     shallow,
   );
 
-  useAsyncEffect(async () => setState({personItems: list}), [list]);
+  useAsyncEffect(async () => setState({ personItems: list }), [list]);
 
   useAsyncEffect(async () => {
     const cardListActiveKey = state.personItems.findIndex((i) => i.digitalId === selectedPerson.digitalId);
-    setState({cardListActiveKey});
+    setState({ cardListActiveKey });
   }, [state.personItems, selectedPerson]);
 
   useAsyncEffect(async () => {
-    setState({activeKey: tabActiveKey});
+    setState({ activeKey: tabActiveKey });
   }, [tabActiveKey]);
 
   const toCreateDigital = () => onTabChange && onTabChange(1);
@@ -76,17 +76,16 @@ const Persons: React.FC<IProps> = ({list, tabActiveKey, onTabChange, refreshPers
   };
 
   const onChange = (data: any) => {
-    updateDigitalImage(data?.url)
-    updatePerson(data)
+    updateDigitalImage(data?.url);
+    updatePerson(data);
   };
-
 
   const onDelete = async (item: { id: number }) => {
     const key = 'deleteing';
 
-    message.loading({content: '删除中', duration: 0, key});
+    message.loading({ content: '删除中', duration: 0, key });
     api
-      .deletePerson({assetId: item.id})
+      .deletePerson({ assetId: item.id })
       .then((r) => {
         r.code === 200 && message.success('删除成功');
         refreshPerson && refreshPerson();
@@ -99,10 +98,28 @@ const Persons: React.FC<IProps> = ({list, tabActiveKey, onTabChange, refreshPers
       });
   };
 
+  const onEdit = async (item: any) => {
+    console.log('AT-[ onEdit ---------     xxxxx    &&&&&********** ]', item);
+
+    const key = 'updatePersonAssetName';
+
+    message.loading({ content: '更改名称中', key, duration: 0 });
+
+    api.updatePersonAssetName({ digitalPersonAssetsId: item.digitalId, name: item.newValue }).then((res) => {
+      console.log('AT-[ res &&&&&********** ]', res);
+      message.destroy(key);
+      if (res.code === 200) {
+        message.success('更改成功');
+      } else {
+        message.error('更改失败');
+      }
+    });
+  };
+
   return (
     <div className="persons">
       <div className="persons_header">
-        <AutoTabs items={state.tabItems} onTabChange={onTabChange} activeKey={state.activeKey}/>
+        <AutoTabs items={state.tabItems} onTabChange={onTabChange} activeKey={state.activeKey} />
 
         {state.activeKey === 1 && (
           <>
@@ -120,7 +137,7 @@ const Persons: React.FC<IProps> = ({list, tabActiveKey, onTabChange, refreshPers
               onChange={onFileChange}
             />
 
-            <AutoTabs items={['我的数字人']} key="travel"/>
+            <AutoTabs items={['我的数字人']} key="travel" />
           </>
         )}
       </div>
@@ -132,6 +149,7 @@ const Persons: React.FC<IProps> = ({list, tabActiveKey, onTabChange, refreshPers
           editable={state.activeKey === 1}
           onChange={onChange}
           onDelete={onDelete}
+          onEdit={onEdit}
         />
       </div>
     </div>

@@ -1,10 +1,10 @@
 import React from 'react';
 import { useAsyncEffect, useSetState } from 'ahooks';
 import { Input } from 'antd';
+import { shallow } from 'zustand/shallow';
 import AutoTabs from '@/components/auto-tabs';
 import TipAndUpload from '@/components/tipAndUpload';
-import useStore from "@/store";
-import {shallow} from "zustand/shallow";
+import useStore from '@/store';
 
 const { TextArea } = Input;
 
@@ -18,21 +18,10 @@ type IState = {
 };
 
 const WordsOrSounds: React.FC<IProps> = ({ tabActiveKey = 0, onTabChange }) => {
-  const [state, setState] = useSetState<IState>({
-    tabActiveKey,
-  });
-  const {updateTextContent, textContent, updatePerson, selectedBackground, updateBackground, selectedVoice, updateVoice} = useStore(
-    ({updateTextContent,textContent, updatePerson, selectedBackground, updateBackground, selectedVoice, updateVoice}) => ({
-      updateTextContent,
-      textContent,
-      updatePerson,
+  const [state, setState] = useSetState<IState>({ tabActiveKey });
 
-      selectedBackground,
-      updateBackground,
-
-      selectedVoice,
-      updateVoice,
-    }),
+  const { updateTextContent, textContent } = useStore(
+    ({ updateTextContent, textContent }) => ({ updateTextContent, textContent }),
     shallow,
   );
 
@@ -40,12 +29,7 @@ const WordsOrSounds: React.FC<IProps> = ({ tabActiveKey = 0, onTabChange }) => {
     setState({ tabActiveKey });
   }, [tabActiveKey]);
 
-  // const handleOnTabChange = (tabActiveKey: number) => {
-  //   setState({ tabActiveKey });
-  // };
-  const onChange = (value) => {
-    updateTextContent(value.target.value)
-  }
+  const onChange = (value: any) => updateTextContent(value.target.value);
 
   return (
     <div className="wordsorsounds">

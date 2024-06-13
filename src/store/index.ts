@@ -26,8 +26,8 @@ interface IStore {
   /**
    * 横竖屏 VERTICAL：竖版 HORIZONTAL: 横版
    */
-  align: VERTICAL | HORIZONTAL;
-  updateAlign: (align: VERTICAL | HORIZONTAL) => void;
+  align: 'VERTICAL' | 'HORIZONTAL';
+  updateAlign: (align: 'VERTICAL' | 'HORIZONTAL') => void;
   /**
    * 缩放比例
    */
@@ -50,6 +50,9 @@ interface IStore {
 
   selectedVoice: any;
   updateVoice: (value: any) => void;
+
+  currentName: string;
+  updateCurrentName: (value: string) => void;
 }
 
 type CustomStoreType = StateCreator<IStore>;
@@ -71,7 +74,7 @@ const store: CustomStoreType = (set, get) => ({
     'https://digital-person.oss-cn-hangzhou.aliyuncs.com/alpha/51c8b926-62b5-4a2e-944e-ea54499eb5e6_avatar.png',
   updateDigitalImage: (image: string) => set(() => ({ digitalManImage: image })),
   align: 'VERTICAL',
-  updateAlign: (align: string) => set(() => ({ align })),
+  updateAlign: (align: 'VERTICAL' | 'HORIZONTAL') => set(() => ({ align })),
   scale: 1,
   updateScale: (scale: number) => set(() => ({ scale })),
   count: 0,
@@ -85,6 +88,9 @@ const store: CustomStoreType = (set, get) => ({
   updateBackground: (selectedBackground: any) => set(() => ({ selectedBackground })),
   selectedVoice: null,
   updateVoice: (selectedVoice: any) => set(() => ({ selectedVoice })),
+
+  currentName: '',
+  updateCurrentName: (currentName: string) => set(() => ({ currentName })),
 });
 const useStore = create<IStore>()(immer(devtools(store)));
 

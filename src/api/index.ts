@@ -200,6 +200,13 @@ export const createVideoByText = (data: {
     data,
   });
 
+export const updatePersonAssetName = (data: { digitalPersonAssetsId: number; name: string }) =>
+  instance<null, any>({
+    url: '/openApiDigitalPerson/customer/updatePersonAssetName',
+    method: 'post',
+    data,
+  });
+
 export default {
   getFreePersonList,
   getSuccessPersonList,
@@ -213,4 +220,5 @@ export default {
   createVideoByText,
   uploadBackgroundFile,
   deletePerson,
+  updatePersonAssetName,
 };
