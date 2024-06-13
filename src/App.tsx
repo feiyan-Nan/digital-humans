@@ -15,7 +15,7 @@ function App() {
           <Route path="/video" element={<Video />} />
         </Route>
 
-        <Route path="*" element={<Navigate to="/home" />} />
+        <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </BrowserRouter>
   );

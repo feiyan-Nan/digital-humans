@@ -23,7 +23,7 @@ import Persons from '@/components/persons';
 import Backgrounds from '@/components/backgrounds';
 import Voices from '@/components/voices';
 
-import api, { createWithTTS } from '@/api';
+import api from '@/api';
 import InlineEdit from '@/components/InlineEdit';
 import WordsOrSounds from '@/components/wordsOrSounds';
 
@@ -73,6 +73,12 @@ type IStates = {
 
   initialName: string;
   currentName: string;
+
+  textInputFocus: boolean;
+
+  isGetedDraft: boolean;
+
+  audioUrl: string;
 };
 
 enum TabsEnum {
@@ -113,12 +119,19 @@ const IIndex: React.FC = () => {
 
     initialName: '未命名草稿',
     currentName: '未命名草稿',
+
+    textInputFocus: false,
+
+    isGetedDraft: false,
+
+    audioUrl: '',
   });
 
   const [createVideoIng, { setTrue: showCreateVideoLoading, setFalse: hideCreateVideoLoading }] = useBoolean(false);
 
   const {
     textContent,
+    updateTextContent,
     selectedPerson,
     updatePerson,
     selectedBackground,
@@ -128,9 +141,16 @@ const IIndex: React.FC = () => {
     updateDigitalImage,
     currentName,
     updateCurrentName,
+
+    speechStr,
+    updateSpeedStr,
+
+    draftData,
+    updateDraftData,
   } = useStore(
     ({
       textContent,
+      updateTextContent,
       selectedPerson,
       updatePerson,
       selectedBackground,
@@ -140,9 +160,15 @@ const IIndex: React.FC = () => {
       updateDigitalImage,
       currentName,
       updateCurrentName,
+      speechStr,
+      updateSpeedStr,
+      draftData,
+      updateDraftData,
     }) => ({
-      selectedPerson,
       textContent,
+      updateTextContent,
+
+      selectedPerson,
       updatePerson,
 
       selectedBackground,
@@ -154,6 +180,12 @@ const IIndex: React.FC = () => {
       updateDigitalImage,
       currentName,
       updateCurrentName,
+
+      speechStr,
+      updateSpeedStr,
+
+      draftData,
+      updateDraftData,
     }),
     shallow,
   );
@@ -258,16 +290,51 @@ const IIndex: React.FC = () => {
     },
   });
 
+  // 获取草稿
   useAsyncEffect(async () => {
-    getVideoList();
+    if (!state.isGetedDraft) {
+      const res = await api.getDraftVideo();
+
+      if (res.code === 200) {
+        setState({ isGetedDraft: true });
+
+        updateDraftData(res.data);
+
+        const {
+          selectedBackground: b,
+          selectedPerson: p,
+          selectedVoice: v,
+          textContent: t,
+          speechStr: s,
+          currentName: c,
+        } = draftData;
+
+        updateBackground(b);
+        updatePerson(p);
+        updateVoice(v);
+        updateTextContent(t);
+        updateSpeedStr(s);
+        updateCurrentName(c);
+      }
+    }
   }, []);
 
-  useAsyncEffect(async () => {
-    getPersonList(0);
+  // useAsyncEffect(async () => {
+  //   if (state.isGetedDraft) {
+  //     getBgList(0);
 
+  //     getAudioList(0);
+
+  //     getVideoList();
+  //   }
+  // }, [state.isGetedDraft]);
+
+  useAsyncEffect(async () => {
     getBgList(0);
 
     getAudioList(0);
+
+    getVideoList();
   }, []);
 
   /** 触发接口请求 */
@@ -308,6 +375,20 @@ const IIndex: React.FC = () => {
     !selectedVoice && state.voices.length && updateVoice(state.voices[0]);
   }, [state.voices]);
 
+  // 创建草稿记录
+  useAsyncEffect(async () => {
+    const res = await api.createDraftVideo({
+      selectedBackground,
+      selectedPerson,
+      selectedVoice,
+      textContent,
+      speechStr,
+      currentName,
+    });
+
+    console.log('resres------------', res);
+  }, [selectedBackground, selectedPerson, selectedVoice, textContent, speechStr, currentName]);
+
   const changeNav = (activeNum: number) => setState({ activeNum });
 
   const onNameChange = (name: string) => {
@@ -317,7 +398,7 @@ const IIndex: React.FC = () => {
   };
 
   const toHomePage = () => {
-    window.location.href = 'https://www.baidu.com/';
+    window.location.href = 'https://aidigitalfield.com/';
   };
 
   const onUploadBgSuccess = () => {
@@ -325,26 +406,39 @@ const IIndex: React.FC = () => {
   };
 
   const onWordsOrSoundsTabChange = (wordsOrSoundsActiveKey: number) => {
-    console.log('AT-[ wordsOrSoundsActiveKey &&&&&********** ]', wordsOrSoundsActiveKey);
-    setState({
-      wordsOrSoundsActiveKey,
-    });
+    setState({ wordsOrSoundsActiveKey });
   };
 
   const handleOnSave = () => {
-    // console.log('AT-[ handleOnSave &&&&&********** ]');
-    // message.success('handleOnSave');
-    // console.log(selectedPerson, selectedVoice, selectedBackground, textContent);
     const { digitalId } = selectedPerson;
     const { templateId: voice } = selectedVoice;
     const { url } = selectedBackground;
 
+    if (state.wordsOrSoundsActiveKey === 0) {
+      if (!textContent) {
+        message.error('请先输入文字播报内容');
+        setState({ textInputFocus: false });
+
+        setTimeout(() => setState({ textInputFocus: true }));
+        return;
+      }
+    }
+
+    if (state.wordsOrSoundsActiveKey === 1) {
+      if (!state.audioUrl) {
+        message.error('请先上传音频文件');
+        return;
+      }
+    }
+
+    const options = { ...(state.wordsOrSoundsActiveKey === 0 ? { textContent } : { audioUrl: state.audioUrl }) };
+
     const body = {
+      ...options,
       name: currentName,
-      textContent,
       voice,
       digitalId,
-      speechStr: 1, // 语速
+      speechStr, // 语速
       width: 1080,
       height: 1920,
       layers: [
@@ -378,7 +472,8 @@ const IIndex: React.FC = () => {
 
     showCreateVideoLoading();
 
-    createWithTTS(body)
+    api
+      .createWithTTS(body)
       .then((res) => {
         console.log('AT-[ res &&&&&********** ]', res);
         getVideoList();
@@ -398,6 +493,18 @@ const IIndex: React.FC = () => {
       okText: '确定',
     });
   };
+
+  const onFileChange = async (formData: FormData) => {
+    const res = await api.uploadAudio(formData);
+
+    if (res.code === 200) {
+      setState({ audioUrl: res.data });
+    }
+  };
+
+  useAsyncEffect(async () => {
+    setState({ audioUrl: '' });
+  }, [state.wordsOrSoundsActiveKey]);
 
   return (
     <Layout>
@@ -476,6 +583,8 @@ const IIndex: React.FC = () => {
                       <WordsOrSounds
                         tabActiveKey={state.wordsOrSoundsActiveKey}
                         onTabChange={onWordsOrSoundsTabChange}
+                        focus={state.textInputFocus}
+                        onFileChange={onFileChange}
                       />
                     </div>
 

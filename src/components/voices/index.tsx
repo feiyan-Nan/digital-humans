@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { shallow } from 'zustand/shallow';
 import { useSetState, useAsyncEffect } from 'ahooks';
 import { Button, InputNumber, Space } from 'antd';
@@ -10,20 +10,26 @@ import './index.scss';
 import useStore from '@/store';
 
 type IProps = {
-  list: { url: string; id: number; templateId: number }[];
+  list: { url: string; id: number; templateId: number; enable: boolean }[];
   onTabChange?: (activeKey: number) => void;
   tabActiveKey?: number;
 };
 
 type IState = {
   activeKey: number;
-  list: { url: string; id: number; templateId: number }[];
+  list: { url: string; id: number; templateId: number; enable: boolean }[];
   cardListActiveKey: number;
+  speechStr: number;
 };
 
 const Voices: React.FC<IProps> = ({ onTabChange, list, tabActiveKey = 0 }) => {
-  const { updateVoice, selectedVoice } = useStore(
-    ({ updateVoice, selectedVoice }) => ({ updateVoice, selectedVoice }),
+  const { updateVoice, selectedVoice, speechStr, updateSpeedStr } = useStore(
+    ({ updateVoice, selectedVoice, speechStr, updateSpeedStr }) => ({
+      updateVoice,
+      selectedVoice,
+      speechStr,
+      updateSpeedStr,
+    }),
     shallow,
   );
 
@@ -31,6 +37,7 @@ const Voices: React.FC<IProps> = ({ onTabChange, list, tabActiveKey = 0 }) => {
     activeKey: tabActiveKey,
     list,
     cardListActiveKey: -1,
+    speechStr,
   });
 
   useAsyncEffect(async () => {
@@ -52,6 +59,15 @@ const Voices: React.FC<IProps> = ({ onTabChange, list, tabActiveKey = 0 }) => {
 
   const onChange = (data: any) => updateVoice(data);
 
+  const refInput = useRef<any>();
+
+  const onPressEnter = () => {
+    updateSpeedStr(state.speechStr);
+    refInput.current.blur();
+  };
+
+  const onSpeedChange = (speechStr: any) => setState({ speechStr });
+
   return (
     <div className="voice">
       <div className="voice_header">
@@ -60,8 +76,21 @@ const Voices: React.FC<IProps> = ({ onTabChange, list, tabActiveKey = 0 }) => {
         <div className="persons_tip" style={{ paddingTop: '10px' }}>
           语速
           <Space.Compact style={{ width: '60%', marginLeft: '10px' }} size="small">
-            <InputNumber defaultValue={1.2} type="number" style={{ textAlign: 'center' }} />
-            <Button type="primary">确认</Button>
+            <InputNumber
+              defaultValue={state.speechStr}
+              type="number"
+              style={{ textAlign: 'center' }}
+              min={1}
+              max={10}
+              step={0.1}
+              onPressEnter={onPressEnter}
+              onChange={onSpeedChange}
+              ref={refInput}
+            />
+
+            <Button type="primary" style={{ background: '#7B68EE' }} onClick={onPressEnter}>
+              确认
+            </Button>
           </Space.Compact>
         </div>
 
@@ -71,6 +100,7 @@ const Voices: React.FC<IProps> = ({ onTabChange, list, tabActiveKey = 0 }) => {
               tip="我们也支持上传上传音频驱动数字人，时长5分钟以内，格式支持MP3格式。"
               btnText="上传声音"
               accept="image/*"
+              alert="添加产品微信定制：feastfu"
             />
 
             <AutoTabs items={['我的音色']} />

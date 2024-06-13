@@ -207,6 +207,30 @@ export const updatePersonAssetName = (data: { digitalPersonAssetsId: number; nam
     data,
   });
 
+export const createDraftVideo = (data: any) =>
+  instance<null, any>({
+    url: '/api/digitalVhost/createDraftVideo',
+    method: 'post',
+    data,
+  });
+
+export const getDraftVideo = () =>
+  instance<null, any>({
+    url: '/api/digitalVhost/getDraftVideo',
+    method: 'post',
+  });
+
+export const uploadAudio = (formData: FormData) =>
+  instance<null, any>({
+    url: '/openApiDigitalPerson/customer/uploadAudio',
+    method: 'post',
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+
+    data: formData,
+  });
+
 export default {
   getFreePersonList,
   getSuccessPersonList,
@@ -221,4 +245,8 @@ export default {
   uploadBackgroundFile,
   deletePerson,
   updatePersonAssetName,
+  createDraftVideo,
+  getDraftVideo,
+  createWithTTS,
+  uploadAudio,
 };

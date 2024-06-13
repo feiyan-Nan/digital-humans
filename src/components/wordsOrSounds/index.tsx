@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { useAsyncEffect, useSetState } from 'ahooks';
-import { Input } from 'antd';
+import { Input, InputRef } from 'antd';
 import { shallow } from 'zustand/shallow';
 import AutoTabs from '@/components/auto-tabs';
 import TipAndUpload from '@/components/tipAndUpload';
@@ -11,19 +11,28 @@ const { TextArea } = Input;
 type IProps = {
   tabActiveKey?: number;
   onTabChange?: (activeKey: number) => void;
+  onTextChange?: (text: string) => void;
+  onFileChange?: (formData: FormData) => void;
+  focus?: boolean;
 };
 
 type IState = {
   tabActiveKey: number;
 };
 
-const WordsOrSounds: React.FC<IProps> = ({ tabActiveKey = 0, onTabChange }) => {
+const WordsOrSounds: React.FC<IProps> = ({ tabActiveKey = 0, onTabChange, onTextChange, focus, onFileChange }) => {
   const [state, setState] = useSetState<IState>({ tabActiveKey });
 
   const { updateTextContent, textContent } = useStore(
     ({ updateTextContent, textContent }) => ({ updateTextContent, textContent }),
     shallow,
   );
+
+  const inputRef = useRef<InputRef>(null);
+
+  useAsyncEffect(async () => {
+    focus && inputRef.current?.focus();
+  }, [focus]);
 
   useAsyncEffect(async () => {
     setState({ tabActiveKey });
@@ -48,12 +57,13 @@ const WordsOrSounds: React.FC<IProps> = ({ tabActiveKey = 0, onTabChange }) => {
           style={{ height: 200, resize: 'none', marginTop: '20px', padding: 0, border: 'none' }}
           value={textContent}
           onChange={onChange}
+          ref={inputRef}
         />
       ) : (
         <TipAndUpload
           tip="我们也支持上传上传音频驱动数字人，时长5分钟以内，格式支持MP3格式。"
           btnText="上传音频"
-          accept="audio/*"
+          accept="audio/mp3"
           black
           style={{
             marginTop: '20px',
@@ -61,6 +71,7 @@ const WordsOrSounds: React.FC<IProps> = ({ tabActiveKey = 0, onTabChange }) => {
             fontSize: '12px',
             lineHeight: '20px',
           }}
+          onChange={onFileChange}
         />
       )}
     </div>

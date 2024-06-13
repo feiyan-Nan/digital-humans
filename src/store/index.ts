@@ -1,6 +1,7 @@
 import { create, StateCreator } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
+import { useEffect } from 'react';
 import useInputStore from './input';
 
 interface IStore {
@@ -53,6 +54,12 @@ interface IStore {
 
   currentName: string;
   updateCurrentName: (value: string) => void;
+
+  speechStr: number;
+  updateSpeedStr: (value: number) => void;
+
+  draftData: any;
+  updateDraftData: (value: number) => void;
 }
 
 type CustomStoreType = StateCreator<IStore>;
@@ -91,7 +98,14 @@ const store: CustomStoreType = (set, get) => ({
 
   currentName: '',
   updateCurrentName: (currentName: string) => set(() => ({ currentName })),
+
+  speechStr: 1,
+  updateSpeedStr: (speechStr: number) => set(() => ({ speechStr })),
+
+  draftData: null,
+  updateDraftData: (draftData: any) => set(() => ({ draftData })),
 });
+
 const useStore = create<IStore>()(immer(devtools(store)));
 
 export default useStore;

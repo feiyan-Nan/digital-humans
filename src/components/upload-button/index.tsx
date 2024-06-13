@@ -1,5 +1,7 @@
-// import { Upload } from 'antd';
 import React, { FC } from 'react';
+
+import classNames from 'classnames';
+import { Modal } from 'antd';
 import uploadIcon from '@/static/icons/uploadIcon.png';
 import './index.scss';
 
@@ -7,11 +9,12 @@ interface IProps {
   text: string;
   onChange?: (formData: FormData, file: File) => void;
   accept: string;
+
+  alert?: string;
 }
 
-const ButtonCom: FC<IProps> = ({ text, onChange, accept }) => {
+const ButtonCom: FC<IProps> = ({ text, onChange, accept, alert }) => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log('AT-[ handleChange &&&&&********** 点击一次 ]');
     if (e.target.files) {
       const selectedFile = e.target.files[0];
 
@@ -23,8 +26,20 @@ const ButtonCom: FC<IProps> = ({ text, onChange, accept }) => {
     }
   };
 
+  const onAlert = () => {
+    Modal.info({
+      title: '',
+      content: (
+        <div>
+          <p>{alert}</p>
+        </div>
+      ),
+      onOk() {},
+    });
+  };
+
   return (
-    <div className="upload_button">
+    <div className={classNames('upload_button', alert ? 'alertable' : null)} onClick={alert ? onAlert : undefined}>
       <img src={uploadIcon} alt="" />
       {text}
       <input type="file" onChange={handleChange} accept={accept} />
