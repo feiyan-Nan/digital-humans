@@ -7,7 +7,8 @@ import UnoCSS from 'unocss/vite';
 
 // https://vitejs.dev/config https://vitest.dev/config
 export default defineConfig({
-  base: './workbench/',
+  // base: '/workbench/',
+  base: './',
   test: {
     globals: true,
     environment: 'happy-dom',

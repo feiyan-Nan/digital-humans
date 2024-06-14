@@ -2,6 +2,7 @@ import React from 'react';
 import { Layout, message, Modal, Spin } from 'antd';
 import { useAsyncEffect, useBoolean, useRequest, useSetState } from 'ahooks';
 import classNames from 'classnames';
+import { Scrollbars } from 'react-custom-scrollbars';
 
 import './index.scss';
 
@@ -600,28 +601,29 @@ const IIndex: React.FC = () => {
                     )}
                   </div>
                 </Spin>
-
-                <div className="right_box_footer">
-                  <div className="video_list">
-                    {state.videos.map((item) => (
-                      <div className="video_item" key={item.digitalPersonWorksId}>
-                        <img src={item.previewPictureUrl} alt="" className="thumbnail" />
-                        <div className="video_info">
-                          <div className="video_name">{item.videoName}</div>
-                          <div className="video_status">状态：{item.statusText}</div>
-                          <div className="video_time">{item.createTime}</div>
-                          <div className="video_actions">
-                            <div className="video_btn" onClick={() => previewVideo(item.url)}>
-                              播放
-                            </div>
-                            {/* <div className="video_btn">下载</div>
+                <Scrollbars>
+                  <div className="right_box_footer">
+                    <div className="video_list">
+                      {state.videos.map((item) => (
+                        <div className="video_item" key={item.digitalPersonWorksId}>
+                          <img src={item.previewPictureUrl} alt="" className="thumbnail" />
+                          <div className="video_info">
+                            <div className="video_name">{item.videoName}</div>
+                            <div className="video_status">状态：{item.statusText}</div>
+                            <div className="video_time">{item.createTime}</div>
+                            <div className="video_actions">
+                              <div className="video_btn" onClick={() => previewVideo(item.url)}>
+                                播放
+                              </div>
+                              {/* <div className="video_btn">下载</div>
                             <div className="video_btn">删除</div> */}
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
                   </div>
-                </div>
+                </Scrollbars>
               </div>
             </Sider>
           </Layout>

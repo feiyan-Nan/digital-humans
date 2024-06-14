@@ -1,5 +1,6 @@
 import React, { useRef } from 'react';
 import { shallow } from 'zustand/shallow';
+import { Scrollbars } from 'react-custom-scrollbars';
 import { useSetState, useAsyncEffect } from 'ahooks';
 import { Button, InputNumber, Space } from 'antd';
 import AutoTabs from '@/components/auto-tabs';
@@ -107,10 +108,9 @@ const Voices: React.FC<IProps> = ({ onTabChange, list, tabActiveKey = 0 }) => {
           </>
         )}
       </div>
-
-      <div className="voice_main">
+      <Scrollbars>
         <CardList items={state.list} onChange={onChange} activeKey={state.cardListActiveKey} />
-      </div>
+      </Scrollbars>
     </div>
   );
 };

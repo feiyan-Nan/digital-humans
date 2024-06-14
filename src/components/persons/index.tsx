@@ -1,5 +1,6 @@
 import React from 'react';
 import { useAsyncEffect, useSetState } from 'ahooks';
+import { Scrollbars } from 'react-custom-scrollbars';
 import { message } from 'antd';
 import { shallow } from 'zustand/shallow';
 import AutoTabs from '@/components/auto-tabs';
@@ -142,7 +143,8 @@ const Persons: React.FC<IProps> = ({ list, tabActiveKey, onTabChange, refreshPer
         )}
       </div>
 
-      <div className="persons_main">
+      {/* <div className="persons_main"> */}
+      <Scrollbars universal>
         <CardList
           items={state.personItems}
           activeKey={state.cardListActiveKey}
@@ -151,7 +153,8 @@ const Persons: React.FC<IProps> = ({ list, tabActiveKey, onTabChange, refreshPer
           onDelete={onDelete}
           onEdit={onEdit}
         />
-      </div>
+      </Scrollbars>
+      {/* </div> */}
     </div>
   );
 };

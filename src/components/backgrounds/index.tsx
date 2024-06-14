@@ -1,7 +1,8 @@
 import React from 'react';
-import {useAsyncEffect, useSetState} from 'ahooks';
-import {shallow} from 'zustand/shallow';
-import {message} from 'antd';
+import { useAsyncEffect, useSetState } from 'ahooks';
+import { shallow } from 'zustand/shallow';
+import { Scrollbars } from 'react-custom-scrollbars';
+import { message } from 'antd';
 import AutoTabs from '@/components/auto-tabs';
 import CardList from '@/components/card-list';
 import TipAndUpload from '@/components/tipAndUpload';
@@ -25,7 +26,7 @@ type IState = {
   cardListActiveKey: number;
 };
 
-const Backgrounds: React.FC<IProps> = ({list, onTabChange, tabActiveKey = 0, whenUploadSuccess}) => {
+const Backgrounds: React.FC<IProps> = ({ list, onTabChange, tabActiveKey = 0, whenUploadSuccess }) => {
   const [state, setState] = useSetState<IState>({
     items: ['默认背景', '自定义'],
 
@@ -38,29 +39,29 @@ const Backgrounds: React.FC<IProps> = ({list, onTabChange, tabActiveKey = 0, whe
     cardListActiveKey: -1,
   });
 
-  const {selectedBackground, updateBackground, updateBackGroundImage} = useStore(
-    ({updateBackground, selectedBackground, updateBackGroundImage}) => ({
+  const { selectedBackground, updateBackground, updateBackGroundImage } = useStore(
+    ({ updateBackground, selectedBackground, updateBackGroundImage }) => ({
       updateBackground,
       selectedBackground,
-      updateBackGroundImage
+      updateBackGroundImage,
     }),
     shallow,
   );
 
   useAsyncEffect(async () => {
     setState({
-      list: list.map((i) => ({...i, id: i.backgroundId})),
+      list: list.map((i) => ({ ...i, id: i.backgroundId })),
     });
   }, [list]);
 
   useAsyncEffect(async () => {
     const cardListActiveKey = state.list.findIndex((i) => i.backgroundId === selectedBackground.backgroundId);
 
-    setState({cardListActiveKey});
+    setState({ cardListActiveKey });
   }, [state.list, selectedBackground]);
 
   useAsyncEffect(async () => {
-    setState({tabActiveKey});
+    setState({ tabActiveKey });
   }, [tabActiveKey]);
 
   const validateImage = async (file: File) =>
@@ -71,7 +72,7 @@ const Backgrounds: React.FC<IProps> = ({list, onTabChange, tabActiveKey = 0, whe
         const img = new Image();
 
         img.onload = () => {
-          const {width, height} = img;
+          const { width, height } = img;
 
           width / height === 0.5625 ? resolve(null) : reject();
         };
@@ -107,23 +108,23 @@ const Backgrounds: React.FC<IProps> = ({list, onTabChange, tabActiveKey = 0, whe
   };
 
   const onChange = (data: any) => {
-    updateBackground(data)
-    updateBackGroundImage(data?.url)
+    updateBackground(data);
+    updateBackGroundImage(data?.url);
   };
 
   return (
     <div className="backgrounds">
       <div className="backgrounds_header">
-        <AutoTabs items={state.items} onTabChange={onTabChange} activeKey={state.tabActiveKey}/>
+        <AutoTabs items={state.items} onTabChange={onTabChange} activeKey={state.tabActiveKey} />
 
         {state.tabActiveKey === 1 && (
-          <TipAndUpload tip="我们也支持上传自定义背景图" btnText="上传图片" accept="image/*" onChange={onFileChange}/>
+          <TipAndUpload tip="我们也支持上传自定义背景图" btnText="上传图片" accept="image/*" onChange={onFileChange} />
         )}
       </div>
 
-      <div className="backgrounds_main">
-        <CardList items={state.list} onChange={onChange} activeKey={state.cardListActiveKey}/>
-      </div>
+      <Scrollbars universal>
+        <CardList items={state.list} onChange={onChange} activeKey={state.cardListActiveKey} />
+      </Scrollbars>
     </div>
   );
 };
