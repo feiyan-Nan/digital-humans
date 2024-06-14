@@ -477,7 +477,9 @@ const IIndex: React.FC = () => {
       .createWithTTS(body)
       .then((res) => {
         console.log('AT-[ res &&&&&********** ]', res);
-        getVideoList();
+        if (res.code === 200) {
+          getVideoList();
+        }
       })
       .finally(hideCreateVideoLoading);
   };
