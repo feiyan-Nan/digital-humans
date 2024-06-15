@@ -80,6 +80,8 @@ type IStates = {
   isGetedDraft: boolean;
 
   audioUrl: string;
+
+  localMp3Name: string | undefined;
 };
 
 enum TabsEnum {
@@ -124,8 +126,8 @@ const IIndex: React.FC = () => {
     textInputFocus: false,
 
     isGetedDraft: false,
-
     audioUrl: '',
+    localMp3Name: undefined,
   });
 
   const [createVideoIng, { setTrue: showCreateVideoLoading, setFalse: hideCreateVideoLoading }] = useBoolean(false);
@@ -284,6 +286,8 @@ const IIndex: React.FC = () => {
   // 获取已生成的视频
   const { loading: videoLoading, run: getVideoList } = useRequest(api.getVideoList, {
     manual: true,
+
+    pollingInterval: 10 * 1000,
 
     onSuccess(res) {
       const statusMap = new Map([
@@ -455,10 +459,10 @@ const IIndex: React.FC = () => {
     const { digitalId } = selectedPerson;
     const { templateId: voice } = selectedVoice;
 
-    if (!selectedBackground) {
-      message.error('请先选择背景图');
-      return;
-    }
+    // if (!selectedBackground) {
+    //   message.error('请先选择背景图');
+    //   return;
+    // }
 
     if (state.wordsOrSoundsActiveKey === 0) {
       if (!textContent) {
@@ -477,7 +481,7 @@ const IIndex: React.FC = () => {
       }
     }
 
-    const { url } = selectedBackground;
+    const { url } = selectedBackground || { url: '' };
 
     const options = { ...(state.wordsOrSoundsActiveKey === 0 ? { textContent } : { mediaUrl: state.audioUrl }) };
 
@@ -544,12 +548,15 @@ const IIndex: React.FC = () => {
     });
   };
 
-  const onFileChange = async (formData: FormData) => {
-    const res = await api.uploadAudio(formData);
-    if (res.code === 200) {
-      setState({ audioUrl: res.data.url });
+  const [uploadAudioIng, { setTrue, setFalse }] = useBoolean(false);
 
-      handleOnSave();
+  const onFileChange = async (formData: FormData, file: File) => {
+    setTrue();
+    const res = await api.uploadAudio(formData);
+    setFalse();
+    if (res.code === 200) {
+      setState({ audioUrl: res.data.url, localMp3Name: file.name });
+      // handleOnSave();
     }
   };
 
@@ -559,6 +566,24 @@ const IIndex: React.FC = () => {
 
   const loginOrOut = () => {
     token ? setToken('') : (window.location.href = 'http://puton.aidigitalfield.com/');
+  };
+
+  const downloadVideo = (src: string, name: string) => {
+    console.log('AT-[ src &&&&&********** ]', src);
+    const videoName = `${name}.mp4`;
+
+    return fetch(src)
+      .then((res) => res.blob())
+      .then((blob) => {
+        const a = document.createElement('a');
+        a.style.display = 'none';
+        document.body.append(a);
+        const url = URL.createObjectURL(blob);
+        a.href = url;
+        a.download = videoName;
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      });
   };
 
   return (
@@ -635,7 +660,7 @@ const IIndex: React.FC = () => {
 
             <Sider className="right_sider" width="256px">
               <div className="right_box">
-                <Spin spinning={createVideoIng}>
+                <Spin spinning={createVideoIng || uploadAudioIng}>
                   <div className="right_box_header">
                     <div className="block">
                       <WordsOrSounds
@@ -643,6 +668,7 @@ const IIndex: React.FC = () => {
                         onTabChange={onWordsOrSoundsTabChange}
                         focus={state.textInputFocus}
                         onFileChange={onFileChange}
+                        tip={state.audioUrl ? state.localMp3Name : undefined}
                       />
                     </div>
 
@@ -670,9 +696,17 @@ const IIndex: React.FC = () => {
                             <div className="video_time">{item.createTime}</div>
                             <div className="video_actions">
                               {item.status === 'SUCCESS' ? (
-                                <div className="video_btn" onClick={() => previewVideo(item.url)}>
-                                  播放
-                                </div>
+                                <>
+                                  <div className="video_btn" onClick={() => previewVideo(item.url)}>
+                                    播放
+                                  </div>
+
+                                  <div className="video_btn" onClick={() => downloadVideo(item.url, item.videoName)}>
+                                    下载
+                                  </div>
+
+                                  <div className="video_btn">删除</div>
+                                </>
                               ) : null}
                             </div>
                           </div>

@@ -88,28 +88,19 @@ const Backgrounds: React.FC<IProps> = ({ list, onTabChange, tabActiveKey = 0, wh
       reader.readAsDataURL(file);
     });
 
-  const onFileChange = async (formData: FormData, file: File) => {
-    validateImage(file)
-      .then(async () => {
-        const uploadingKey = 'uploadingKey';
+  const onFileChange = async (formData: FormData) => {
+    const uploadingKey = 'uploadingKey';
 
-        message.loading({
-          content: '上传中',
-          key: uploadingKey,
-        });
+    message.loading({
+      content: '上传中',
+      key: uploadingKey,
+    });
 
-        await api.uploadBackgroundFile(formData);
+    await api.uploadBackgroundFile(formData);
 
-        message.destroy(uploadingKey);
+    message.destroy(uploadingKey);
 
-        whenUploadSuccess();
-      })
-      .catch(() => {
-        message.error({
-          content: '必须要9:16的图片',
-          duration: 2,
-        });
-      });
+    whenUploadSuccess();
   };
 
   const onChange = (data: any) => {
