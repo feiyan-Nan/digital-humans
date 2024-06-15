@@ -1,9 +1,21 @@
-#root {
+#root * {
   /* max-width: 1280px;
   margin: 0 auto;
   padding: 2rem;
   text-align: center; */
 }
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 5px;
+  background: rgb(221, 222, 224);
+  transition: 0.3s ease-in-out;
+}
+
 
 .logo {
   height: 6em;
