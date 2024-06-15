@@ -15,7 +15,7 @@ function App() {
           <Route path="/video" element={<Video />} />
         </Route>
 
-        <Route path="*" element={<Navigate to="/" />} />
+        <Route path="*" element={<Navigate to="/workbench" />} />
       </Routes>
     </BrowserRouter>
   );

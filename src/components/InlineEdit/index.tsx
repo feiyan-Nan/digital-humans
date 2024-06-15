@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { useBoolean } from 'ahooks';
+import { useBoolean, useAsyncEffect } from 'ahooks';
 import { Input, InputRef } from 'antd';
 import edit from '@/static/icons/edit.png';
 
@@ -11,6 +11,10 @@ interface InlineEditProps {
 
 function InlineEdit({ name: originName, onChange, hideEdit = false }: InlineEditProps) {
   const [name, setName] = useState(originName);
+
+  useAsyncEffect(async () => {
+    setName(originName);
+  }, [originName]);
 
   const [state, { toggle }] = useBoolean(false);
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Layout, message, Modal, Spin } from 'antd';
-import { useAsyncEffect, useBoolean, useRequest, useSetState } from 'ahooks';
+import { useAsyncEffect, useBoolean, useDebounceEffect, useRequest, useSetState, useCookieState } from 'ahooks';
 import classNames from 'classnames';
 import { Scrollbars } from 'react-custom-scrollbars';
 
@@ -58,7 +58,7 @@ const headerStyle: React.CSSProperties = {
 type IStates = {
   navs: { icon: string; text: string }[];
   activeNum: number;
-  backgrounds: { url: string; backgroundId: number }[];
+  backgrounds: ({ url: string; backgroundId: number } | null)[];
   siderLoading: boolean;
   loading: { backgrounds: boolean; digital: boolean; voice: boolean; sider: boolean };
   persons: { url: string; text?: string | undefined; id: number; digitalId: number; enable: boolean }[];
@@ -191,6 +191,12 @@ const IIndex: React.FC = () => {
     shallow,
   );
 
+  const [token, setToken] = useCookieState('token');
+
+  useAsyncEffect(async () => {
+    setState({ currentName: currentName || state.initialName });
+  }, [currentName]);
+
   // 数字人接口请求
   const { loading: personListLoading, run: getPersonList } = useRequest(
     (personsActiveKey: TabsEnum) =>
@@ -239,7 +245,9 @@ const IIndex: React.FC = () => {
       manual: true,
 
       onSuccess(res) {
-        setState({ backgrounds: res.data });
+        const backgrounds = state.bgActiveKey === 0 ? [null, ...res.data] : res.data;
+
+        setState({ backgrounds });
       },
     },
   );
@@ -292,13 +300,10 @@ const IIndex: React.FC = () => {
   });
 
   // 获取草稿
-  useAsyncEffect(async () => {
-    if (!state.isGetedDraft) {
-      const res = await api.getDraftVideo();
-
+  const { run: getDraftVideo } = useRequest(() => api.getDraftVideo(), {
+    manual: true,
+    onSuccess(res) {
       if (res.code === 200) {
-        setState({ isGetedDraft: true });
-
         updateDraftData(res.data);
 
         const {
@@ -308,38 +313,61 @@ const IIndex: React.FC = () => {
           textContent: t,
           speechStr: s,
           currentName: c,
-        } = draftData;
+        } = res.data;
 
-        updateBackground(b);
-        updatePerson(p);
-        updateVoice(v);
-        updateTextContent(t);
-        updateSpeedStr(s);
-        updateCurrentName(c);
+        b && updateBackground(b);
+        p && updatePerson(p);
+        v && updateVoice(v);
+        t && updateTextContent(t);
+        s && updateSpeedStr(s);
+        c && updateCurrentName(c);
+
+        setState({ isGetedDraft: true });
       }
+    },
+  });
+
+  // 获取草稿
+  useAsyncEffect(async () => {
+    if (!token) {
+      getPersonList(0);
+
+      getBgList(0);
+
+      getAudioList(0);
+
+      getVideoList();
+
+      return;
+    }
+
+    if (!state.isGetedDraft) {
+      getDraftVideo();
     }
   }, []);
 
-  // useAsyncEffect(async () => {
-  //   if (state.isGetedDraft) {
-  //     getBgList(0);
-
-  //     getAudioList(0);
-
-  //     getVideoList();
-  //   }
-  // }, [state.isGetedDraft]);
-
   useAsyncEffect(async () => {
-    getBgList(0);
+    if (state.isGetedDraft) {
+      getBgList(0);
 
-    getAudioList(0);
+      getAudioList(0);
 
-    getVideoList();
-  }, []);
+      getVideoList();
+    }
+  }, [state.isGetedDraft]);
+
+  // useAsyncEffect(async () => {
+  //   getBgList(0);
+
+  //   getAudioList(0);
+
+  //   getVideoList();
+  // }, []);
 
   /** 触发接口请求 */
   useAsyncEffect(async () => {
+    if (!state.isGetedDraft) return;
+
     if (state.activeNum === 0) {
       !state.persons.length && getPersonList(state.personsActiveKey);
     }
@@ -350,7 +378,7 @@ const IIndex: React.FC = () => {
     if (state.activeNum === 2) {
       !state.voices.length && getAudioList(state.voiceActiveKey);
     }
-  }, [state.activeNum]);
+  }, [state.activeNum, state.isGetedDraft]);
 
   /** 切换loading状态 */
   useAsyncEffect(async () => {
@@ -362,7 +390,7 @@ const IIndex: React.FC = () => {
   // 监测数据获取状态，赋全局默认值
   useAsyncEffect(async () => {
     !selectedPerson && state.persons.length && updatePerson(state.persons[0]);
-  }, [state.persons]);
+  }, [state.persons, selectedPerson]);
 
   useAsyncEffect(async () => {
     updateDigitalImage(selectedPerson?.url);
@@ -376,19 +404,32 @@ const IIndex: React.FC = () => {
     !selectedVoice && state.voices.length && updateVoice(state.voices[0]);
   }, [state.voices]);
 
-  // 创建草稿记录
-  useAsyncEffect(async () => {
-    const res = await api.createDraftVideo({
-      selectedBackground,
-      selectedPerson,
-      selectedVoice,
-      textContent,
-      speechStr,
-      currentName,
-    });
+  const { run: createDraftVideo } = useRequest(
+    () =>
+      api.createDraftVideo({
+        selectedBackground,
+        selectedPerson,
+        selectedVoice,
+        textContent,
+        speechStr,
+        currentName,
+      }),
+    {
+      manual: true,
+      onSuccess(res) {
+        console.log('AT-[ createDraftVideo &&&&&********** ]', res);
+      },
+    },
+  );
 
-    console.log('resres------------', res);
-  }, [selectedBackground, selectedPerson, selectedVoice, textContent, speechStr, currentName]);
+  // 创建草稿记录
+  useDebounceEffect(
+    () => {
+      if (token) createDraftVideo();
+    },
+    [selectedBackground, selectedPerson, selectedVoice, textContent, speechStr, currentName],
+    { wait: 1000 },
+  );
 
   const changeNav = (activeNum: number) => setState({ activeNum });
 
@@ -413,7 +454,11 @@ const IIndex: React.FC = () => {
   const handleOnSave = () => {
     const { digitalId } = selectedPerson;
     const { templateId: voice } = selectedVoice;
-    const { url } = selectedBackground;
+
+    if (!selectedBackground) {
+      message.error('请先选择背景图');
+      return;
+    }
 
     if (state.wordsOrSoundsActiveKey === 0) {
       if (!textContent) {
@@ -432,7 +477,9 @@ const IIndex: React.FC = () => {
       }
     }
 
-    const options = { ...(state.wordsOrSoundsActiveKey === 0 ? { textContent } : { audioUrl: state.audioUrl }) };
+    const { url } = selectedBackground;
+
+    const options = { ...(state.wordsOrSoundsActiveKey === 0 ? { textContent } : { mediaUrl: state.audioUrl }) };
 
     const body = {
       ...options,
@@ -474,7 +521,7 @@ const IIndex: React.FC = () => {
     showCreateVideoLoading();
 
     api
-      .createWithTTS(body)
+      .createVideo(body)
       .then((res) => {
         console.log('AT-[ res &&&&&********** ]', res);
         if (res.code === 200) {
@@ -509,6 +556,10 @@ const IIndex: React.FC = () => {
     setState({ audioUrl: '' });
   }, [state.wordsOrSoundsActiveKey]);
 
+  const loginOrOut = () => {
+    token ? setToken('') : (window.location.href = 'http://puton.aidigitalfield.com/');
+  };
+
   return (
     <Layout>
       <Header style={headerStyle}>
@@ -522,6 +573,9 @@ const IIndex: React.FC = () => {
 
           <div className="account">
             <img src={vector} alt="" />
+            <div className="account_text" onClick={loginOrOut}>
+              {token ? '退出' : '登录'}
+            </div>
           </div>
         </div>
       </Header>
@@ -614,11 +668,11 @@ const IIndex: React.FC = () => {
                             <div className="video_status">状态：{item.statusText}</div>
                             <div className="video_time">{item.createTime}</div>
                             <div className="video_actions">
-                              <div className="video_btn" onClick={() => previewVideo(item.url)}>
-                                播放
-                              </div>
-                              {/* <div className="video_btn">下载</div>
-                            <div className="video_btn">删除</div> */}
+                              {item.status === 'SUCCESS' ? (
+                                <div className="video_btn" onClick={() => previewVideo(item.url)}>
+                                  播放
+                                </div>
+                              ) : null}
                             </div>
                           </div>
                         </div>

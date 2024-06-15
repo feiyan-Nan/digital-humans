@@ -11,8 +11,10 @@ import './index.scss';
 import api from '@/api';
 import useStore from '@/store';
 
+// type IList = ({ url: string; id: number; backgroundId: number } | null)[];
+
 type IProps = {
-  list: { url: string; backgroundId: number }[];
+  list: any;
   onTabChange?: (activeKey: number) => void;
   tabActiveKey?: number;
   whenUploadSuccess: () => void;
@@ -21,7 +23,7 @@ type IProps = {
 type IState = {
   items: string[];
   tabActiveKey: number;
-  list: { url: string; id: number; backgroundId: number }[];
+  list: any;
   spinning: boolean;
   cardListActiveKey: number;
 };
@@ -50,12 +52,14 @@ const Backgrounds: React.FC<IProps> = ({ list, onTabChange, tabActiveKey = 0, wh
 
   useAsyncEffect(async () => {
     setState({
-      list: list.map((i) => ({ ...i, id: i.backgroundId })),
+      list: list.map((i: { backgroundId: any }) => (i ? { ...i, id: i.backgroundId } : i)),
     });
   }, [list]);
 
   useAsyncEffect(async () => {
-    const cardListActiveKey = state.list.findIndex((i) => i.backgroundId === selectedBackground.backgroundId);
+    const cardListActiveKey = state.list.findIndex(
+      (i: { backgroundId: any }) => i?.backgroundId === selectedBackground?.backgroundId,
+    );
 
     setState({ cardListActiveKey });
   }, [state.list, selectedBackground]);

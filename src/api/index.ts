@@ -5,12 +5,19 @@ const instance = axios.create({
   // base接口，表示请求URL的公共部分
   baseURL: '',
   // 超时
-  timeout: 30000,
+  timeout: 300000,
   // 还可以进行一些其他的配置
 });
 
+// const token = document.cookie
+//   .split(';')
+//   .find((i) => i.includes('token='))
+//   ?.replace('token=', '');
+
 const token =
   'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE3MTgyMDYwMzcsInVzZXJuYW1lIjoiMTg2MTAwMTU1MzgifQ._tsDvCKwl6X5fZ2wjy6esvX0_wEYBCEq-eEAxx5KJ5I';
+
+console.log('AT-[ token &&&&&********** ]', token);
 
 instance.interceptors.request.use((config) => {
   Object.assign(config.headers, {
@@ -79,9 +86,9 @@ export const getSuccessPersonList = (data = {}) =>
     data,
   });
 
-export const createWithTTS = (data = {}) =>
+export const createVideo = (data = {}) =>
   instance<null, IPersonRes>({
-    url: '/api/digitalVhost/createWithTTS',
+    url: '/api/digitalVhost/createVideo',
     method: 'post',
     data,
   });
@@ -247,6 +254,6 @@ export default {
   updatePersonAssetName,
   createDraftVideo,
   getDraftVideo,
-  createWithTTS,
+  createVideo,
   uploadAudio,
 };

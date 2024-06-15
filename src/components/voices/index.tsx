@@ -11,14 +11,14 @@ import './index.scss';
 import useStore from '@/store';
 
 type IProps = {
-  list: { url: string; id: number; templateId: number; enable: boolean }[];
+  list: { url: string; id: number; templateId: number; enable: boolean; audioName: string }[];
   onTabChange?: (activeKey: number) => void;
   tabActiveKey?: number;
 };
 
 type IState = {
   activeKey: number;
-  list: { url: string; id: number; templateId: number; enable: boolean }[];
+  list: { url: string; id: number; templateId: number; enable: boolean; audioName: string }[];
   cardListActiveKey: number;
   speechStr: number;
 };
@@ -43,6 +43,7 @@ const Voices: React.FC<IProps> = ({ onTabChange, list, tabActiveKey = 0 }) => {
 
   useAsyncEffect(async () => {
     setState({ list });
+    console.log('AT-[ list oooooooooo   ppppppppppppppp &&&&&********** ]', list);
   }, [list]);
 
   useAsyncEffect(async () => {
@@ -109,7 +110,7 @@ const Voices: React.FC<IProps> = ({ onTabChange, list, tabActiveKey = 0 }) => {
         )}
       </div>
       <Scrollbars>
-        <CardList items={state.list} onChange={onChange} activeKey={state.cardListActiveKey} />
+        <CardList items={state.list} onChange={onChange} activeKey={state.cardListActiveKey} type="avatar" />
       </Scrollbars>
     </div>
   );

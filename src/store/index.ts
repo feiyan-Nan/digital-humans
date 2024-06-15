@@ -75,11 +75,9 @@ const store: CustomStoreType = (set, get) => ({
   updateSpeechStr: (value: number) => set(() => ({ speechStr: value })),
   textContent: '',
   updateTextContent: (val: string) => set(() => ({ textContent: val })),
-  backGroundImage:
-    'https://digital-person.oss-cn-hangzhou.aliyuncs.com/FileUpload/1/UID_1/Image/Background/nafiniaputraKwdp0pokIunsplash_1678881317677.jpg',
+  backGroundImage: '',
   updateBackGroundImage: (image: string) => set(() => ({ backGroundImage: image })),
-  digitalManImage:
-    'https://digital-person.oss-cn-hangzhou.aliyuncs.com/alpha/51c8b926-62b5-4a2e-944e-ea54499eb5e6_avatar.png',
+  digitalManImage: '',
   updateDigitalImage: (image: string) => set(() => ({ digitalManImage: image })),
   align: 'VERTICAL',
   updateAlign: (align: 'VERTICAL' | 'HORIZONTAL') => set(() => ({ align })),

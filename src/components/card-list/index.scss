@@ -64,6 +64,57 @@
           line-height: 1;
         }
       }
+
+      .empty_site {
+        width: 80px;
+        height: 120px;
+        background-color: #EFEFEF;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border: 2px solid rgba(0,0,0,0);
+
+        &.active {
+          border: 2px solid #7B68EE;
+        }
+
+        > img {
+          width: 41px;
+        }
+      }
+    }
+
+    .avatar_type {
+      background-color:#E9EBF0;
+      width: 80px;
+      height: 120px;
+      margin-bottom: 12px;
+      overflow: hidden;
+      border-radius: 4px;
+      cursor: pointer;
+      border: 2px solid rgba(0,0,0,0);
+
+      &.active {
+        border: 2px solid #7B68EE;
+      }
+
+
+      .avatar {
+        width: 64px;
+        height: 64px;
+        border-radius: 100%;
+        overflow: hidden;
+        margin: 0 auto;
+        margin-top: 8px;
+      }
+
+      .name_text {
+        font-size: 12px;
+        color: #000;
+        text-align: center;
+        margin-top: 8px;
+      }
     }
   }
 

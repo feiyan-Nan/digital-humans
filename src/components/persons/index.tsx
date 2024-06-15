@@ -10,18 +10,18 @@ import api from '@/api';
 import useStore from '@/store';
 import './index.scss';
 
-type Item = { url: string; text?: string | undefined; id: number; digitalId: number; enable: boolean };
+// type Item = { url: string; text?: string | undefined; id: number; digitalId: number; enable: boolean };
 
 type IProps = {
   tabActiveKey: number;
-  list: Item[];
+  list: any[];
   onTabChange?: (activeKey: number) => void;
   refreshPerson?: () => void;
 };
 
 type IStates = {
   activeKey: number;
-  personItems: Item[];
+  personItems: any[];
   tabItems: string[];
   cardListActiveKey: number;
 };
@@ -111,6 +111,7 @@ const Persons: React.FC<IProps> = ({ list, tabActiveKey, onTabChange, refreshPer
       message.destroy(key);
       if (res.code === 200) {
         message.success('更改成功');
+        refreshPerson?.();
       } else {
         message.error('更改失败');
       }
