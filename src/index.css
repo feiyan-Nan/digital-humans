@@ -68,11 +68,11 @@
   height: 100%;
   right: 0;
   top: 0;
-  width: var(--ms-track-size, 16px)
+  width: 6px;
 }
 
 .ms-track.ms-y.ms-active .ms-thumb, .ms-track.ms-y:hover .ms-thumb {
-  width: calc(var(--ms-track-size, 16px) - var(--ms-track-gutter, 2px) * 2)
+  /*width: calc(var(--ms-track-size, 16px) - var(--ms-track-gutter, 2px) * 2)*/
 }
 
 .ms-track.ms-y .ms-thumb {
@@ -83,7 +83,7 @@
 }
 
 .ms-track.ms-y .ms-thumb:hover {
-  width: calc(var(--ms-track-size, 16px) - var(--ms-track-gutter, 2px) * 2)
+  /*width: calc(var(--ms-track-size, 16px) - var(--ms-track-gutter, 2px) * 2)*/
 }
 
 .ms-track.ms-y .ms-thumb:after {
