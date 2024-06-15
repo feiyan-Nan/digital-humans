@@ -43,7 +43,7 @@ const contentStyle: React.CSSProperties = {
   // minHeight: 'calc(100vh - 54px)',
   color: '#fff',
   background: '#0D1530',
-  overflowY: 'scroll',
+  // overflowY: 'scroll',
   padding: '0 18px 0 7px',
 };
 
@@ -131,6 +131,7 @@ const IIndex: React.FC = () => {
   const [createVideoIng, { setTrue: showCreateVideoLoading, setFalse: hideCreateVideoLoading }] = useBoolean(false);
 
   const {
+    scale, locations,
     textContent,
     updateTextContent,
     selectedPerson,
@@ -164,8 +165,10 @@ const IIndex: React.FC = () => {
       speechStr,
       updateSpeedStr,
       draftData,
-      updateDraftData,
+      updateDraftData, scale, locations,
     }) => ({
+      scale,
+      locations,
       textContent,
       updateTextContent,
 
@@ -511,7 +514,7 @@ const IIndex: React.FC = () => {
           data: [
             {
               type: 'human',
-              rect: [270, 500, 810, 1440],
+              rect: [locations.left / scale, locations.top / scale, locations.width / scale, locations.height / scale],
             },
           ],
         },
