@@ -4,8 +4,8 @@ import { message } from 'antd';
 const instance = axios.create({
   // base接口，表示请求URL的公共部分
   baseURL: '',
-  // 超时
-  timeout: 30000,
+  // 超时 设置为5分钟
+  timeout: 5*60*1000,
   // 还可以进行一些其他的配置
 });
 
