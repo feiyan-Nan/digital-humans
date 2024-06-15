@@ -448,7 +448,7 @@ const IIndex: React.FC = () => {
   };
 
   const onWordsOrSoundsTabChange = (wordsOrSoundsActiveKey: number) => {
-    setState({ wordsOrSoundsActiveKey });
+    setState({ wordsOrSoundsActiveKey, audioUrl: '' });
   };
 
   const handleOnSave = () => {
@@ -546,9 +546,10 @@ const IIndex: React.FC = () => {
 
   const onFileChange = async (formData: FormData) => {
     const res = await api.uploadAudio(formData);
-
     if (res.code === 200) {
-      setState({ audioUrl: res.data });
+      setState({ audioUrl: res.data.url });
+
+      handleOnSave();
     }
   };
 
