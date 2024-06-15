@@ -1,7 +1,8 @@
 import React from 'react';
 import { useAsyncEffect, useSetState } from 'ahooks';
 import { shallow } from 'zustand/shallow';
-import { Scrollbars } from 'react-custom-scrollbars';
+// import { MacScrollbar } from 'mac-scrollbar';;
+import { MacScrollbar } from 'mac-scrollbar';
 import { message } from 'antd';
 import AutoTabs from '@/components/auto-tabs';
 import CardList from '@/components/card-list';
@@ -126,9 +127,9 @@ const Backgrounds: React.FC<IProps> = ({ list, onTabChange, tabActiveKey = 0, wh
         )}
       </div>
 
-      <Scrollbars universal>
+      <MacScrollbar>
         <CardList items={state.list} onChange={onChange} activeKey={state.cardListActiveKey} />
-      </Scrollbars>
+      </MacScrollbar>
     </div>
   );
 };

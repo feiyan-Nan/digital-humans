@@ -2,7 +2,7 @@ import React from 'react';
 import { Layout, message, Modal, Spin } from 'antd';
 import { useAsyncEffect, useBoolean, useDebounceEffect, useRequest, useSetState, useCookieState } from 'ahooks';
 import classNames from 'classnames';
-import { Scrollbars } from 'react-custom-scrollbars';
+import { MacScrollbar } from 'mac-scrollbar';
 
 import './index.scss';
 
@@ -657,7 +657,7 @@ const IIndex: React.FC = () => {
                     )}
                   </div>
                 </Spin>
-                <Scrollbars>
+                <MacScrollbar>
                   <div className="right_box_footer">
                     <div className="video_list">
                       {state.videos.map((item) => (
@@ -679,7 +679,7 @@ const IIndex: React.FC = () => {
                       ))}
                     </div>
                   </div>
-                </Scrollbars>
+                </MacScrollbar>
               </div>
             </Sider>
           </Layout>

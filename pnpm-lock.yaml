@@ -35,6 +35,9 @@ dependencies:
   lodash:
     specifier: ^4.17.21
     version: 4.17.21
+  mac-scrollbar:
+    specifier: ^0.13.6
+    version: 0.13.6
   memoize-one:
     specifier: ^5.2.1
     version: 5.2.1
@@ -4885,6 +4888,10 @@ packages:
     resolution: {integrity: sha512-h5bgJWpxJNswbU7qCrV0tIKQCaS3blPDrqKWx+QxzuzL1zGUzij9XCWLrSLsJPu5t+eWA/ycetzYAO5IOMcWAQ==}
     hasBin: true
     dev: true
+
+  /mac-scrollbar@0.13.6:
+    resolution: {integrity: sha512-P0eNiCTExlmWBQ0FXalfXVh42eo9b0obnZIo1khZzyZX99frTsCmZwcbH0RWZZtNYtBZVd5f/7k4iLPou+skzg==}
+    dev: false
 
   /magic-string@0.30.10:
     resolution: {integrity: sha512-iIRwTIf0QKV3UAnYK4PU8uiEc4SRh5jX0mwpIwETPpHdhVM4f53RSwS/vXvN1JhGX+Cs7B8qIq3d6AH49O5fAQ==}

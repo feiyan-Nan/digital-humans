@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import { shallow } from 'zustand/shallow';
-import { Scrollbars } from 'react-custom-scrollbars';
+import { MacScrollbar } from 'mac-scrollbar';
 import { useSetState, useAsyncEffect } from 'ahooks';
 import { Button, InputNumber, Space } from 'antd';
 import AutoTabs from '@/components/auto-tabs';
@@ -109,9 +109,9 @@ const Voices: React.FC<IProps> = ({ onTabChange, list, tabActiveKey = 0 }) => {
           </>
         )}
       </div>
-      <Scrollbars>
+      <MacScrollbar>
         <CardList items={state.list} onChange={onChange} activeKey={state.cardListActiveKey} type="avatar" />
-      </Scrollbars>
+      </MacScrollbar>
     </div>
   );
 };
