@@ -1,9 +1,31 @@
-#root {
+#root * {
   /* max-width: 1280px;
   margin: 0 auto;
   padding: 2rem;
   text-align: center; */
 }
+
+/* 隐藏整个滚动条 */
+::-webkit-scrollbar {
+  display: none;
+}
+
+/* 或者只隐藏滚动条的轨道、滑块和滚动条角落 */
+/* 隐藏轨道 */
+::-webkit-scrollbar-track {
+  display: none;
+}
+
+/* 隐藏滑块 */
+::-webkit-scrollbar-thumb {
+  display: none;
+}
+
+/* 隐藏角落 */
+::-webkit-scrollbar-corner {
+  display: none;
+}
+
 
 .logo {
   height: 6em;
@@ -68,7 +90,7 @@
   height: 100%;
   right: 0;
   top: 0;
-  width: 6px;
+  width: 1px;
 }
 
 .ms-track.ms-y.ms-active .ms-thumb, .ms-track.ms-y:hover .ms-thumb {
