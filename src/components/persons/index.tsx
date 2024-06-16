@@ -146,7 +146,19 @@ const Persons: React.FC<IProps> = ({ list, tabActiveKey, onTabChange, refreshPer
         ) : (
           <>
             <TipAndUpload
-              tip="我们也支持上传上传音频驱动数字人，时长5分钟以内，格式支持MP3格式。"
+              tip={
+                <div className="custom_tip_style">
+                  我们支持上传您的视频来打造个性化的数字人形象。
+                  <br />
+                  为了确保定制效果：
+                  <br />
+                  <ul>
+                    <li>定制需要上传约10分钟的朗读视频；</li>
+                    <li>采用竖屏9:16的尺寸比例，分辨率为2K高清；</li>
+                    <li>请确保人脸部分占据适中比例，五官展现清晰无任何遮挡，并且保持目光直视摄像头</li>
+                  </ul>
+                </div>
+              }
               style={{ fontSize: '12px', lineHeight: '20px' }}
               btnText="上传视频"
               accept="video/*"

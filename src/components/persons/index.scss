@@ -34,3 +34,13 @@
     }
   }
 }
+
+.custom_tip_style {
+  color: #B9BEC7;
+  font-size: 12px;
+  line-height: 20px;
+  > ul {
+    list-style: disc;
+    padding-left: 10px;
+  }
+}

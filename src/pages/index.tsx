@@ -98,13 +98,15 @@ const IIndex: React.FC = () => {
         icon: personsIcon,
         text: '数字人',
       },
-      {
-        icon: imagesIcon,
-        text: '背景图',
-      },
+
       {
         icon: voiceIcon,
         text: '声音',
+      },
+
+      {
+        icon: imagesIcon,
+        text: '背景图',
       },
     ],
     backgrounds: [],
@@ -614,9 +616,10 @@ const IIndex: React.FC = () => {
     });
   };
 
-  const handleOnDeleteVideo = (item: any) => {
+  const handleOnDeleteVideo = async (item: any) => {
     message.loading({ content: '删除中' });
-    api.deleteWork({ digitalPersonWorksId: item.digitalPersonWorksId });
+    const res = await api.deleteWork({ digitalPersonWorksId: item.digitalPersonWorksId });
+    console.log('AT-[ res &&&&&********** ]', res);
     message.destroy();
     getVideoList();
   };
@@ -671,16 +674,16 @@ const IIndex: React.FC = () => {
                 )}
 
                 {state.activeNum === 1 && (
+                  <Voices list={state.voices} onTabChange={onAudioTabChange} tabActiveKey={state.voiceActiveKey} />
+                )}
+
+                {state.activeNum === 2 && (
                   <Backgrounds
                     list={state.backgrounds}
                     onTabChange={onBgTabChange}
                     tabActiveKey={state.bgActiveKey}
                     whenUploadSuccess={onUploadBgSuccess}
                   />
-                )}
-
-                {state.activeNum === 2 && (
-                  <Voices list={state.voices} onTabChange={onAudioTabChange} tabActiveKey={state.voiceActiveKey} />
                 )}
               </Spin>
             </Content>

@@ -75,7 +75,11 @@ const AutoTabs: React.FC<IProps> = ({
       <div className="auto_tabs_items">
         {items.map((item, index) => (
           <div
-            className={classNames('auto_tabs_item', state.activeKey === index && activeClassName)}
+            className={classNames(
+              'auto_tabs_item',
+              state.activeKey === index && activeClassName,
+              items.length === 1 && 'alignLeft',
+            )}
             key={item}
             onClick={() => handleClick(index)}
           >
@@ -85,7 +89,6 @@ const AutoTabs: React.FC<IProps> = ({
       </div>
 
       <div className={classNames('auto_tabs_line', activeClassName)}>
-        {/* {!hideStatus ? <div className="auto_tabs_active_line" style={state.activeLineStyle} /> : null} */}
         {items.length > 1 ? <div className="auto_tabs_active_line" style={state.activeLineStyle} /> : null}
       </div>
     </div>
