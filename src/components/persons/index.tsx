@@ -1,7 +1,7 @@
 import React from 'react';
-import { useAsyncEffect, useSetState } from 'ahooks';
+import { useAsyncEffect, useSetState, useBoolean } from 'ahooks';
 import { MacScrollbar } from 'mac-scrollbar';
-import { message } from 'antd';
+import { message, Spin } from 'antd';
 import { shallow } from 'zustand/shallow';
 import AutoTabs from '@/components/auto-tabs';
 import CardList from '@/components/card-list';
@@ -55,7 +55,11 @@ const Persons: React.FC<IProps> = ({ list, tabActiveKey, onTabChange, refreshPer
 
   const toCreateDigital = () => onTabChange && onTabChange(1);
 
+  const [uploadVideoIng, { setTrue: showSpin, setFalse: hideSpin }] = useBoolean(false);
+
   const onFileChange = async (formData: FormData) => {
+    console.log('AT-[ onFileChange &&&&&********** ]', formData);
+
     const key = 'loading';
 
     message.loading({
@@ -64,16 +68,23 @@ const Persons: React.FC<IProps> = ({ list, tabActiveKey, onTabChange, refreshPer
       duration: 0,
     });
 
+    showSpin();
+
     const res = await api.uploadVideoFile(formData);
 
     message.destroy(key);
 
-    if (res.code !== 200) {
-      message.error(res.data.message);
-    } else {
+    hideSpin();
+
+    if (res.code === 200) {
       message.success(res.data.message);
-      refreshPerson && refreshPerson();
+      console.log('refreshPerson?.();');
+      refreshPerson?.();
     }
+
+    setState({ activeKey: 0 });
+
+    setTimeout(() => setState({ activeKey: 1 }), 10);
   };
 
   const onChange = (data: any) => {
@@ -100,14 +111,11 @@ const Persons: React.FC<IProps> = ({ list, tabActiveKey, onTabChange, refreshPer
   };
 
   const onEdit = async (item: any) => {
-    console.log('AT-[ onEdit ---------     xxxxx    &&&&&********** ]', item);
-
     const key = 'updatePersonAssetName';
 
     message.loading({ content: '更改名称中', key, duration: 0 });
 
     api.updatePersonAssetName({ digitalPersonAssetsId: item.digitalId, name: item.newValue }).then((res) => {
-      console.log('AT-[ res &&&&&********** ]', res);
       message.destroy(key);
       if (res.code === 200) {
         message.success('更改成功');

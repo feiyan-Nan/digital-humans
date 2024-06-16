@@ -371,7 +371,7 @@ const IIndex: React.FC = () => {
   useAsyncEffect(async () => {
     if (!token) {
       if (state.personsActiveKey === 1 || state.bgActiveKey === 1 || state.voiceActiveKey === 1) {
-        window.location.href = 'https://login.aidigitalfield.com/ ';
+        toLoginPage();
       }
     }
   }, [state.personsActiveKey, state.bgActiveKey, state.voiceActiveKey]);
@@ -455,6 +455,10 @@ const IIndex: React.FC = () => {
     window.location.href = 'https://aidigitalfield.com/';
   };
 
+  const toLoginPage = () => {
+    window.location.href = 'https://login.aidigitalfield.com/ ';
+  };
+
   const onUploadBgSuccess = () => {
     getBgList(TabsEnum.private);
   };
@@ -466,6 +470,11 @@ const IIndex: React.FC = () => {
   const handleOnSave = () => {
     const { digitalId } = selectedPerson;
     const { templateId: voice } = selectedVoice;
+
+    if (!token) {
+      toLoginPage();
+      return;
+    }
 
     if (state.wordsOrSoundsActiveKey === 0) {
       if (!textContent) {
