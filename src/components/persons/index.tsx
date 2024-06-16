@@ -139,7 +139,7 @@ const Persons: React.FC<IProps> = ({ list, tabActiveKey, onTabChange, refreshPer
               onChange={onFileChange}
             />
 
-            <AutoTabs items={['我的数字人']} key="travel" />
+            <AutoTabs items={['我的数字人']} key="travel" hideStatus />
           </>
         )}
       </div>

@@ -3,6 +3,7 @@ import { Layout, message, Modal, Spin } from 'antd';
 import { useAsyncEffect, useBoolean, useDebounceEffect, useRequest, useSetState, useCookieState } from 'ahooks';
 import classNames from 'classnames';
 import { MacScrollbar } from 'mac-scrollbar';
+import axios from 'axios';
 
 import './index.scss';
 
@@ -133,7 +134,8 @@ const IIndex: React.FC = () => {
   const [createVideoIng, { setTrue: showCreateVideoLoading, setFalse: hideCreateVideoLoading }] = useBoolean(false);
 
   const {
-    scale, locations,
+    scale,
+    locations,
     textContent,
     updateTextContent,
     selectedPerson,
@@ -167,7 +169,9 @@ const IIndex: React.FC = () => {
       speechStr,
       updateSpeedStr,
       draftData,
-      updateDraftData, scale, locations,
+      updateDraftData,
+      scale,
+      locations,
     }) => ({
       scale,
       locations,
@@ -343,7 +347,7 @@ const IIndex: React.FC = () => {
 
       getAudioList(0);
 
-      getVideoList();
+      // getVideoList();
 
       return;
     }
@@ -363,13 +367,13 @@ const IIndex: React.FC = () => {
     }
   }, [state.isGetedDraft]);
 
-  // useAsyncEffect(async () => {
-  //   getBgList(0);
-
-  //   getAudioList(0);
-
-  //   getVideoList();
-  // }, []);
+  useAsyncEffect(async () => {
+    if (!token) {
+      if (state.personsActiveKey === 1 || state.bgActiveKey === 1 || state.voiceActiveKey === 1) {
+        window.location.href = '//login.aidigitalfield.com/ ';
+      }
+    }
+  }, [state.personsActiveKey, state.bgActiveKey, state.voiceActiveKey]);
 
   /** 触发接口请求 */
   useAsyncEffect(async () => {
@@ -380,10 +384,10 @@ const IIndex: React.FC = () => {
     }
 
     if (state.activeNum === 1) {
-      !state.backgrounds.length && getBgList(state.bgActiveKey);
+      token && !state.backgrounds.length && getBgList(state.bgActiveKey);
     }
     if (state.activeNum === 2) {
-      !state.voices.length && getAudioList(state.voiceActiveKey);
+      token && !state.voices.length && getAudioList(state.voiceActiveKey);
     }
   }, [state.activeNum, state.isGetedDraft]);
 
@@ -462,11 +466,6 @@ const IIndex: React.FC = () => {
     const { digitalId } = selectedPerson;
     const { templateId: voice } = selectedVoice;
 
-    // if (!selectedBackground) {
-    //   message.error('请先选择背景图');
-    //   return;
-    // }
-
     if (state.wordsOrSoundsActiveKey === 0) {
       if (!textContent) {
         message.error('请先输入文字播报内容');
@@ -490,7 +489,7 @@ const IIndex: React.FC = () => {
 
     const body = {
       ...options,
-      name: currentName,
+      name: currentName || state.initialName,
       voice,
       digitalId,
       speechStr, // 语速
@@ -535,7 +534,11 @@ const IIndex: React.FC = () => {
           getVideoList();
         }
       })
-      .finally(hideCreateVideoLoading);
+      .finally(() => {
+        hideCreateVideoLoading();
+        // 重新获取草稿
+        getDraftVideo();
+      });
   };
 
   const previewVideo = (mp4Path: string) => {
@@ -551,15 +554,14 @@ const IIndex: React.FC = () => {
     });
   };
 
-  const [uploadAudioIng, { setTrue, setFalse }] = useBoolean(false);
+  const [uploadAudioIng, { setTrue: showUploadAudio, setFalse: hideUploadAudio }] = useBoolean(false);
 
   const onFileChange = async (formData: FormData, file: File) => {
-    setTrue();
+    showUploadAudio();
     const res = await api.uploadAudio(formData);
-    setFalse();
+    hideUploadAudio();
     if (res.code === 200) {
       setState({ audioUrl: res.data.url, localMp3Name: file.name });
-      // handleOnSave();
     }
   };
 
@@ -568,25 +570,37 @@ const IIndex: React.FC = () => {
   }, [state.wordsOrSoundsActiveKey]);
 
   const loginOrOut = () => {
-    token ? setToken('') : (window.location.href = 'http://puton.aidigitalfield.com/');
+    // token ? setToken('') : (window.location.href = '//login.aidigitalfield.com/ ');
+    if (token) {
+      setToken('');
+      message.success('退出成功');
+      // window.location.reload();
+    } else {
+      window.location.href = '//login.aidigitalfield.com';
+    }
   };
 
   const downloadVideo = (src: string, name: string) => {
-    console.log('AT-[ src &&&&&********** ]', src);
     const videoName = `${name}.mp4`;
 
-    return fetch(src)
-      .then((res) => res.blob())
-      .then((blob) => {
-        const a = document.createElement('a');
-        a.style.display = 'none';
-        document.body.append(a);
-        const url = URL.createObjectURL(blob);
-        a.href = url;
-        a.download = videoName;
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-      });
+    axios({
+      url: src,
+      method: 'GET',
+      responseType: 'blob', // 这里就是转化为blob文件流
+    }).then((res) => {
+      const href = URL.createObjectURL(res.data);
+      const box = document.createElement('a');
+      box.download = videoName;
+      box.href = href;
+      box.click();
+    });
+  };
+
+  const handleOnDeleteVideo = (item: any) => {
+    message.loading({ content: '删除中' });
+    api.deleteWork({ digitalPersonWorksId: item.digitalPersonWorksId });
+    message.destroy();
+    getVideoList();
   };
 
   return (
@@ -672,6 +686,7 @@ const IIndex: React.FC = () => {
                         focus={state.textInputFocus}
                         onFileChange={onFileChange}
                         tip={state.audioUrl ? state.localMp3Name : undefined}
+                        tipTextAlign={state.audioUrl && state.localMp3Name ? 'center' : 'left'}
                       />
                     </div>
 
@@ -692,13 +707,15 @@ const IIndex: React.FC = () => {
                     <div className="video_list">
                       {state.videos.map((item) => (
                         <div className="video_item" key={item.digitalPersonWorksId}>
-                          <img src={item.previewPictureUrl} alt="" className="thumbnail" />
+                          <div className="thumbnail">
+                            <img src={item.previewPictureUrl} alt="" />
+                          </div>
                           <div className="video_info">
                             <div className="video_name">{item.videoName}</div>
                             <div className="video_status">状态：{item.statusText}</div>
                             <div className="video_time">{item.createTime}</div>
                             <div className="video_actions">
-                              {item.status === 'SUCCESS' ? (
+                              {/* {item.status === 'SUCCESS' ? (
                                 <>
                                   <div className="video_btn" onClick={() => previewVideo(item.url)}>
                                     播放
@@ -707,10 +724,32 @@ const IIndex: React.FC = () => {
                                   <div className="video_btn" onClick={() => downloadVideo(item.url, item.videoName)}>
                                     下载
                                   </div>
-
-                                  <div className="video_btn">删除</div>
                                 </>
-                              ) : null}
+                              ) : null} */}
+
+                              <div
+                                className={classNames('video_btn', item.status !== 'SUCCESS' && 'disable')}
+                                onClick={() => item.status === 'SUCCESS' && previewVideo(item.url)}
+                              >
+                                播放
+                              </div>
+
+                              <div
+                                className={classNames('video_btn', item.status !== 'SUCCESS' && 'disable')}
+                                onClick={() => item.status === 'SUCCESS' && downloadVideo(item.url, item.videoName)}
+                              >
+                                下载
+                              </div>
+
+                              <div
+                                className={classNames(
+                                  'video_btn',
+                                  !['SUCCESS', 'FAIL'].includes(item.status) && 'disable',
+                                )}
+                                onClick={() => ['SUCCESS', 'FAIL'].includes(item.status) && handleOnDeleteVideo(item)}
+                              >
+                                删除
+                              </div>
                             </div>
                           </div>
                         </div>

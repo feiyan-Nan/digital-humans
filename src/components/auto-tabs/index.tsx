@@ -9,6 +9,7 @@ type IProps = {
   textMode?: 'white' | 'black';
   activeKey?: number;
   onTabChange?: (activeKey: number) => void;
+  hideStatus?: boolean;
 };
 
 type IState = {
@@ -30,7 +31,7 @@ type IState = {
 
  * @returns
  */
-const AutoTabs: React.FC<IProps> = ({ items, activeKey = 0, textMode = 'white', onTabChange }) => {
+const AutoTabs: React.FC<IProps> = ({ items, activeKey = 0, textMode = 'white', onTabChange, hideStatus = false }) => {
   const isSingle = items.length === 1;
 
   const [state, setState] = useSetState<IState>({
@@ -71,7 +72,7 @@ const AutoTabs: React.FC<IProps> = ({ items, activeKey = 0, textMode = 'white', 
       </div>
 
       <div className={classNames('auto_tabs_line', activeClassName)}>
-        <div className="auto_tabs_active_line" style={state.activeLineStyle} />
+        {!hideStatus ? <div className="auto_tabs_active_line" style={state.activeLineStyle} /> : null}
       </div>
     </div>
   );

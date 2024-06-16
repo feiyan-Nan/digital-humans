@@ -69,24 +69,24 @@ const Backgrounds: React.FC<IProps> = ({ list, onTabChange, tabActiveKey = 0, wh
     setState({ tabActiveKey });
   }, [tabActiveKey]);
 
-  const validateImage = async (file: File) =>
-    new Promise((resolve, reject) => {
-      const reader = new FileReader();
+  // const validateImage = async (file: File) =>
+  //   new Promise((resolve, reject) => {
+  //     const reader = new FileReader();
 
-      reader.onload = (e) => {
-        const img = new Image();
+  //     reader.onload = (e) => {
+  //       const img = new Image();
 
-        img.onload = () => {
-          const { width, height } = img;
+  //       img.onload = () => {
+  //         const { width, height } = img;
 
-          width / height === 0.5625 ? resolve(null) : reject();
-        };
+  //         width / height === 0.5625 ? resolve(null) : reject();
+  //       };
 
-        img.src = e.target?.result as string;
-      };
+  //       img.src = e.target?.result as string;
+  //     };
 
-      reader.readAsDataURL(file);
-    });
+  //     reader.readAsDataURL(file);
+  //   });
 
   const onFileChange = async (formData: FormData) => {
     const uploadingKey = 'uploadingKey';

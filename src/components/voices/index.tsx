@@ -90,7 +90,7 @@ const Voices: React.FC<IProps> = ({ onTabChange, list, tabActiveKey = 0 }) => {
               ref={refInput}
             />
 
-            <Button type="primary" style={{ background: '#7B68EE' }} onClick={onPressEnter}>
+            <Button type="primary" style={{ background: '#7B68EE', fontSize: '10px' }} onClick={onPressEnter}>
               确认
             </Button>
           </Space.Compact>

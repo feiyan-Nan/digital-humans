@@ -11,10 +11,10 @@ const { TextArea } = Input;
 type IProps = {
   tabActiveKey?: number;
   onTabChange?: (activeKey: number) => void;
-  onTextChange?: (text: string) => void;
   onFileChange?: (formData: FormData, file: File) => void;
   focus?: boolean;
   tip?: string;
+  tipTextAlign?: 'left' | 'center';
 };
 
 type IState = {
@@ -24,9 +24,9 @@ type IState = {
 const WordsOrSounds: React.FC<IProps> = ({
   tabActiveKey = 0,
   onTabChange,
-  onTextChange,
   focus,
   onFileChange,
+  tipTextAlign = 'left',
   tip = '我们也支持上传上传音频驱动数字人，时长5分钟以内，格式支持MP3格式。',
 }) => {
   const [state, setState] = useSetState<IState>({ tabActiveKey });
@@ -62,7 +62,7 @@ const WordsOrSounds: React.FC<IProps> = ({
           showCount
           maxLength={1000}
           placeholder="请输入文字"
-          style={{ height: 200, resize: 'none', marginTop: '20px', padding: 0, border: 'none' }}
+          style={{ height: 200, resize: 'none', marginTop: '20px', padding: 0, border: 'none', fontSize: '12px' }}
           value={textContent}
           onChange={onChange}
           ref={inputRef}
@@ -78,6 +78,7 @@ const WordsOrSounds: React.FC<IProps> = ({
             marginBottom: '80px',
             fontSize: '12px',
             lineHeight: '20px',
+            textAlign: tipTextAlign,
           }}
           onChange={onFileChange}
         />

@@ -49,9 +49,12 @@ ol, ul {
 
 
     .home_icon {
-      height: 18px;
+      // height: 18px;
       margin-right: 10px;
-      margin-top: 10px;
+      // margin-top: 10px;
+      width: 27px;
+      margin-bottom: 8px;
+
     }
 
 
@@ -202,15 +205,24 @@ ol, ul {
         }
         scrollbar-width: none;
         scrollbar-color: transparent transparent;
-
         .video_item {
           display: flex;
           margin-bottom: 20px;
+
+
+
 
           .thumbnail {
             width: 80px;
             border-radius: 2px;
             overflow: hidden;
+            height: 92px;
+            position: relative;
+            > img {
+              width: 100%;
+              position: absolute;
+              top: -50%;
+            }
           }
 
           .video_info {
@@ -234,6 +246,11 @@ ol, ul {
               .video_btn {
                 margin-right: 10px;
                 cursor: pointer;
+
+                &.disable {
+                  color: #909090;
+                  cursor: not-allowed;
+                }
               }
             }
           }

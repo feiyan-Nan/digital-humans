@@ -21,6 +21,8 @@
       align-items: center;
       flex-direction: column;
       overflow: hidden;
+      // height: 120px;
+      // background-color: red;
 
 
       &.active {
@@ -94,7 +96,7 @@
       overflow: hidden;
       border-radius: 4px;
       cursor: pointer;
-      border: 2px solid rgba(0,0,0,0);
+      // border: 2px solid rgba(0,0,0,0);
 
       &.active {
         border: 2px solid #7B68EE;
@@ -119,6 +121,19 @@
     }
   }
 
+  .face {
+    background-color: #F3F3F3;
+    width: 80px;
+    height: 120px;
+    border-radius: 4px;
+    overflow: hidden;
+
+    >img {
+      object-fit: cover;
+      width: 80px;
+      height: 120px;
+    }
+  }
 
   .mask {
     position: relative;

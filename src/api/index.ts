@@ -15,7 +15,7 @@ const instance = axios.create({
 //   ?.replace('token=', '');
 
 const token =
-  'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE3MTgyMDYwMzcsInVzZXJuYW1lIjoiMTg2MTAwMTU1MzgifQ._tsDvCKwl6X5fZ2wjy6esvX0_wEYBCEq-eEAxx5KJ5I';
+  'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE3MTg3MjA4MDQsInVzZXJuYW1lIjoiMTUyMzk0ODEyOTcifQ.2o076dTvkuXMZkZIbZmR9rKnpnnnKpZOR7x6XDREp_Y';
 
 console.log('AT-[ token &&&&&********** ]', token);
 
@@ -227,6 +227,13 @@ export const getDraftVideo = () =>
     method: 'post',
   });
 
+export const deleteWork = (data: any) =>
+  instance<null, any>({
+    url: '/openApiDigitalPerson/customer/deleteWork',
+    method: 'post',
+    data,
+  });
+
 export const uploadAudio = (formData: FormData) =>
   instance<null, any>({
     url: '/openApiDigitalPerson/customer/uploadAudio',
@@ -256,4 +263,5 @@ export default {
   getDraftVideo,
   createVideo,
   uploadAudio,
+  deleteWork,
 };
