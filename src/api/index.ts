@@ -9,13 +9,13 @@ const instance = axios.create({
   // 还可以进行一些其他的配置
 });
 
-// const token = document.cookie
-//   .split(';')
-//   .find((i) => i.includes('token='))
-//   ?.replace('token=', '');
+const token = document.cookie
+  .split(';')
+  .find((i) => i.includes('token='))
+  ?.replace('token=', '');
 
-const token =
-  'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE3MTg3MjA4MDQsInVzZXJuYW1lIjoiMTUyMzk0ODEyOTcifQ.2o076dTvkuXMZkZIbZmR9rKnpnnnKpZOR7x6XDREp_Y';
+// const token =
+//   'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE3MTg3MjA4MDQsInVzZXJuYW1lIjoiMTUyMzk0ODEyOTcifQ.2o076dTvkuXMZkZIbZmR9rKnpnnnKpZOR7x6XDREp_Y';
 
 console.log('AT-[ token &&&&&********** ]', token);
 

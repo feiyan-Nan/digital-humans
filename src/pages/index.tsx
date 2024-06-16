@@ -567,6 +567,11 @@ const IIndex: React.FC = () => {
   const [uploadAudioIng, { setTrue: showUploadAudio, setFalse: hideUploadAudio }] = useBoolean(false);
 
   const onFileChange = async (formData: FormData, file: File) => {
+    if (!token) {
+      document.cookie = '';
+      toLoginPage();
+      return;
+    }
     showUploadAudio();
     const res = await api.uploadAudio(formData);
     hideUploadAudio();
@@ -582,7 +587,9 @@ const IIndex: React.FC = () => {
   const loginOrOut = () => {
     // token ? setToken('') : (window.location.href = '//login.aidigitalfield.com/ ');
     if (token) {
-      setToken('');
+      document.cookie = 'token=;domain=aidigitalfield.com';
+      document.cookie = 'token=;domain=127.0.0.1;';
+      document.cookie = 'token=;domain=*;';
       message.success('退出成功');
       window.location.reload();
     } else {

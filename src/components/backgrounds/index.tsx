@@ -119,7 +119,15 @@ const Backgrounds: React.FC<IProps> = ({ list, onTabChange, tabActiveKey = 0, wh
         />
 
         {state.tabActiveKey === 1 && (
-          <TipAndUpload tip="我们也支持上传自定义背景图" btnText="上传图片" accept="image/*" onChange={onFileChange} />
+          <>
+            <TipAndUpload
+              tip="我们也支持上传自定义背景图"
+              btnText="上传图片"
+              accept="image/*"
+              onChange={onFileChange}
+            />
+            <AutoTabs items={['我的背景图']} hideStatus />
+          </>
         )}
       </div>
 

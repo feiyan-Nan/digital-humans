@@ -85,7 +85,8 @@ const AutoTabs: React.FC<IProps> = ({
       </div>
 
       <div className={classNames('auto_tabs_line', activeClassName)}>
-        {!hideStatus ? <div className="auto_tabs_active_line" style={state.activeLineStyle} /> : null}
+        {/* {!hideStatus ? <div className="auto_tabs_active_line" style={state.activeLineStyle} /> : null} */}
+        {items.length > 1 ? <div className="auto_tabs_active_line" style={state.activeLineStyle} /> : null}
       </div>
     </div>
   );
