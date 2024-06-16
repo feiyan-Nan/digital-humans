@@ -73,7 +73,12 @@ const Voices: React.FC<IProps> = ({ onTabChange, list, tabActiveKey = 0 }) => {
   return (
     <div className="voice">
       <div className="voice_header">
-        <AutoTabs items={['主播音色', '定制音色']} onTabChange={handleTabChange} activeKey={state.activeKey} />
+        <AutoTabs
+          items={['主播音色', '定制音色']}
+          onTabChange={handleTabChange}
+          activeKey={state.activeKey}
+          style={{ paddingRight: '8px' }}
+        />
 
         <div className="persons_tip" style={{ paddingTop: '10px' }}>
           语速
@@ -102,6 +107,7 @@ const Voices: React.FC<IProps> = ({ onTabChange, list, tabActiveKey = 0 }) => {
               tip="我们也支持上传上传音频驱动数字人，时长5分钟以内，格式支持MP3格式。"
               btnText="上传声音"
               accept="image/*"
+              style={{ fontSize: '12px', lineHeight: '20px' }}
               alert="添加产品微信定制：feastfu"
             />
 

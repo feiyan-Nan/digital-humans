@@ -84,10 +84,11 @@ const CardList: React.FC<IProps> = ({
                       effect="blur"
                       src={item.url}
                       onClick={() => !item.mask && handleClick(index)}
-                      wrapperClassName={item.mask ? 'mask face' : 'face'}
-                      wrapperProps={{
-                        placeholder: item.mask,
-                      }}
+                      wrapperClassName="face"
+                      // wrapperClassName={item.mask ? 'mask face' : 'face'}
+                      // wrapperProps={{
+                      //   placeholder: item.mask,
+                      // }}
                     />
 
                     <EditCom

@@ -4,6 +4,8 @@ import { useAsyncEffect, useBoolean, useDebounceEffect, useRequest, useSetState,
 import classNames from 'classnames';
 import { MacScrollbar } from 'mac-scrollbar';
 import axios from 'axios';
+import { LazyLoadImage } from 'react-lazy-load-image-component';
+import 'react-lazy-load-image-component/src/effects/blur.css';
 
 import './index.scss';
 
@@ -41,11 +43,10 @@ const sliderStyle: React.CSSProperties = {
 };
 
 const contentStyle: React.CSSProperties = {
-  // minHeight: 'calc(100vh - 54px)',
   color: '#fff',
   background: '#0D1530',
-  // overflowY: 'scroll',
-  padding: '0 18px 0 7px',
+  // padding: '0 18px 0 7px',
+  padding: '0 10px 0 7px',
 };
 
 const headerStyle: React.CSSProperties = {
@@ -370,7 +371,7 @@ const IIndex: React.FC = () => {
   useAsyncEffect(async () => {
     if (!token) {
       if (state.personsActiveKey === 1 || state.bgActiveKey === 1 || state.voiceActiveKey === 1) {
-        window.location.href = '//login.aidigitalfield.com/ ';
+        window.location.href = 'https://login.aidigitalfield.com/ ';
       }
     }
   }, [state.personsActiveKey, state.bgActiveKey, state.voiceActiveKey]);
@@ -574,7 +575,7 @@ const IIndex: React.FC = () => {
     if (token) {
       setToken('');
       message.success('退出成功');
-      // window.location.reload();
+      window.location.reload();
     } else {
       window.location.href = '//login.aidigitalfield.com';
     }
@@ -695,11 +696,11 @@ const IIndex: React.FC = () => {
                         保存并生成播报
                       </div>
                     )}
-                    {!state.videos.length && (
+                    {state.videos.length ? (
                       <div className="block">
                         <AutoTabs items={['视频列表']} textMode="black" />
                       </div>
-                    )}
+                    ) : null}
                   </div>
                 </Spin>
                 <MacScrollbar>
@@ -708,7 +709,13 @@ const IIndex: React.FC = () => {
                       {state.videos.map((item) => (
                         <div className="video_item" key={item.digitalPersonWorksId}>
                           <div className="thumbnail">
-                            <img src={item.previewPictureUrl} alt="" />
+                            {/* <img src={item.previewPictureUrl} alt="" /> */}
+                            <LazyLoadImage
+                              width="100%"
+                              effect="blur"
+                              src={item.previewPictureUrl}
+                              wrapperClassName="face"
+                            />
                           </div>
                           <div className="video_info">
                             <div className="video_name">{item.videoName}</div>

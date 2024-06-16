@@ -111,7 +111,12 @@ const Backgrounds: React.FC<IProps> = ({ list, onTabChange, tabActiveKey = 0, wh
   return (
     <div className="backgrounds">
       <div className="backgrounds_header">
-        <AutoTabs items={state.items} onTabChange={onTabChange} activeKey={state.tabActiveKey} />
+        <AutoTabs
+          items={state.items}
+          onTabChange={onTabChange}
+          activeKey={state.tabActiveKey}
+          style={{ paddingRight: '8px' }}
+        />
 
         {state.tabActiveKey === 1 && (
           <TipAndUpload tip="我们也支持上传自定义背景图" btnText="上传图片" accept="image/*" onChange={onFileChange} />

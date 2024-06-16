@@ -121,19 +121,25 @@ const Persons: React.FC<IProps> = ({ list, tabActiveKey, onTabChange, refreshPer
   return (
     <div className="persons">
       <div className="persons_header">
-        <AutoTabs items={state.tabItems} onTabChange={onTabChange} activeKey={state.activeKey} />
+        <AutoTabs
+          items={state.tabItems}
+          onTabChange={onTabChange}
+          activeKey={state.activeKey}
+          style={{ paddingRight: '8px' }}
+        />
 
-        {state.activeKey === 1 && (
+        {state.activeKey === 0 ? (
+          <div className="persons_tip">
+            没有合适的数字人？
+            <span className="persons_btn" onClick={toCreateDigital}>
+              去定制
+            </span>
+          </div>
+        ) : (
           <>
             <TipAndUpload
-              tip={
-                <div className="persons_tip">
-                  没有合适的数字人？
-                  <span className="persons_btn" onClick={toCreateDigital}>
-                    去定制
-                  </span>
-                </div>
-              }
+              tip="我们也支持上传上传音频驱动数字人，时长5分钟以内，格式支持MP3格式。"
+              style={{ fontSize: '12px', lineHeight: '20px' }}
               btnText="上传视频"
               accept="video/*"
               onChange={onFileChange}
@@ -144,7 +150,6 @@ const Persons: React.FC<IProps> = ({ list, tabActiveKey, onTabChange, refreshPer
         )}
       </div>
 
-      {/* <div className="persons_main"> */}
       <MacScrollbar>
         <CardList
           items={state.personItems}
@@ -155,7 +160,6 @@ const Persons: React.FC<IProps> = ({ list, tabActiveKey, onTabChange, refreshPer
           onEdit={onEdit}
         />
       </MacScrollbar>
-      {/* </div> */}
     </div>
   );
 };

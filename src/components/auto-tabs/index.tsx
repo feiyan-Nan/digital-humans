@@ -1,6 +1,6 @@
 import React from 'react';
 import classNames from 'classnames';
-import { useSetState } from 'ahooks';
+import { useAsyncEffect, useSetState } from 'ahooks';
 
 import './index.scss';
 
@@ -10,6 +10,7 @@ type IProps = {
   activeKey?: number;
   onTabChange?: (activeKey: number) => void;
   hideStatus?: boolean;
+  style?: React.CSSProperties;
 };
 
 type IState = {
@@ -31,7 +32,14 @@ type IState = {
 
  * @returns
  */
-const AutoTabs: React.FC<IProps> = ({ items, activeKey = 0, textMode = 'white', onTabChange, hideStatus = false }) => {
+const AutoTabs: React.FC<IProps> = ({
+  items,
+  activeKey = 0,
+  textMode = 'white',
+  onTabChange,
+  hideStatus = false,
+  style,
+}) => {
   const isSingle = items.length === 1;
 
   const [state, setState] = useSetState<IState>({
@@ -57,8 +65,13 @@ const AutoTabs: React.FC<IProps> = ({ items, activeKey = 0, textMode = 'white', 
     }
   };
 
+  useAsyncEffect(async () => {
+    // setState({ activeKey });
+    handleClick(activeKey);
+  }, [activeKey]);
+
   return (
-    <div className="auto_tabs">
+    <div className="auto_tabs" style={style}>
       <div className="auto_tabs_items">
         {items.map((item, index) => (
           <div
