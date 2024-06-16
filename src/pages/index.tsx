@@ -19,7 +19,7 @@ import Video from '@/pages/video';
 
 import AutoTabs from '@/components/auto-tabs';
 import AspectRatio from '@/components/AspectRatio';
-import LocationInformation from '@/components/LocationInformation';
+// import LocationInformation from '@/components/LocationInformation';
 
 import Persons from '@/components/persons';
 import Backgrounds from '@/components/backgrounds';
@@ -763,7 +763,7 @@ const IIndex: React.FC = () => {
 
           <Footer className="custom_footer">
             <AspectRatio />
-            <LocationInformation />
+            {/* <LocationInformation /> */}
           </Footer>
         </Layout>
       </Layout>
