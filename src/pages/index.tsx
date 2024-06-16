@@ -584,12 +584,13 @@ const IIndex: React.FC = () => {
     setState({ audioUrl: '' });
   }, [state.wordsOrSoundsActiveKey]);
 
-  const loginOrOut = () => {
+  const loginOrOut = async () => {
     // token ? setToken('') : (window.location.href = '//login.aidigitalfield.com/ ');
     if (token) {
       document.cookie = 'token=;domain=aidigitalfield.com';
       document.cookie = 'token=;domain=127.0.0.1;';
       document.cookie = 'token=;domain=*;';
+      await api.logout();
       message.success('退出成功');
       window.location.reload();
     } else {

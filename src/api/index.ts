@@ -5,7 +5,7 @@ const instance = axios.create({
   // base接口，表示请求URL的公共部分
   baseURL: '',
   // 超时 设置为5分钟
-  timeout: 5 * 60 * 1000,
+  timeout: 60 * 60 * 1000,
   // 还可以进行一些其他的配置
 });
 
@@ -13,11 +13,6 @@ const token = document.cookie
   .split(';')
   .find((i) => i.includes('token='))
   ?.replace('token=', '');
-
-// const token =
-//   'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE3MTg3MjA4MDQsInVzZXJuYW1lIjoiMTUyMzk0ODEyOTcifQ.2o076dTvkuXMZkZIbZmR9rKnpnnnKpZOR7x6XDREp_Y';
-
-console.log('AT-[ token &&&&&********** ]', token);
 
 instance.interceptors.request.use((config) => {
   Object.assign(config.headers, {
@@ -32,6 +27,11 @@ instance.interceptors.request.use((config) => {
 
 instance.interceptors.response.use(
   async (res) => {
+    if (res.data.code === 401) {
+      window.location.href = 'https://login.aidigitalfield.com/';
+      return res.data;
+    }
+
     if (res.data.code !== 200) {
       message.error(res.data.message);
     }
@@ -234,6 +234,12 @@ export const deleteWork = (data: any) =>
     data,
   });
 
+export const logout = () =>
+  instance<null, any>({
+    url: '/api/digital/logout',
+    method: 'post',
+  });
+
 export const uploadAudio = (formData: FormData) =>
   instance<null, any>({
     url: '/openApiDigitalPerson/customer/uploadAudio',
@@ -264,4 +270,5 @@ export default {
   createVideo,
   uploadAudio,
   deleteWork,
+  logout,
 };
