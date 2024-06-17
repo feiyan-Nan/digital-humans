@@ -64,9 +64,16 @@ const Voices: React.FC<IProps> = ({ onTabChange, list, tabActiveKey = 0 }) => {
   const refInput = useRef<any>();
 
   const onPressEnter = () => {
-    updateSpeedStr(state.speechStr);
     refInput.current.blur();
   };
+
+  const onBlur = () => {
+    updateSpeedStr(state.speechStr);
+  };
+
+  // useAsyncEffect(async () => {
+  //   updateSpeedStr(state.speechStr);
+  // }, [state.speechStr]);
 
   const onSpeedChange = (speechStr: any) => setState({ speechStr });
 
@@ -92,6 +99,7 @@ const Voices: React.FC<IProps> = ({ onTabChange, list, tabActiveKey = 0 }) => {
               step={0.1}
               onPressEnter={onPressEnter}
               onChange={onSpeedChange}
+              onBlur={onBlur}
               ref={refInput}
             />
 
@@ -104,7 +112,7 @@ const Voices: React.FC<IProps> = ({ onTabChange, list, tabActiveKey = 0 }) => {
         {state.activeKey === 1 && (
           <>
             <TipAndUpload
-              tip="我们也支持上传上传音频驱动数字人，时长5分钟以内，格式支持MP3格式。"
+              tip="我们支持您上传一分钟音频定制克隆您的专属音色，格式支持MP3格式。"
               btnText="上传声音"
               accept="image/*"
               style={{ fontSize: '12px', lineHeight: '20px' }}

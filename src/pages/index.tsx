@@ -473,6 +473,8 @@ const IIndex: React.FC = () => {
     const { digitalId } = selectedPerson;
     const { templateId: voice } = selectedVoice;
 
+    console.log('speechStr', speechStr);
+
     if (!token) {
       toLoginPage();
       return;
@@ -554,16 +556,30 @@ const IIndex: React.FC = () => {
   };
 
   const previewVideo = (mp4Path: string) => {
-    Modal.success({
-      title: '视频预览',
-      content: (
-        <div>
-          <video src={mp4Path} width="300px" autoPlay />
-        </div>
-      ),
+    const a = document.createElement('a');
 
-      okText: '确定',
-    });
+    a.href = mp4Path;
+
+    a.target = '_blank';
+
+    a.style.display = 'none';
+
+    document.body.appendChild(a);
+
+    a.click();
+
+    document.body.removeChild(a);
+
+    // Modal.success({
+    //   title: '视频预览',
+    //   content: (
+    //     <div>
+    //       <video src={mp4Path} width="300px" autoPlay />
+    //     </div>
+    //   ),
+
+    //   okText: '确定',
+    // });
   };
 
   const [uploadAudioIng, { setTrue: showUploadAudio, setFalse: hideUploadAudio }] = useBoolean(false);
@@ -619,8 +635,14 @@ const IIndex: React.FC = () => {
   const handleOnDeleteVideo = async (item: any) => {
     message.loading({ content: '删除中' });
     const res = await api.deleteWork({ digitalPersonWorksId: item.digitalPersonWorksId });
-    console.log('AT-[ res &&&&&********** ]', res);
     message.destroy();
+    console.log('AT-[ res &&&&&********** ]', res);
+    if (res.code === 200) {
+      message.success(res.data);
+    } else {
+      message.warning(res.message);
+    }
+
     getVideoList();
   };
 

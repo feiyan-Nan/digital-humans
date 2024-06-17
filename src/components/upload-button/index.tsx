@@ -1,7 +1,9 @@
 import React, { FC } from 'react';
 
 import classNames from 'classnames';
-import { Modal } from 'antd';
+import { Modal, Button } from 'antd';
+import { InfoCircleOutlined } from '@ant-design/icons';
+import { useBoolean } from 'ahooks';
 import uploadIcon from '@/static/icons/uploadIcon.png';
 import './index.scss';
 
@@ -14,6 +16,8 @@ interface IProps {
 }
 
 const ButtonCom: FC<IProps> = ({ text, onChange, accept, alert }) => {
+  const [open, { toggle, setTrue: showModal, setFalse: hideModal }] = useBoolean(false);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const selectedFile = e.target.files[0];
@@ -27,23 +31,39 @@ const ButtonCom: FC<IProps> = ({ text, onChange, accept, alert }) => {
   };
 
   const onAlert = () => {
-    Modal.info({
-      title: '',
-      content: (
-        <div>
-          <p>{alert}</p>
-        </div>
-      ),
-      onOk() {},
-    });
+    showModal();
+    // Modal.info({
+    //   title: '',
+    //   content: (
+    //     <div>
+    //       <p>{alert}</p>
+    //     </div>
+    //   ),
+    //   onOk() {},
+    // });
   };
 
   return (
-    <div className={classNames('upload_button', alert ? 'alertable' : null)} onClick={alert ? onAlert : undefined}>
-      <img src={uploadIcon} alt="" />
-      {text}
-      <input type="file" onChange={handleChange} accept={accept} />
-    </div>
+    <>
+      <Modal
+        title={<InfoCircleOutlined style={{ color: '#7B68EE' }} />}
+        open={open}
+        onOk={hideModal}
+        footer={
+          <Button type="primary" onClick={hideModal} style={{ background: '#7B68EE' }}>
+            ok
+          </Button>
+        }
+      >
+        <p>{alert}</p>
+      </Modal>
+
+      <div className={classNames('upload_button', alert ? 'alertable' : null)} onClick={alert ? onAlert : undefined}>
+        <img src={uploadIcon} alt="" />
+        {text}
+        <input type="file" onChange={handleChange} accept={accept} />
+      </div>
+    </>
   );
 };
 

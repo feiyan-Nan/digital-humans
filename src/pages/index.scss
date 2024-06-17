@@ -164,6 +164,7 @@ ol, ul {
     display: flex;
     flex-direction: column;
     height: calc(100vh - 134px);
+    height: calc(100vh - 108px);
     width: 100%;
 
 
@@ -195,9 +196,7 @@ ol, ul {
 
 
     .right_box_footer {
-      //flex: 1;
       margin: 0 10px;
-      //overflow-y: scroll;
 
       .video_list {
         &::-webkit-scrollbar {
@@ -210,19 +209,14 @@ ol, ul {
           margin-bottom: 20px;
 
 
-
-
           .thumbnail {
             width: 80px;
-            border-radius: 2px;
+            border-radius: 4px;
             overflow: hidden;
             height: 92px;
             position: relative;
-            > img {
-              width: 100%;
-              // position: absolute;
-              // top: -50%;
-            }
+
+
           }
 
           .video_info {
@@ -264,7 +258,13 @@ ol, ul {
 
 
 
-
+.face {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 100%;
+  transform: translateY(-50%);
+}
 
 
 
@@ -272,7 +272,6 @@ ol, ul {
     height: 100%;
     flex: 1;
     flex-shrink: 0;
-
   }
 
 
@@ -283,7 +282,8 @@ ol, ul {
 
 .custom_footer {
   background-color:#F2F2F2;
-  height: 80px;
+  // height: 80px;
+  height: 54px;
   box-sizing: border-box;
   padding: 0;
   margin: 0;
