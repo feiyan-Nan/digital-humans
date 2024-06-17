@@ -228,7 +228,10 @@ function Video() {
       loginTag.style.left = `${left}px`;
       loginTag.style.top = `${top}px`;
       canvasctx.clearRect(0, 0, canvasctx.canvas.width, canvasctx.canvas.height);
-      canvasctx.drawImage(
+      if (image.src.includes('undefined')) {
+        return;
+      }
+      canvasctx?.drawImage(
         image,
         left,
         top,
