@@ -1,5 +1,5 @@
 import React from 'react';
-import { Layout, message, Modal, Spin } from 'antd';
+import { Layout, message, Spin } from 'antd';
 import { useAsyncEffect, useBoolean, useDebounceEffect, useRequest, useSetState, useCookieState } from 'ahooks';
 import classNames from 'classnames';
 import { MacScrollbar } from 'mac-scrollbar';
@@ -13,15 +13,12 @@ import { shallow } from 'zustand/shallow';
 import voiceIcon from '@/static/icons/voice.png';
 import personsIcon from '@/static/icons/persons.png';
 import imagesIcon from '@/static/icons/images.png';
-// import img from '@/static/imgs/test.png';
-import logo from '@/static/imgs/logo.png';
+import logo_home from '@/static/imgs/login_home.png';
 import vector from '@/static/icons/vector.png';
-import homeIcon from '@/static/icons/home_icon.png';
 import Video from '@/pages/video';
 
 import AutoTabs from '@/components/auto-tabs';
 import AspectRatio from '@/components/AspectRatio';
-// import LocationInformation from '@/components/LocationInformation';
 
 import Persons from '@/components/persons';
 import Backgrounds from '@/components/backgrounds';
@@ -651,8 +648,9 @@ const IIndex: React.FC = () => {
       <Header style={headerStyle}>
         <div className="custom_header">
           <div className="logo_custom" onClick={toHomePage}>
-            <img src={homeIcon} alt="" className="home_icon" />
-            <img src={logo} alt="" className="logo_icon" />
+            {/* <img src={homeIcon} alt="" className="home_icon" /> */}
+            {/* <img src={logo} alt="" className="logo_icon" /> */}
+            <img src={logo_home} alt="" className="logo_home" />
           </div>
 
           <InlineEdit name={state.currentName} onChange={onNameChange} />

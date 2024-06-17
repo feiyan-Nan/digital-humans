@@ -32,7 +32,7 @@ ol, ul {
   justify-content: space-between;
   font-size: 14px;
   color: #000;
-  padding-left: 60px;
+  padding-left: 20px;
   padding-right: 20px;
   margin: 0;
   box-sizing: border-box;
@@ -41,7 +41,8 @@ ol, ul {
 
 
   .logo_custom{
-    width: 67px;
+    // width: 67px;
+    // width: 200px;
     display: inline-flex;
     justify-content: center;
     align-items: center;
@@ -52,15 +53,15 @@ ol, ul {
       margin-right: 10px;
       width: 27px;
       margin-bottom: 8px;
-      // height: 37px;
-
     }
 
 
     .logo_icon{
       width: 80%;
-      // height: 35px;
+    }
 
+    .logo_home  {
+      width: 220px;
     }
   }
 
