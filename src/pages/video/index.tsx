@@ -25,7 +25,6 @@ function Video() {
   const [hasWH, setHasWH] = useState(false);
   const ref = useRef(null);
   const size = useSize(ref);
-  console.log(scale, 'scale');
   // 设置背景图
   useEffect(() => {
     const backImgView = document.getElementById('backImgView') as HTMLElement;
@@ -42,7 +41,6 @@ function Video() {
     }
     const backImgView = document.getElementById('backImgView') as HTMLElement;
     const canvasctx = document.getElementById('digitalMan') as HTMLCanvasElement;
-    console.log('size', size);
     const { width, height } = size ?? {};
     if (align === 'VERTICAL') {
       // 9:16 === 1080 * 1920
@@ -98,7 +96,6 @@ function Video() {
       '2d',
     ) as CanvasRenderingContext2D;
     setHasWH(false);
-    console.log('执行');
     const image = new Image();
     image.src = digitalManImage;
     image.onload = function () {
@@ -111,13 +108,11 @@ function Video() {
       let width;
       let height;
       if (align === 'VERTICAL') {
-        console.log('竖版,竖版竖版竖版竖版');
         top = 192 * scale;
         left = 52 * scale;
         width = 973 * scale;
         height = 1728 * scale;
       } else {
-        console.log('横版, 横版横版横版横版横版');
         top = 108 * scale;
         left = 686 * scale;
         width = 548 * scale;
