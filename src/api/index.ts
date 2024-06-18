@@ -40,6 +40,15 @@ instance.interceptors.response.use(
   },
   (error) => {
     message.error(error.response.data.message);
+
+    const { status } = error.response;
+
+    if (status === 401) {
+      document.cookie = 'token=;domain=aidigitalfield.com';
+      document.cookie = 'token=;domain=127.0.0.1;';
+      document.cookie = 'token=;domain=*;';
+      window.location.href = 'https://login.aidigitalfield.com/';
+    }
   },
 );
 

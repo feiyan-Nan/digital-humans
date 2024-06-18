@@ -49,6 +49,7 @@ const ButtonCom: FC<IProps> = ({ text, onChange, accept, alert }) => {
         title={<InfoCircleOutlined style={{ color: '#7B68EE' }} />}
         open={open}
         onOk={hideModal}
+        closable={false}
         footer={
           <Button type="primary" onClick={hideModal} style={{ background: '#7B68EE' }}>
             ok
