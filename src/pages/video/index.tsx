@@ -75,7 +75,7 @@ function Video() {
         updateScale(width / 1920);
       }
     }
-  }, [size, align]);
+  }, [size, align, updateScale]);
 
   const onClickDigitalMan = (e: any) => {
     e.stopPropagation();
@@ -103,15 +103,21 @@ function Video() {
       originImageHeight = image.height;
       canvasctx.clearRect(0, 0, canvasctx.canvas.width, canvasctx.canvas.height);
       const { scale, align } = useStore.getState();
+
+      console.log('AT-[ scale &&&&&********** ]', scale);
       let left;
       let top;
       let width;
       let height;
       if (align === 'VERTICAL') {
-        top = 192 * scale;
-        left = 52 * scale;
-        width = 973 * scale;
-        height = 1728 * scale;
+        // top = 192 * scale;
+        // left = 52 * scale;
+        // width = 973 * scale;
+        // height = 1728 * scale;
+        top = 0 * scale;
+        left = 0 * scale;
+        width = 1080 * scale;
+        height = 1920 * scale;
       } else {
         top = 108 * scale;
         left = 686 * scale;
@@ -256,7 +262,7 @@ function Video() {
     return () => {
       document.removeEventListener('visibilitychange', drawCanvas);
     };
-  }, [digitalManImage, size, scale]);
+  }, [digitalManImage, size, scale, updateSelected, updateLocations]);
   return (
     <div
       id="videoWrap"

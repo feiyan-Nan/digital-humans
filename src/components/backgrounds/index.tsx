@@ -125,6 +125,7 @@ const Backgrounds: React.FC<IProps> = ({ list, onTabChange, tabActiveKey = 0, wh
               btnText="上传图片"
               accept="image/*"
               onChange={onFileChange}
+              style={{ fontSize: '12px', lineHeight: '20px' }}
             />
             <AutoTabs items={['我的背景图']} hideStatus />
           </>
