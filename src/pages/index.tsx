@@ -1,6 +1,15 @@
 import React from 'react';
 import { Layout, message, Spin } from 'antd';
-import { useAsyncEffect, useBoolean, useDebounceEffect, useRequest, useSetState, useCookieState } from 'ahooks';
+import {
+  useAsyncEffect,
+  useBoolean,
+  useDebounceEffect,
+  useRequest,
+  useSetState,
+  useCookieState,
+  useTitle,
+  useFavicon,
+} from 'ahooks';
 import classNames from 'classnames';
 import { MacScrollbar } from 'mac-scrollbar';
 import axios from 'axios';
@@ -464,6 +473,9 @@ const IIndex: React.FC = () => {
     window.location.href = jf ? 'https://jflogin.aidigitalfield.com/' : 'https://login.aidigitalfield.com/';
   };
 
+  useTitle(jf ? 'xxxxxxx' : 'VHOST主播工厂 - 个性化数字人定制专家');
+  // useFavicon(jf ? '极场' : '艾迪数字);
+
   const onUploadBgSuccess = () => {
     getBgList(TabsEnum.private);
   };
@@ -655,7 +667,7 @@ const IIndex: React.FC = () => {
         <div className="custom_header">
           <div className="logo_custom" onClick={toHomePage}>
             <img src={homeIcon} alt="" className="home_icon" />
-            <img src={jf ? jfLogo : logo} alt="" style={{ width: jf ? '40px' : '80%' }} className="logo_icon" />
+            <img src={jf ? jfLogo : logo} alt="" style={{ width: jf ? '100px' : '80%' }} className="logo_icon" />
             <img src={logo_home} alt="" className="logo_home" />
           </div>
 
