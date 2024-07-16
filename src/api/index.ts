@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { message } from 'antd';
+import { jf } from '@/pages';
 
 const instance = axios.create({
   // base接口，表示请求URL的公共部分
@@ -28,7 +29,7 @@ instance.interceptors.request.use((config) => {
 instance.interceptors.response.use(
   async (res) => {
     if (res.data.code === 401) {
-      window.location.href = 'https://login.aidigitalfield.com/';
+      window.location.href = jf ? 'https://jflogin.aidigitalfield.com/' : 'https://login.aidigitalfield.com/';
       return res.data;
     }
 
@@ -47,7 +48,7 @@ instance.interceptors.response.use(
       document.cookie = 'token=;domain=aidigitalfield.com';
       document.cookie = 'token=;domain=127.0.0.1;';
       document.cookie = 'token=;domain=*;';
-      window.location.href = 'https://login.aidigitalfield.com/';
+      window.location.href = jf ? 'https://jflogin.aidigitalfield.com/' : 'https://login.aidigitalfield.com/';
     }
   },
 );

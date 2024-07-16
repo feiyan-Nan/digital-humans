@@ -92,7 +92,7 @@ enum TabsEnum {
   private = 1,
 }
 
-const jf = window.location.hostname.includes('jfworkbench');
+export const jf = window.location.hostname.includes('jfworkbench');
 
 const IIndex: React.FC = () => {
   const [state, setState] = useSetState<IStates>({
@@ -457,11 +457,11 @@ const IIndex: React.FC = () => {
   };
 
   const toHomePage = () => {
-    window.location.href = 'https://aidigitalfield.com/';
+    window.location.href = jf ? 'http://jf.aidigitalfield.com/' : 'https://aidigitalfield.com/';
   };
 
   const toLoginPage = () => {
-    window.location.href = 'https://login.aidigitalfield.com/ ';
+    window.location.href = jf ? 'https://jflogin.aidigitalfield.com/' : 'https://login.aidigitalfield.com/';
   };
 
   const onUploadBgSuccess = () => {
@@ -615,7 +615,7 @@ const IIndex: React.FC = () => {
       message.success('退出成功');
       window.location.reload();
     } else {
-      window.location.href = '//login.aidigitalfield.com';
+      window.location.href = jf ? '//jflogin.aidigitalfield.com' : '//login.aidigitalfield.com';
     }
   };
 
