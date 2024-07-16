@@ -13,7 +13,11 @@ import { shallow } from 'zustand/shallow';
 import voiceIcon from '@/static/icons/voice.png';
 import personsIcon from '@/static/icons/persons.png';
 import imagesIcon from '@/static/icons/images.png';
-import logo_home from '@/static/imgs/login_home.png';
+import logo_home from '@/static/icons/homeText.svg';
+import homeIcon from '@/static/icons/home.svg';
+import logo from '@/static/icons/logo.svg';
+import jfLogo from '@/static/icons/jf.png';
+
 import vector from '@/static/icons/vector.png';
 import Video from '@/pages/video';
 
@@ -87,6 +91,8 @@ enum TabsEnum {
   public = 0,
   private = 1,
 }
+
+const jf = window.location.hostname.includes('jfworkbench');
 
 const IIndex: React.FC = () => {
   const [state, setState] = useSetState<IStates>({
@@ -648,8 +654,8 @@ const IIndex: React.FC = () => {
       <Header style={headerStyle}>
         <div className="custom_header">
           <div className="logo_custom" onClick={toHomePage}>
-            {/* <img src={homeIcon} alt="" className="home_icon" /> */}
-            {/* <img src={logo} alt="" className="logo_icon" /> */}
+            <img src={homeIcon} alt="" className="home_icon" />
+            <img src={jf ? jfLogo : logo} alt="" style={{ width: jf ? '40px' : '80%' }} className="logo_icon" />
             <img src={logo_home} alt="" className="logo_home" />
           </div>
 

@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "deploy": "npm run build && node deploy.mjs",
     "build1": "tsc && vite build",
     "serve": "vite preview",
     "test": "vitest",
@@ -27,6 +28,7 @@
     "lodash": "^4.17.21",
     "mac-scrollbar": "^0.13.6",
     "memoize-one": "^5.2.1",
+    "node-ssh": "^13.2.0",
     "normalize.css": "^8.0.1",
     "react": "^18.2.0",
     "react-custom-scrollbars": "^4.2.1",
