@@ -473,7 +473,7 @@ const IIndex: React.FC = () => {
     window.location.href = jf ? 'https://jflogin.aidigitalfield.com/' : 'https://login.aidigitalfield.com/';
   };
 
-  useTitle(jf ? 'xxxxxxx' : 'VHOST主播工厂 - 个性化数字人定制专家');
+  useTitle(jf ? '精分大数据' : 'VHOST主播工厂 - 个性化数字人定制专家');
   // useFavicon(jf ? '极场' : '艾迪数字);
 
   const onUploadBgSuccess = () => {
