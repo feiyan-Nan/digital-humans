@@ -667,7 +667,7 @@ const IIndex: React.FC = () => {
       <Header style={headerStyle}>
         <div className="custom_header">
           <div className="logo_custom" onClick={toHomePage}>
-            {!hongren ? (
+            {hongren ? (
               <img src={hongrenSrc} height={45} alt="" />
             ) : (
               <>

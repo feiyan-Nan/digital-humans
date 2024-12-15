@@ -13,7 +13,8 @@ const main = async () => {
   console.log('上传中...')
 
   // eslint-disable-next-line no-undef
-  await ssh.putDirectory('dist', '/home/gjf/digital_workbench/h5/h5')
+  await ssh.putDirectory('dist', '/www/wwwroot/dev.aidigitalfield.com')
+  // await ssh.putDirectory('dist', '/home/gjf/digital_workbench/h5/h5')
 
   console.log('上传成功')
 
