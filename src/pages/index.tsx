@@ -3,12 +3,11 @@ import { Layout, message, Spin } from 'antd';
 import {
   useAsyncEffect,
   useBoolean,
+  useCookieState,
   useDebounceEffect,
   useRequest,
   useSetState,
-  useCookieState,
   useTitle,
-  useFavicon,
 } from 'ahooks';
 import classNames from 'classnames';
 import { MacScrollbar } from 'mac-scrollbar';
@@ -26,6 +25,7 @@ import logo_home from '@/static/icons/homeText.svg';
 import homeIcon from '@/static/icons/home.svg';
 import logo from '@/static/icons/logo.svg';
 import jfLogo from '@/static/icons/jf.png';
+import hongrenSrc from '@/static/imgs/hongren.png';
 
 import vector from '@/static/icons/vector.png';
 import Video from '@/pages/video';
@@ -102,6 +102,7 @@ enum TabsEnum {
 }
 
 export const jf = window.location.hostname.includes('jfworkbench');
+export const hongren = window.location.hostname.includes('dev.aidigitalfield');
 
 const IIndex: React.FC = () => {
   const [state, setState] = useSetState<IStates>({
@@ -666,9 +667,15 @@ const IIndex: React.FC = () => {
       <Header style={headerStyle}>
         <div className="custom_header">
           <div className="logo_custom" onClick={toHomePage}>
-            <img src={homeIcon} alt="" className="home_icon" />
-            <img src={jf ? jfLogo : logo} alt="" style={{ width: jf ? '100px' : '80%' }} className="logo_icon" />
-            <img src={logo_home} alt="" className="logo_home" />
+            {!hongren ? (
+              <img src={hongrenSrc} height={45} alt="" />
+            ) : (
+              <>
+                <img src={homeIcon} alt="" className="home_icon" />
+                <img src={jf ? jfLogo : logo} alt="" style={{ width: jf ? '100px' : '80%' }} className="logo_icon" />
+                <img src={logo_home} alt="" className="logo_home" />
+              </>
+            )}
           </div>
 
           <InlineEdit name={state.currentName} onChange={onNameChange} />
